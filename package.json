@@ -20,6 +20,7 @@
     "check": "astro check"
   },
   "dependencies": {
+    "98.css": "^0.1.21",
     "@astrojs/cloudflare": "^14.3.3",
     "@astrojs/react": "^6.0.6",
     "@astrojs/rss": "^4.0.19",
@@ -32,6 +33,8 @@
     "@types/react-dom": "^19.3.0",
     "astro": "^7.3.5",
     "daisyui": "^5.7.46",
+    "nes.css": "^2.3.0",
+    "papercss": "^1.9.2",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "tailwind-merge": "^3.7.0",

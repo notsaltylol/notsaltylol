@@ -7,6 +7,9 @@ selector changes the presentation without reloading the page.
 - **daisyUI:** actual daisyUI cards, buttons, badges, and input styling.
 - **HyperUI:** adapted Tailwind markup from HyperUI's marketing card patterns.
 - **Starwind:** generated Starwind React Button, Card, Badge, and Input components.
+- **PaperCSS:** native hand-drawn cards, badges, buttons, and inputs, scoped to its presentation.
+- **98.css:** native Windows 98 windows, title bars, status bars, buttons, and checkbox.
+- **NES.css:** native pixel-art containers, buttons, inputs, and checkbox.
 
 All project content is illustrative demo content, stored in `src/content/site.ts`.
 Change it once to update every presentation.
@@ -19,7 +22,7 @@ mise exec -- pnpm install
 mise exec -- pnpm dev
 ```
 
-Use the style buttons in the header to choose among all six presentations.
+Use the style buttons in the header to choose among all nine presentations.
 Each full page load starts with a randomly chosen style different
 from the previous saved style. Manual choices last for the current visit;
 navigation between Home and Projects keeps the current presentation. Gallery
@@ -161,3 +164,32 @@ RSS discovery link. GitHub Pages base paths are included in feed URLs.
 
 Cloudflare builds require `SITE_URL=https://your-domain.com`. GitHub Pages
 supplies its configured URL through the workflow. Development uses the local URL.
+
+## Typography
+
+Fonts use Astro's built-in Fontsource provider and `<Font />` component, with
+Latin subsets, local asset delivery, swap rendering, and optimized fallbacks.
+Tailwind's `@theme inline` maps them to `font-body`, `font-display`, and
+`font-controls`; shared UI and native library components consume the same tokens.
+Fonts are loaded as needed rather than preloading all nine presentations.
+
+| Style    | Body / controls         | Headings                |
+| -------- | ----------------------- | ----------------------- |
+| Glass    | Manrope                 | Manrope                 |
+| Gothic   | Source Serif 4          | Cinzel                  |
+| Minimal  | Source Serif 4          | Source Serif 4          |
+| daisyUI  | Nunito Sans             | Nunito Sans             |
+| HyperUI  | Space Grotesk           | Space Grotesk           |
+| Starwind | DM Sans                 | DM Sans                 |
+| PaperCSS | Neucha                  | Patrick Hand SC         |
+| 98.css   | Pixelated MS Sans Serif | Pixelated MS Sans Serif |
+| NES.css  | Press Start 2P          | Press Start 2P          |
+
+PaperCSS's upstream stylesheet is isolated with CSS `@scope` in
+`src/themes/PaperStyles.astro`. Its remote font import is removed so Astro owns
+font delivery. Light/dark colors are bridged to the shared semantic palette.
+
+98.css and NES.css are also isolated with CSS `@scope`. The MS Sans Serif files
+bundled with 98.css use Astro’s local font provider (regular and bold). NES.css
+uses Fontsource through Astro. Both styles map their light/dark palettes onto
+the shared semantic tokens.

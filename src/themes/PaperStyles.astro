@@ -1,0 +1,17 @@
+---
+import paperCSS from "papercss/dist/paper.css?raw";
+// Keep the upstream framework isolated from the other presentations. Astro
+// owns font delivery; PaperCSS's Google Fonts import must not reach browsers.
+const scopedCSS = paperCSS
+  .replace(/@charset[^;]+;/g, "")
+  .replace(/@import[^;]+;/g, "")
+  .replace(/\bhtml\.dark\b/g, ":scope[data-paper-dark]")
+  .replace(/\bhtml\b/g, ":scope")
+  .replaceAll('"Neucha", sans-serif', "var(--font-neucha)")
+  .replaceAll('"Patrick Hand SC", sans-serif', "var(--font-patrick-hand)");
+---
+
+<style
+  is:global
+  set:html={`@layer theme, base, components, utilities; @layer components { @scope (.paper-presentation) { ${scopedCSS} } }`}
+/>

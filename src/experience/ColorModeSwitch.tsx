@@ -10,6 +10,36 @@ export default function ColorModeSwitch({
   dark: boolean;
   onChange: (dark: boolean) => void;
 }) {
+  if (theme === "nes") {
+    return (
+      <label className="mode-switch nes-surface">
+        <input
+          className={`nes-checkbox ${dark ? "is-dark" : ""}`}
+          type="checkbox"
+          role="switch"
+          aria-label="Dark mode"
+          checked={dark}
+          onChange={(event) => onChange(event.target.checked)}
+        />
+        <span>Dark mode</span>
+      </label>
+    );
+  }
+  if (theme === "retro") {
+    return (
+      <div className="mode-switch retro-surface">
+        <input
+          id="retro-dark-mode"
+          type="checkbox"
+          role="switch"
+          aria-label="Dark mode"
+          checked={dark}
+          onChange={(event) => onChange(event.target.checked)}
+        />
+        <label htmlFor="retro-dark-mode">Dark mode</label>
+      </div>
+    );
+  }
   return (
     <div className="mode-switch">
       <span>Light</span>

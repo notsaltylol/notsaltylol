@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { projects, site, type Project } from "../content/site";
+import Nes from "../themes/Nes";
+import Retro from "../themes/Retro";
+import Paper from "../themes/Paper";
 import Daisy from "../themes/Daisy";
 import Hyper from "../themes/Hyper";
 import Tailwind from "../themes/Tailwind";
@@ -14,6 +17,9 @@ const themes: { id: ThemeId; label: string }[] = [
   { id: "daisy", label: "daisyUI" },
   { id: "hyper", label: "HyperUI" },
   { id: "starwind", label: "Starwind" },
+  { id: "paper", label: "PaperCSS" },
+  { id: "retro", label: "98.css" },
+  { id: "nes", label: "NES.css" },
 ];
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const href = (page: Page) =>
@@ -108,7 +114,13 @@ export default function Website({ initialPage }: { initialPage: Page }) {
         ? Hyper
         : theme === "starwind"
           ? Starwind
-          : Tailwind;
+          : theme === "paper"
+            ? Paper
+            : theme === "retro"
+              ? Retro
+              : theme === "nes"
+                ? Nes
+                : Tailwind;
   return (
     <div
       className={`website theme-${theme}`}

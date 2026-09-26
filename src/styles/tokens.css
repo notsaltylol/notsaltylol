@@ -19,7 +19,7 @@
   --font-body: var(--ui-font-body);
   --font-display: var(--ui-font-display);
   --font-controls: var(--ui-font-controls);
-  --font-artwork: Georgia, serif;
+  --font-artwork: var(--font-source-serif);
   --font-weight-heading: var(--ui-weight-display);
   --font-weight-title: var(--ui-weight-title);
   --radius-panel: var(--ui-radius-panel);
@@ -67,9 +67,9 @@
   --ui-art-ink: #24344c;
   --ui-art-line: #24344c24;
   --ui-backdrop: #15213588;
-  --ui-font-body: "Avenir Next", Avenir, "Segoe UI", sans-serif;
-  --ui-font-display: "Avenir Next", Avenir, "Segoe UI", sans-serif;
-  --ui-font-controls: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+  --ui-font-body: var(--font-manrope);
+  --ui-font-display: var(--font-manrope);
+  --ui-font-controls: var(--font-manrope);
   --ui-weight-display: 750;
   --ui-weight-title: 700;
   --ui-radius-panel: 1.4rem;
@@ -87,8 +87,14 @@
   --ui-secondary: #466b52;
   --ui-on-secondary: #fff;
 }
+/* Resolve the control font on the active presentation, not on :root. */
+.website {
+  --ui-font-controls: var(--ui-font-body);
+}
 /* Each presentation owns values, never component selectors. */
 .theme-daisy {
+  --ui-font-body: var(--font-nunito-sans);
+  --ui-font-display: var(--font-nunito-sans);
   --color-base-100: var(--ui-surface-solid);
   --color-base-200: var(--ui-canvas);
   --color-base-300: var(--ui-line);
@@ -105,8 +111,8 @@
   --ui-line: #171717;
   --ui-action: #ffe24b;
   --ui-on-action: #171717;
-  --ui-font-body: "Trebuchet MS", Arial, sans-serif;
-  --ui-font-display: "Trebuchet MS", Arial, sans-serif;
+  --ui-font-body: var(--font-space-grotesk);
+  --ui-font-display: var(--font-space-grotesk);
   --ui-radius-panel: 0;
   --ui-radius-control: 0;
   --ui-radius-dialog: 0;
@@ -117,6 +123,8 @@
   --ui-shadow-dialog: 8px 8px #171717;
 }
 .theme-starwind {
+  --ui-font-body: var(--font-dm-sans);
+  --ui-font-display: var(--font-dm-sans);
   --ui-canvas: #f8faf9;
   --ui-content: #182c27;
   --ui-heading: #182c27;
@@ -178,8 +186,8 @@
   --ui-art-background: radial-gradient(ellipse at center, #433147, #251d2e);
   --ui-art-ink: #d6b879;
   --ui-art-line: #b3945955;
-  --ui-font-body: Georgia, "Times New Roman", serif;
-  --ui-font-display: Georgia, "Times New Roman", serif;
+  --ui-font-body: var(--font-source-serif);
+  --ui-font-display: var(--font-cinzel);
   --ui-weight-display: 400;
   --ui-weight-title: 400;
   --ui-radius-panel: 46% 46% 3px 3px / 27% 27% 3px 3px;
@@ -199,8 +207,8 @@
   --ui-radius-dialog: 3px;
   --ui-shadow-panel: none;
   --ui-shadow-dialog: none;
-  --ui-font-body: Georgia, serif;
-  --ui-font-display: Georgia, serif;
+  --ui-font-body: var(--font-source-serif);
+  --ui-font-display: var(--font-source-serif);
   --ui-weight-display: 400;
 }
 
@@ -222,4 +230,76 @@
   --radius-selector: 1rem;
   --radius-field: 0.7rem;
   --radius-box: 1.4rem;
+}
+
+.theme-paper {
+  --ui-font-body: var(--font-neucha);
+  --ui-font-display: var(--font-patrick-hand);
+  --ui-weight-display: 400;
+  --ui-weight-title: 400;
+  --ui-canvas: #f5f2eb;
+  --ui-surface: #fffdf8;
+  --ui-surface-solid: #fffdf8;
+  --ui-surface-hover: #eae6dc;
+  --ui-content: #41403e;
+  --ui-heading: #31302e;
+  --ui-content-muted: #625f59;
+  --ui-line: #625f59;
+  --ui-line-hover: #31302e;
+  --ui-action: #41403e;
+  --ui-on-action: #fffdf8;
+  --ui-focus: #175f9c;
+  --ui-radius-panel: 2% 6% 4% 3% / 1% 1% 2% 4%;
+  --ui-radius-control: 8% 4% 5% 3% / 4% 3% 6% 5%;
+  --ui-radius-brand: 4% 6% 3% 5%;
+}
+
+.theme-retro {
+  --ui-font-body: var(--font-ms-sans);
+  --ui-font-display: var(--font-ms-sans);
+  --ui-weight-display: 700;
+  --ui-weight-title: 700;
+  --ui-canvas: #d4e5e5;
+  --ui-surface: #c0c0c0;
+  --ui-surface-solid: #c0c0c0;
+  --ui-surface-hover: #dfdfdf;
+  --ui-content: #222;
+  --ui-heading: #111;
+  --ui-content-muted: #444;
+  --ui-line: #808080;
+  --ui-action: #000080;
+  --ui-on-action: #fff;
+  --ui-focus: #000080;
+  --ui-radius-panel: 0;
+  --ui-radius-control: 0;
+  --ui-radius-dialog: 0;
+  --ui-radius-brand: 0;
+  --ui-radius-picker: 0;
+  --ui-retro-highlight: #fff;
+  --ui-retro-edge: #0a0a0a;
+  --ui-retro-title: linear-gradient(90deg, #000080, #1084d0);
+}
+
+.theme-nes {
+  --ui-font-body: var(--font-press-start);
+  --ui-font-display: var(--font-press-start);
+  --ui-weight-display: 400;
+  --ui-weight-title: 400;
+  --ui-canvas: #e5edf5;
+  --ui-surface: #fff;
+  --ui-surface-solid: #fff;
+  --ui-surface-hover: #e4e4e4;
+  --ui-content: #212529;
+  --ui-heading: #212529;
+  --ui-content-muted: #4b5260;
+  --ui-line: #212529;
+  --ui-action: #174fc4;
+  --ui-on-action: #fff;
+  --ui-focus: #174fc4;
+  --ui-radius-panel: 0;
+  --ui-radius-control: 0;
+  --ui-radius-dialog: 0;
+  --ui-radius-brand: 0;
+  --ui-radius-picker: 0;
+  --ui-nes-edge: #777;
 }
