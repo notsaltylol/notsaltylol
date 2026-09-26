@@ -2,7 +2,9 @@
 
 Every preview uses the same expanded islands and camera angle: 10× the original width, with small buildings and trees across 100× the land area. Use Castle, Lake & bridge, or Lookout in the viewer to inspect the retained fine detail. All five styles share the camera controls, castle masonry, roof tiles, doors, balconies, bridge, shoreline gardens, ivy, foreground path, individual tree leaves, meadow plants, and weathered rock texture. The buttons change palette, material shaders, lighting, outlines, and grain while keeping the current view. [3D guide](threejs-3d.md) · [Illustrated gallery](style-gallery.md)
 
-These previews use the perspective camera, calmer painted sky, unequal sheared crags, a broken lookout ridge, asymmetric secondary islands, a lake with deep peninsulas and unequal bays, split waterfall streams, and a connected castle precinct with hipped roofs and broken enclosure walls. Shared tree crowns have spreading, upright and wind-shaped branch plans; close views retain individual leaves and veins. The [sky asset](sky-environment.md) and [surface textures](painted-materials.md), including their generation prompts, are published alongside the Three.js source.
+The scene uses a perspective camera, painted sky, side sunlight, and slow art-directed cloud shadows projected in world space. A [shared habitat layout](../assets/sky-castle-habitat.js) connects woodland stands, meadow drifts, and open routes across trees, grass, ferns, flowers, and stones. Populations and physical sizes are retained, including the lookout's 3,000 shrubs and 9,000 flowers; fine geometry stays available when zoomed in.
+
+The castle road meets its paving using the [actual ground sampler](../assets/sky-castle-ground.js). A [joined ballistic waterfall](../assets/sky-castle-waterfall.js) rolls over the river lip, then breaks into an uneven falling veil and three-dimensional spray. The [sky asset](sky-environment.md) and [surface textures](painted-materials.md), including their generation prompts, are published alongside the Three.js source.
 
 ## 1. Golden ruins
 
