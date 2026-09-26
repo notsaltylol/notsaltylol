@@ -7,6 +7,8 @@
  * patches, with shared live materials and protected paths, water and foundations.
  */
 export function buildBotany(THREE, materials, terrain) {
+  const worldScale = terrain.scale || 1, areaScale = worldScale * worldScale;
+  const world = (x, z) => terrain.toWorld ? terrain.toWorld(x, z) : { x:x * worldScale, z:z * worldScale };
   const group = new THREE.Group();
   group.name = 'fine-island-botany';
   const leafMaterial = materials.leafDetail || materials.leaf;
@@ -28,20 +30,21 @@ export function buildBotany(THREE, materials, terrain) {
     new THREE.Vector3(-3.8, 0, .9), new THREE.Vector3(-2.7, 0, -.25),
     new THREE.Vector3(-3.1, 0, -1.7),
   ]);
-  const trailPoints = trail.getPoints(140);
-  const gardens = [[-4.55, .25], [-2, 2.15], [4.55, 2.2]];
+  const trailPoints = (terrain.trail || trail).getPoints(160);
+  const distanceToTrail = (x, z) => terrain.trailDistance ? terrain.trailDistance(x, z) : Math.min(...trailPoints.map(p => Math.hypot(x - p.x, z - p.z)));
+  const gardens = [[-4.55, .25], [-2, 2.15], [4.55, 2.2]].map(([x, z]) => world(x, z));
   function dryLand(x, z) {
-    const lake = terrain.lakeDistance ? terrain.lakeDistance(x, z) : Math.hypot((x - 1.05) / 2.35, (z - .15) / 1.65);
-    const wetFootprint = lake < 1.25 || (z > 1 && Math.abs(x - terrain.riverX(z)) < .63);
+    const lake = terrain.lakeDistance ? terrain.lakeDistance(x, z) : Math.hypot((x / worldScale - 1.05) / 2.35, (z / worldScale - .15) / 1.65);
+    const wetFootprint = lake < 1.25 || (z > worldScale && Math.abs(x - terrain.riverX(z)) < .63 * worldScale);
     return !wetFootprint || terrain.height(x, z) > terrain.waterLevel + .055;
   }
   function allowed(x, z, clearance = .15, protectGardens = true) {
     if (!terrain.contains(x, z, .24 + clearance) || !dryLand(x, z)) return false;
     if (Math.hypot((x - terrain.castleAnchor.x) / 1.52, (z - terrain.castleAnchor.z) / 1.25) < 1.03) return false;
-    if (Math.hypot(x - 4.1, z + 2.6) < .57) return false;
-    if (z > 2.28 && z < 3.03 && x > -.78 && x < 3.5) return false;
-    if (trailPoints.some(p => Math.hypot(x - p.x, z - p.z) < .19 + clearance)) return false;
-    if (protectGardens && gardens.some(p => Math.hypot(x - p[0], z - p[1]) < .57)) return false;
+    if (Math.hypot(x - 4.1 * worldScale, z + 2.6 * worldScale) < .57) return false;
+    if (z > 2.45 * worldScale && z < 2.93 * worldScale && x > -.78 * worldScale && x < 3.5 * worldScale) return false;
+    if (distanceToTrail(x, z) < .19 + clearance) return false;
+    if (protectGardens && gardens.some(p => Math.hypot(x - p.x, z - p.z) < .57)) return false;
     return true;
   }
 
@@ -176,55 +179,67 @@ export function buildBotany(THREE, materials, terrain) {
   const reedGeometry = finish(reedBag);
   const seedHeadGeometry = new THREE.CapsuleGeometry(.016, .080, 2, 5);
 
-  // Clumps gather at the edges of deliberately empty clearings instead of being
-  // evenly scattered. Both populations share the same protected landscape mask.
-  const patchCenters = [
+  // Population follows land area; every tuft retains its original physical
+  // size. More small habitats are added instead of stretching a dozen old ones.
+  function habitats(base, count, radius, clearance = .2) {
+    const result = base.map(([x, z, r]) => { const p = world(x, z); return [p.x, p.z, r || radius]; });
+    for (let attempt = 0; result.length < count && attempt < count * 50; attempt++) {
+      const x = range(-6.7, 6.7) * worldScale, z = range(-5.05, 5.05) * worldScale;
+      const localX = x / worldScale, localZ = z / worldScale;
+      if (!allowed(x, z, clearance) || Math.sin(localX * 1.7 + .5) * Math.cos(localZ * 1.4) < -.54) continue;
+      result.push([x, z, radius * range(.78, 1.22)]);
+    }
+    return result;
+  }
+  const patchCenters = habitats([
     [-5.15, 1.05, .64], [-4.95, -2.8, .60], [-4.1, 2.65, .70],
     [-2.05, 3.45, .62], [.15, 3.76, .57], [4.6, 3.0, .60],
     [5.3, .76, .73], [5.13, -1.18, .68], [3.0, -3.75, .74],
     [.65, -3.45, .78], [-1.25, -3.7, .62], [-5.4, -.40, .57],
-  ];
-  const occupied = [];
-  function scatterGrass(count, smaller) {
-    const roots = [];
-    for (let attempt = 0; roots.length < count && attempt < count * 80; attempt++) {
-      const patch = patchCenters[Math.floor(random() * patchCenters.length)];
+  ], Math.round(12 * areaScale), .66);
+  // Spatial hashing keeps rejection sampling linear at tens of thousands of roots.
+  function spacedPopulation(minDistance) {
+    const cells = new Map(), cellSize = minDistance;
+    return (x, z) => {
+      const cx = Math.floor(x / cellSize), cz = Math.floor(z / cellSize);
+      for (let dz = -1; dz <= 1; dz++) for (let dx = -1; dx <= 1; dx++) {
+        const points = cells.get(`${cx + dx},${cz + dz}`);
+        if (points && points.some(p => Math.hypot(x - p.x, z - p.z) < minDistance)) return false;
+      }
+      const key = `${cx},${cz}`;
+      if (!cells.has(key)) cells.set(key, []);
+      cells.get(key).push({ x, z }); return true;
+    };
+  }
+  const grassSpacing = spacedPopulation(.115);
+  function scatter(count, patches, clearance, spacing, sizeRange, offsetY = 0) {
+    const roots = [], target = Math.round(count * areaScale);
+    for (let attempt = 0; roots.length < target && attempt < target * 55; attempt++) {
+      const patch = patches[Math.floor(random() * patches.length)];
       const angle = random() * Math.PI * 2, radius = Math.sqrt(random()) * patch[2];
       const x = patch[0] + Math.cos(angle) * radius, z = patch[1] + Math.sin(angle) * radius;
-      if (!allowed(x, z, .15) || Math.sin(x * 3.1 + .7) * Math.cos(z * 2.3) < -.64) continue;
-      if (occupied.some(p => Math.hypot(x - p.x, z - p.z) < .115)) continue;
-      const root = { x, z, y:terrain.height(x, z), size:range(smaller ? .75 : .72, smaller ? 1.25 : 1.18), yaw:random() * Math.PI * 2, phase:random() * Math.PI * 2 };
-      roots.push(root); occupied.push(root);
+      if (!allowed(x, z, clearance) || !spacing(x, z)) continue;
+      roots.push({ x, z, y:terrain.height(x, z) + offsetY, size:range(...sizeRange),
+        yaw:range(0, Math.PI * 2), phase:range(0, Math.PI * 2) });
     }
     return roots;
   }
-  const tallRoots = scatterGrass(170, false), fineRoots = scatterGrass(60, true);
-  const fernRoots = [];
-  const fernPatches = [[-4.75, 1.6], [4.7, -1.55], [-.9, -3.85], [3.9, 2.1]];
-  for (let attempt = 0; fernRoots.length < 12 && attempt < 500; attempt++) {
-    const patch = fernPatches[Math.floor(random() * fernPatches.length)];
-    const angle = random() * Math.PI * 2, radius = range(.08, .48);
-    const x = patch[0] + Math.cos(angle) * radius, z = patch[1] + Math.sin(angle) * radius;
-    if (!allowed(x, z, .27) || fernRoots.some(p => Math.hypot(x - p.x, z - p.z) < .41)) continue;
-    fernRoots.push({ x, z, y:terrain.height(x, z) + .007, size:range(.80, 1.12), yaw:range(0, Math.PI * 2), phase:0 });
-  }
-  const cloverRoots = [];
-  const cloverPatches = [[-4.75, .85], [-1.15, 3.15], [4.85, .35], [.20, -3.15]];
-  for (let attempt = 0; cloverRoots.length < 60 && attempt < 1800; attempt++) {
-    const patch = cloverPatches[Math.floor(random() * cloverPatches.length)];
-    const angle = random() * Math.PI * 2, radius = Math.sqrt(random()) * .48;
-    const x = patch[0] + Math.cos(angle) * radius, z = patch[1] + Math.sin(angle) * radius;
-    if (!allowed(x, z, .12) || cloverRoots.some(p => Math.hypot(x - p.x, z - p.z) < .115)) continue;
-    cloverRoots.push({ x, z, y:terrain.height(x, z) + .003, size:range(.8, 1.25), yaw:range(0, Math.PI * 2), phase:0 });
-  }
+  const tallRoots = scatter(170, patchCenters, .15, grassSpacing, [.72, 1.18]);
+  const fineRoots = scatter(60, patchCenters, .15, grassSpacing, [.75, 1.25]);
+  const fernPatches = habitats([[-4.75, 1.6], [4.7, -1.55], [-.9, -3.85], [3.9, 2.1]], Math.round(4 * areaScale), .52, .45);
+  const fernRoots = scatter(12, fernPatches, .27, spacedPopulation(.41), [.80, 1.12], .007);
+  const cloverPatches = habitats([[-4.75, .85], [-1.15, 3.15], [4.85, .35], [.20, -3.15]], Math.round(4 * areaScale), .48);
+  const cloverRoots = scatter(60, cloverPatches, .12, spacedPopulation(.115), [.80, 1.25], .003);
   const reedRoots = [];
-  for (const baseAngle of [.10, 1.94, 2.73, 4.55]) {
+  const reedGroups = Math.max(4, Math.round(4 * worldScale));
+  for (let cluster = 0; cluster < reedGroups; cluster++) {
+    const baseAngle = worldScale === 1 ? [.10, 1.94, 2.73, 4.55][cluster] : cluster / reedGroups * Math.PI * 2 + .08;
     for (let i = 0; i < 3; i++) {
-      const angle = baseAngle + (i - 1) * .045;
+      const angle = baseAngle + (i - 1) * .045 / worldScale;
       let radius = 1.03, x = 0, z = 0;
-      for (; radius < 1.40; radius += .012) {
-        x = 1.05 + Math.cos(angle) * 2.35 * radius;
-        z = .15 + Math.sin(angle) * 1.65 * radius;
+      for (; radius < 1.40; radius += .012 / worldScale) {
+        const p = world(1.05 + Math.cos(angle) * 2.35 * radius, .15 + Math.sin(angle) * 1.65 * radius);
+        x = p.x; z = p.z;
         if (terrain.height(x, z) > terrain.waterLevel + .065) break;
       }
       if (!allowed(x, z, .07, false)) continue;
@@ -232,52 +247,107 @@ export function buildBotany(THREE, materials, terrain) {
     }
   }
 
-  const animated = [];
-  let triangles = 0;
-  function instances(name, shape, material, roots, wind = 0, seedOffset = false) {
-    const mesh = new THREE.InstancedMesh(shape, material, roots.length);
-    mesh.name = name; mesh.receiveShadow = true; mesh.castShadow = !wind;
-    mesh.userData.botanyRoots = roots.map(root => ({ x:root.x, y:root.y, z:root.z }));
-    const record = { mesh, roots, wind, seedOffset, initialized:false };
-    animated.push(record); group.add(mesh);
-    const geometryTriangles = (shape.index ? shape.index.count : shape.getAttribute('position').count) / 3;
-    triangles += geometryTriangles * roots.length;
-    return mesh;
+  // Coarse 3D silhouettes only replace subpixel plants. Full leaf geometry is
+  // retained in spatial chunks and becomes visible as the camera approaches.
+  const overviewGrassBag = bucket();
+  for (let i = 0; i < 3; i++) mergeInto(overviewGrassBag, ribbon({ height:.20 + i * .025, width:.033, bend:.06, yaw:i * 2.399, segments:1 }));
+  const overviewGrass = finish(overviewGrassBag);
+  const overviewFernBag = bucket();
+  for (let i = 0; i < 3; i++) mergeInto(overviewFernBag, ribbon({ height:.29, width:.085, bend:.055, horizontal:true, segments:1 }), [0, .035, 0], [1, 1, 1], [0, i * Math.PI * 2 / 3, .30]);
+  const overviewFern = finish(overviewFernBag);
+  const chunks = new Map(), chunkSize = worldScale > 1 ? 16 : 64;
+  let fullTriangles = 0, overviewTriangles = 0;
+  const trianglesOf = shape => (shape.index ? shape.index.count : shape.getAttribute('position').count) / 3;
+  function chunkFor(root) {
+    const cx = Math.floor((root.x + chunkSize / 2) / chunkSize), cz = Math.floor((root.z + chunkSize / 2) / chunkSize);
+    const key = `${cx},${cz}`;
+    if (!chunks.has(key)) {
+      const high = new THREE.Group(), low = new THREE.Group();
+      high.name = `botany-detail-${key}`; low.name = `botany-overview-${key}`;
+      group.add(high, low);
+      chunks.set(key, { high, low, bounds:new THREE.Box3(), animated:[], highTriangles:0, lowTriangles:0 });
+    }
+    const chunk = chunks.get(key);
+    chunk.bounds.expandByPoint(new THREE.Vector3(root.x - .65, root.y - .05, root.z - .65));
+    chunk.bounds.expandByPoint(new THREE.Vector3(root.x + .65, root.y + .75, root.z + .65));
+    return chunk;
   }
-  instances('curved-meadow-grass', tallGrassGeometry, materials.grass, tallRoots, 1);
-  instances('short-folded-grass', fineGrassGeometry, materials.grass, fineRoots, .7);
-  instances('paired-leaflet-ferns', fernGeometry, leafMaterial, fernRoots);
-  instances('heart-leaf-clover', cloverGeometry, leafMaterial, cloverRoots);
-  instances('shoreline-reed-leaves', reedGeometry, materials.leaf, reedRoots, .55);
-  instances('reed-seed-heads', seedHeadGeometry, materials.wood, reedRoots, .55, true);
-  for (const shape of localGeometry) shape.dispose();
-
-  function animate(phase) {
-    const cycle = ((phase % 1) + 1) % 1, time = cycle * Math.PI * 2;
-    for (const record of animated) {
-      const { mesh, roots, wind, seedOffset } = record;
-      if (!wind && record.initialized) continue;
-      roots.forEach((root, i) => {
-        const sway = wind * (.034 * Math.sin(time * 3 + root.phase) + .017 * Math.sin(time * 5 + root.phase * .7));
-        quaternion.setFromEuler(new THREE.Euler(sway * .48, root.yaw, sway));
-        position.set(root.x, root.y, root.z);
-        if (seedOffset) {
-          // Transform the head from the same rooted stem, so the two cannot drift apart.
-          point.set(0, .426 * root.size, 0).applyQuaternion(quaternion);
-          position.add(point);
-        }
-        transform.compose(position, quaternion, scale.setScalar(root.size));
-        mesh.setMatrixAt(i, transform);
-      });
-      mesh.instanceMatrix.needsUpdate = true;
-      record.initialized = true;
+  function fillMatrices(mesh, roots, time, wind, seedOffset) {
+    roots.forEach((root, i) => {
+      const sway = wind * (.034 * Math.sin(time * 3 + root.phase) + .017 * Math.sin(time * 5 + root.phase * .7));
+      quaternion.setFromEuler(new THREE.Euler(sway * .48, root.yaw, sway));
+      position.set(root.x, root.y, root.z);
+      if (seedOffset) position.add(point.set(0, .426 * root.size, 0).applyQuaternion(quaternion));
+      transform.compose(position, quaternion, scale.setScalar(root.size)); mesh.setMatrixAt(i, transform);
+    });
+    mesh.instanceMatrix.needsUpdate = true;
+  }
+  function instances(name, shape, material, roots, wind = 0, seedOffset = false, overviewShape = null, overviewMaterial = material) {
+    const perChunk = new Map();
+    for (const root of roots) {
+      const chunk = chunkFor(root);
+      if (!perChunk.has(chunk)) perChunk.set(chunk, []);
+      perChunk.get(chunk).push(root);
+    }
+    for (const [chunk, positions] of perChunk) {
+      const mesh = new THREE.InstancedMesh(shape, material, positions.length);
+      mesh.name = name; mesh.receiveShadow = true; mesh.castShadow = false;
+      mesh.userData.botanyRoots = positions.map(root => ({ x:root.x, y:root.y, z:root.z }));
+      fillMatrices(mesh, positions, 0, wind, seedOffset); mesh.computeBoundingSphere(); chunk.high.add(mesh);
+      const count = trianglesOf(shape) * positions.length;
+      fullTriangles += count; chunk.highTriangles += count;
+      if (wind) chunk.animated.push({ mesh, roots:positions, wind, seedOffset });
+      if (overviewShape) {
+        const lowMesh = new THREE.InstancedMesh(overviewShape, overviewMaterial, positions.length);
+        lowMesh.name = `${name}-overview`; lowMesh.receiveShadow = true; lowMesh.castShadow = false;
+        fillMatrices(lowMesh, positions, 0, 0, seedOffset); lowMesh.computeBoundingSphere(); chunk.low.add(lowMesh);
+        const lowCount = trianglesOf(overviewShape) * positions.length;
+        overviewTriangles += lowCount; chunk.lowTriangles += lowCount;
+      }
     }
   }
-  animate(0);
-  for (const { mesh } of animated) mesh.computeBoundingSphere();
-  const stats = { drawCalls:group.children.length, triangles, grassClumps:tallRoots.length + fineRoots.length,
-    grassBlades:tallRoots.length * 5 + fineRoots.length * 4, ferns:fernRoots.length, cloverPlants:cloverRoots.length,
-    reeds:reedRoots.length, trailProtected:true, bridgeProtected:true };
+  instances('curved-meadow-grass', tallGrassGeometry, materials.grass, tallRoots, 1, false, overviewGrass);
+  instances('short-folded-grass', fineGrassGeometry, materials.grass, fineRoots, .7, false, overviewGrass);
+  instances('paired-leaflet-ferns', fernGeometry, leafMaterial, fernRoots, 0, false, overviewFern, materials.leaf);
+  instances('heart-leaf-clover', cloverGeometry, leafMaterial, cloverRoots);
+  instances('shoreline-reed-leaves', reedGeometry, materials.leaf, reedRoots, .55, false, reedGeometry);
+  instances('reed-seed-heads', seedHeadGeometry, materials.wood, reedRoots, .55, true, seedHeadGeometry);
+  for (const shape of localGeometry) shape.dispose();
+
+  const stats = { scale:worldScale, drawCalls:0, triangles:0, fullDetailTriangles:fullTriangles,
+    overviewTriangles, chunks:chunks.size, grassClumps:tallRoots.length + fineRoots.length,
+    grassBlades:tallRoots.length * 5 + fineRoots.length * 4, ferns:fernRoots.length,
+    cloverPlants:cloverRoots.length, reeds:reedRoots.length, detailMode:'overview',
+    trailProtected:true, bridgeProtected:true };
+  const frustum = new THREE.Frustum(), viewProjection = new THREE.Matrix4();
+  let lastWidth = worldScale > 1 ? 280 : 28;
+  function updateDetail(camera, visibleWidth) {
+    const width = visibleWidth || (camera?.isOrthographicCamera ? (camera.right - camera.left) / camera.zoom : lastWidth);
+    lastWidth = width;
+    const close = width <= 72;
+    if (camera) {
+      camera.updateMatrixWorld(); viewProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+      frustum.setFromProjectionMatrix(viewProjection);
+    }
+    stats.drawCalls = stats.triangles = 0; stats.detailMode = close ? 'full' : 'overview';
+    for (const chunk of chunks.values()) {
+      const visible = !camera || frustum.intersectsBox(chunk.bounds);
+      chunk.high.visible = visible && close; chunk.low.visible = visible && !close;
+      if (visible) {
+        stats.drawCalls += (close ? chunk.high : chunk.low).children.length;
+        stats.triangles += close ? chunk.highTriangles : chunk.lowTriangles;
+      }
+    }
+  }
+  function animate(phase, options = {}) {
+    if (options.camera) updateDetail(options.camera, options.visibleWidth);
+    const cycle = ((phase % 1) + 1) % 1, time = cycle * Math.PI * 2;
+    for (const chunk of chunks.values()) {
+      if (!chunk.high.visible) continue;
+      for (const record of chunk.animated) fillMatrices(record.mesh, record.roots, time, record.wind, record.seedOffset);
+    }
+  }
+  updateDetail(null, lastWidth); animate(0);
   group.userData.botany = stats;
-  return { group, animate, stats };
+  return { group, animate, updateDetail, stats };
 }

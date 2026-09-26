@@ -267,6 +267,7 @@ export function createMaterials(THREE) {
   const waterUniforms = {
     uPhase:{ value:0 }, uWater:{ value:new THREE.Color() },
     uFoam:{ value:new THREE.Color() }, uCozy:{ value:0 },
+    uWorldScale:{ value:new THREE.Vector2(1,1) },
   };
   const waterVertex = /* glsl */`
     varying vec2 vWaterUv;
@@ -295,6 +296,7 @@ export function createMaterials(THREE) {
     uniform vec3 uFoam;
     uniform float uFall;
     uniform float uCozy;
+    uniform vec2 uWorldScale;
     #include <fog_pars_fragment>
     void main() {
       vec2 uv = vWaterUv;
@@ -303,9 +305,11 @@ export function createMaterials(THREE) {
       float alpha;
       if (uFall > 0.5) {
         // Thin ribbons and descending highlights, not a solid white curtain.
-        float ribbon = sin(uv.x * 66.0 + sin(uv.y * 11.0 - t * 2.0) * 0.55);
-        float pulse = sin(uv.y * 80.0 + t * 8.0 + sin(uv.x * 23.0));
-        float foam = smoothstep(0.64, 1.0, ribbon) * (0.36 + 0.19 * pulse);
+        float ribbonPhase = uv.x * 66.0 * uWorldScale.x + sin(uv.y * 11.0 * uWorldScale.y - t * 2.0) * 0.55;
+        float ribbon = sin(ribbonPhase);
+        float resolved = 1.0 - smoothstep(1.0, 3.0, fwidth(ribbonPhase));
+        float pulse = sin(uv.y * 80.0 * uWorldScale.y + t * 8.0 + sin(uv.x * 23.0 * uWorldScale.x));
+        float foam = mix(0.065, smoothstep(0.64, 1.0, ribbon) * (0.36 + 0.19 * pulse), resolved);
         foam += pow(uv.y, 12.0) * 0.33;
         foam += pow(1.0 - uv.y, 7.0) * 0.17;
         color = mix(uWater, uFoam, clamp(0.25 + foam, 0.0, 1.0));
@@ -315,10 +319,13 @@ export function createMaterials(THREE) {
       } else {
         vec2 p = vWaterPosition.xz;
         // Broken wind streaks follow broad currents; avoid a regular dot grid.
-        float ripples = sin(p.y * 13.0 + sin(p.x * 1.6 + t) * 1.6 + t * 3.0);
+        float ripplePhase = p.y * 13.0 + sin(p.x * 1.6 + t) * 1.6 + t * 3.0;
+        float ripples = sin(ripplePhase);
+        float resolved = 1.0 - smoothstep(1.0, 3.0, fwidth(ripplePhase));
         float current = sin(p.x * 3.1 - p.y * 1.7 + sin(t) * 0.4);
-        float glint = smoothstep(0.91, 1.0, ripples) * smoothstep(0.15, 0.85, current) * 0.28;
-        float broad = sin(p.x * 1.3 - t) * cos(p.y * 1.6 + t);
+        float glint = smoothstep(0.91, 1.0, ripples) * smoothstep(0.15, 0.85, current) * 0.28 * resolved;
+        float broad = sin(p.x * .23 + p.y * .09 + sin(p.y * .14) * 1.4 - t) * .65
+          + sin(p.y * .17 - p.x * .08 + cos(p.x * .11) + t) * .35;
         color = mix(uWater, uFoam, 0.11 + glint + broad * 0.035);
         alpha = 0.94;
       }
@@ -360,6 +367,9 @@ export function createMaterials(THREE) {
     // Keep exact integer endpoints identical, including negative phases.
     waterUniforms.uPhase.value = ((phase % 1) + 1) % 1;
   }
+  function setWorldScale(horizontal=1,vertical=1) {
+    waterUniforms.uWorldScale.value.set(horizontal,vertical);
+  }
   setStyle('fantasy');
-  return { materials, setStyle, animate, styleInfo };
+  return { materials, setStyle, animate, setWorldScale, styleInfo };
 }

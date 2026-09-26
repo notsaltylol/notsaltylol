@@ -4,12 +4,16 @@
 
 The 3D version rebuilds the floating island as authored procedural geometry: eroded cliffs, rolling meadow, a lake and waterfall, open castle arcades, domed towers, trees, satellite islands, and stone lettering. The camera can travel around the whole scene. It is a new interpretation of the painted composition, rather than a one-to-one reconstruction of that image.
 
+The islands now span **10× their original width and 100× their original land area**. Buildings, trees, leaves, grass blades, and masonry retain their small physical size; the terrain contains more of them. The cliffs and hills grow with the island, preserving its deep rock silhouette. Use the close-up views to inspect the detail.
+
 The illustrated version remains available separately, with its painted layers and restrained parallax. The link above the controls switches between the two versions while keeping the selected style.
 
 ## Controls
 
 - **Drag** to orbit horizontally and change the viewing angle. Dragging pauses automatic motion.
-- **Scroll** over the scene to zoom. Keyboard arrows orbit the focused canvas; plus/minus zoom.
+- **Islands / Castle / Lake & bridge / Lookout** jump between the overview and focused close-ups. Close-ups pause motion.
+- **Scroll** or use the **− / +** buttons to zoom, up to 16×. Keyboard arrows orbit the focused canvas; plus/minus zoom.
+- **Shift-drag** or **right-drag** to pan. Shift plus an arrow key also pans.
 - **Pause motion / Play motion** stops or resumes the slow automatic orbit.
 - **Reset view** restores the starting angle and zoom.
 - The initial automatic motion is paused when the browser prefers reduced motion.
@@ -40,7 +44,9 @@ All five styles share the detailed castle masonry, staggered roof tiles, arched 
 
 Trees have finer branching and individual folded leaves: broadleaf crowns use overlapping leaf sprigs, while cypress trees use upward sprays. Their shared `leafDetail` material adds subtle midribs, branching veins, and tip color variation using each leaf's UV coordinates. The foreground also includes ferns, fallen leaves, and leaves on the shrubs. Fine details are easiest to see when zoomed in.
 
-Instanced meadow plants add **230 grass tufts containing 1,090 blades, 12 ferns, 60 clovers, and 12 reeds**. These plants share geometry and live style materials. Grass and reeds sway in slow wind while their roots stay fixed; the wind uses the same normalized loop phase as the scene and returns exactly to its starting pose.
+Instanced meadow plants add **23,000 grass tufts containing 109,000 blades, 1,200 ferns, 6,000 clovers, and 111 reeds**. These plants share geometry and live style materials. Grass and reeds sway in slow wind while their roots stay fixed; the wind uses the same normalized loop phase as the scene and returns exactly to its starting pose.
+
+The expanded landscape has **900 grove trees on the main island, 100 on each of three satellite islands, and 400 on the lookout**, alongside the original landmark trees. Spatial chunks let the renderer omit offscreen vegetation. The overview uses lightweight tree crowns and grass silhouettes; close views restore folded leaves, veins, curved grass, and small garden geometry within a fixed rendering budget. The main terrain also retains 4,600 stones and 38,000 flowers, which appear as their size becomes visible on screen. Rock texture and water ribbons use physical-scale frequencies rather than stretching with the land.
 
 The [shared geology helper](../assets/sky-castle-geology.js) deforms the rock geometry at several scales: large crags establish the silhouette, secondary ridges break up the faces, and finer weathering adds smaller variations. Fractal Brownian motion (fBm) combines noise at increasing frequencies and decreasing strengths, so the formation has structure beyond a smooth base mesh.
 
@@ -52,6 +58,7 @@ The source is split into shared modules:
 
 - [Scene and interaction](../assets/sky-castle-scene.js): camera, lighting, sky, controls, style switching, and screen effects.
 - [Terrain](../assets/sky-castle-terrain.js): island geometry, terrain height, lake, waterfall, paths, and small vegetation.
+- [Groves](../assets/sky-castle-groves.js): clustered woodland, shared tree variants, spatial culling, and budgeted close-up leaves.
 - [Geology](../assets/sky-castle-geology.js): shared fractal rock deformation, from large crags and secondary ridges to finer weathering.
 - [Materials](../assets/sky-castle-materials.js): five palettes, surface/water shaders, rock detail, and UV-based leaf veins.
 - [Models](../assets/sky-castle-models.js): castle, pavilion, and detailed leafy tree geometry, batched by material.
