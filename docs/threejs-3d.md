@@ -1,6 +1,6 @@
 # Castle in the sky: five styles in real 3D
 
-[Open the 3D scene](https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html) · [Open the illustrated scene](https://notsaltylol.github.io/notsaltylol/assets/animation.html)
+[Open the 3D scene](https://notsaltylol.github.io/assets/animation-3d.html) · [Open the illustrated scene](https://notsaltylol.github.io/assets/animation.html)
 
 The 3D version rebuilds the floating island as authored procedural geometry: eroded cliffs, rolling meadow, a lake and waterfall, open castle arcades, domed towers, trees, satellite islands, and stone lettering. The camera can travel around the whole scene. It is a new interpretation of the painted composition, rather than a one-to-one reconstruction of that image.
 
@@ -32,7 +32,7 @@ Each automatic orbit lasts 60 seconds. The five style buttons reuse the same geo
 
 The fifth direction draws on the warmth of painted animation backgrounds; it uses this project's own materials and lighting, not a proprietary studio or game shader.
 
-For example, [the clear-line version](https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=ink) opens directly with `?style=ink`.
+For example, [the clear-line version](https://notsaltylol.github.io/assets/animation-3d.html?style=ink) opens directly with `?style=ink`.
 
 [Compare all five 3D previews](style-gallery-3d.md)
 

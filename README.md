@@ -3,8 +3,8 @@
 </p>
 
 <p align="center">
-  <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html"><b>Explore the 3D island in five styles ↗</b></a><br />
-  <sub><a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=original">1 · Golden ruins</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=fantasy">2 · Fantasy</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=ink">3 · Clear line</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=cozy">4 · Cozy</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=ghibli">5 · Ghibli-inspired</a></sub>
+  <a href="https://notsaltylol.github.io/assets/animation-3d.html"><b>Explore the 3D island in five styles ↗</b></a><br />
+  <sub><a href="https://notsaltylol.github.io/assets/animation-3d.html?style=original">1 · Golden ruins</a> · <a href="https://notsaltylol.github.io/assets/animation-3d.html?style=fantasy">2 · Fantasy</a> · <a href="https://notsaltylol.github.io/assets/animation-3d.html?style=ink">3 · Clear line</a> · <a href="https://notsaltylol.github.io/assets/animation-3d.html?style=cozy">4 · Cozy</a> · <a href="https://notsaltylol.github.io/assets/animation-3d.html?style=ghibli">5 · Ghibli-inspired</a></sub>
 </p>
 
 <p align="center">
@@ -13,7 +13,7 @@
   <a href="https://github.com/notsaltylol?tab=stars">Things I find interesting</a>
 </p>
 
-<p align="center"><a href="https://notsaltylol.github.io/notsaltylol/"><b>Visit my portfolio</b></a></p>
+<p align="center"><a href="https://notsaltylol.github.io/"><b>Visit my portfolio</b></a></p>
 
 ### Hey, I'm Leon 👋
 

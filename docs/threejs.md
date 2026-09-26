@@ -6,7 +6,7 @@ A painted landscape with a hilltop castle, broad floating island, central lake, 
 
 This version prioritizes illustration quality. It is **2.5D**, made from transparent illustrated planes, rather than a full 360° model. The same layout and motion are shared by all five themes.
 
-[Open the illustrated style picker](https://notsaltylol.github.io/notsaltylol/assets/animation.html) · [Compare the five previews](style-gallery.md)
+[Open the illustrated style picker](https://notsaltylol.github.io/assets/animation.html) · [Compare the five previews](style-gallery.md)
 
 | # | Style ID | Direction | How it changes |
 | --- | --- | --- | --- |
