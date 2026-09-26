@@ -137,18 +137,14 @@ export function buildTerrain(THREE, materials) {
     dummy.rotation.set(random() * .6, random() * 6.28, random() * .4); dummy.updateMatrix(); stones.setMatrixAt(i, dummy.matrix);
   }
   stones.castShadow = stones.receiveShadow = true; group.add(stones);
-  const blade = new THREE.BufferGeometry();
-  blade.setAttribute('position', new THREE.Float32BufferAttribute([-.025,0,0,.025,0,0,.015,.095,0,0,0,-.025,0,0,.025,0,.07,.01], 3));
-  blade.computeVertexNormals(); materials.leaf.side = THREE.DoubleSide;
-  const grass = new THREE.InstancedMesh(blade, materials.grass, 650);
-  let count = 0;
-  while (count < 650) {
+  // Preserve the established flower positions while the richer botanical module
+  // replaces the old triangle grass. No legacy blade meshes are allocated.
+  let sampled = 0;
+  while (sampled < 650) {
     const x = (random() - .5) * 13.8, z = (random() - .5) * 10.4;
     if (!contains(x, z, .18) || height(x, z) < waterLevel + .045 || Math.hypot(x + 3.1, z + 1.7) < 1.5) continue;
-    dummy.position.set(x, height(x, z), z); dummy.rotation.set(0, random() * 6.28, 0);
-    dummy.scale.setScalar(.55 + random() * .9); dummy.updateMatrix(); grass.setMatrixAt(count++, dummy.matrix);
+    random(); random(); sampled++;
   }
-  grass.receiveShadow = true; group.add(grass);
   const flowers = new THREE.InstancedMesh(new THREE.SphereGeometry(.035, 5, 4), materials.flower, 380);
   for (let i = 0; i < 380; i++) {
     let x, z;

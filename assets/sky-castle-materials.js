@@ -11,7 +11,7 @@
  * endpoints produce the same water surface.
  */
 
-const SURFACES = ['grass', 'rock', 'stone', 'stoneLight', 'roof', 'gold', 'dark', 'wood', 'leaf', 'trunk', 'flower', 'cloud'];
+const SURFACES = ['grass', 'rock', 'stone', 'stoneLight', 'roof', 'gold', 'dark', 'wood', 'leaf', 'leafDetail', 'trunk', 'flower', 'cloud'];
 const PALETTES = {
   original: {
     grass:0x859c50, rock:0x9c8260, stone:0xd8ca93, stoneLight:0xefe0b4,
@@ -57,6 +57,7 @@ export const styleInfo = Object.freeze(Object.fromEntries(
 
 const PIGMENT_GLSL = /* glsl */`
   varying vec3 vPaintPosition;
+  varying vec2 vPaintUv;
   uniform float uPaintContrast;
   uniform float uPaintBands;
   uniform float uPaintSoftness;
@@ -87,6 +88,20 @@ const PIGMENT_GLSL = /* glsl */`
     float boundary = smoothstep(0.5 - uPaintSoftness, 0.5 + uPaintSoftness, fract(s));
     return (low + boundary) / steps;
   }
+  // Broken beds, mineral grains, and shallow chips at three spatial scales.
+  // Derivative filtering suppresses subpixel grains while the camera orbits.
+  vec4 rockTexture(vec3 p) {
+    float warp = paintNoise(p * vec3(1.5, 0.7, 1.5));
+    float bed = sin(p.y * 10.0 + warp * 2.8 + p.x * 0.25);
+    float broken = smoothstep(0.26, 0.69, paintNoise(p * vec3(3.7, 1.0, 3.7)));
+    float seam = (1.0 - smoothstep(0.015, 0.14, abs(bed))) * broken;
+    float flakes = paintNoise(p * vec3(4.0, 8.0, 4.0));
+    float footprint = max(length(dFdx(p)), length(dFdy(p)));
+    float fine = 1.0 - smoothstep(0.008, 0.035, footprint);
+    float pores = smoothstep(0.59, 0.83, paintNoise(p * 46.0)) * fine;
+    float relief = (flakes - 0.5) * 0.005 * mix(0.22, 1.0, fine);
+    return vec4(seam, flakes, pores, relief);
+  }
 `;
 
 /** Return live materials and their small style/animation controller. */
@@ -101,18 +116,18 @@ export function createMaterials(THREE) {
 
   for (const key of SURFACES) {
     const material = new THREE.MeshStandardMaterial({
-      color:PALETTES.fantasy[key], roughness:1, metalness:0,
+      color:PALETTES.fantasy[key === 'leafDetail' ? 'leaf' : key], roughness:1, metalness:0,
       // Neither flat normals nor shiny highlights belong to these art directions.
-      flatShading:false, dithering:false,
+      flatShading:false, dithering:false, side:['grass', 'leaf', 'leafDetail'].includes(key) ? THREE.DoubleSide : THREE.FrontSide,
     });
     material.name = `painted-${key}`;
     material.userData.castleSurface = key;
-    const surface = key === 'rock' ? 1 : (key === 'grass' || key === 'leaf') ? 2 : key === 'cloud' ? 3 : 0;
+    const surface = key === 'rock' ? 1 : (key === 'grass' || key === 'leaf') ? 2 : key === 'cloud' ? 3 : key === 'leafDetail' ? 4 : 0;
     material.onBeforeCompile = (shader) => {
       Object.assign(shader.uniforms, shared, { uPaintSurface:{ value:surface } });
       shader.vertexShader = shader.vertexShader
-        .replace('#include <common>', '#include <common>\nvarying vec3 vPaintPosition;')
-        .replace('#include <begin_vertex>', '#include <begin_vertex>\nvPaintPosition = position;');
+        .replace('#include <common>', '#include <common>\nvarying vec3 vPaintPosition;\nvarying vec2 vPaintUv;')
+        .replace('#include <begin_vertex>', '#include <begin_vertex>\nvPaintPosition = position;\nvPaintUv = uv;');
       shader.fragmentShader = shader.fragmentShader
         .replace('#include <common>', `#include <common>\n${PIGMENT_GLSL}`)
         .replace('#include <color_fragment>', /* glsl */`
@@ -132,7 +147,13 @@ export function createMaterials(THREE) {
             pigment -= smoothstep(0.91, 0.995, strata) * 0.022;
             vec3 mineralColor = mix(vec3(0.89, 0.95, 1.02), vec3(1.10, 1.03, 0.88), smoothstep(0.26, 0.74, crag));
             diffuseColor.rgb *= mix(vec3(1.0), mineralColor, uPaintPigment);
+            vec4 textureDetail = rockTexture(pigmentPosition);
+            // Short broken seams stay subordinate to the broad cliff buttresses.
+            pigment += (textureDetail.y - 0.5) * 0.10 - textureDetail.x * 0.085 - textureDetail.z * 0.075;
+            float mineralFleck = smoothstep(0.64, 0.86, textureDetail.y);
+            diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.10, 1.08, 1.01), mineralFleck * uPaintPigment);
             float moss = smoothstep(-0.6, 1.6, pigmentPosition.y) * smoothstep(0.46, 0.66, broadPigment);
+            moss *= mix(0.70, 1.0, textureDetail.y);
             diffuseColor.rgb = mix(diffuseColor.rgb, uPaintMoss, moss * 0.28 * uPaintPigment);
           }
           if (uPaintSurface > 1.5 && uPaintSurface < 2.5) {
@@ -140,8 +161,30 @@ export function createMaterials(THREE) {
             vec3 meadowTint = mix(vec3(0.83, 0.97, 1.01), vec3(1.12, 1.03, 0.77), smoothstep(0.23, 0.77, broadPigment));
             diffuseColor.rgb *= mix(vec3(1.0), meadowTint, uPaintPigment);
           }
-          float pigmentStrength = uPaintSurface > 2.5 ? 0.12 : 1.0;
+          if (uPaintSurface > 3.5) {
+            // UVs follow an individual leaf: U base→tip, V edge→edge.
+            float across = abs(vPaintUv.y - 0.5);
+            float aa = max(fwidth(vPaintUv.y), 0.004);
+            float midrib = 1.0 - smoothstep(0.006, 0.012 + aa, across);
+            float veinWave = abs(sin((vPaintUv.x - across * 0.65) * 34.0));
+            float veins = (1.0 - smoothstep(0.03, 0.13 + fwidth(veinWave), veinWave)) * smoothstep(0.02, 0.12, across);
+            float tip = smoothstep(0.15, 0.94, vPaintUv.x);
+            diffuseColor.rgb *= mix(vec3(0.91, 0.96, 0.88), vec3(1.12, 1.07, 0.88), tip);
+            diffuseColor.rgb *= 1.0 + (midrib * 0.12 + veins * 0.055) * uPaintPigment;
+          }
+          float pigmentStrength = uPaintSurface > 2.5 && uPaintSurface < 3.5 ? 0.12 : 1.0;
           diffuseColor.rgb *= 1.0 + pigment * uPaintPigment * pigmentStrength;
+        `)
+        .replace('#include <normal_fragment_maps>', /* glsl */`
+          #include <normal_fragment_maps>
+          if (uPaintSurface > 0.5 && uPaintSurface < 1.5) {
+            float relief = rockTexture(vPaintPosition).w * uPaintPigment;
+            vec3 dx = dFdx(-vViewPosition), dy = dFdy(-vViewPosition);
+            vec3 r1 = cross(dy, normal), r2 = cross(normal, dx);
+            float determinant = dot(dx, r1);
+            vec3 gradient = sign(determinant) * (dFdx(relief) * r1 + dFdy(relief) * r2);
+            normal = normalize(max(abs(determinant), 0.0000001) * normal - gradient);
+          }
         `)
         .replace('vec3 outgoingLight = totalDiffuse + totalSpecular + totalEmissiveRadiance;', /* glsl */`
           // The actual 3D normal establishes form; a bright hemisphere cannot
@@ -169,10 +212,10 @@ export function createMaterials(THREE) {
           vec3 coolPigment = uPaintShadow * max(0.32, pigmentLuma * 0.88);
           outgoingLight = mix(outgoingLight, coolPigment, shadowMix * rockShadow);
           outgoingLight += totalEmissiveRadiance;
-          if (uPaintSurface > 2.5) outgoingLight = mix(diffuseColor.rgb, outgoingLight, 0.40);
+          if (uPaintSurface > 2.5 && uPaintSurface < 3.5) outgoingLight = mix(diffuseColor.rgb, outgoingLight, 0.40);
         `);
     };
-    material.customProgramCacheKey = () => `sky-castle-painted-v2-${surface}`;
+    material.customProgramCacheKey = () => `sky-castle-painted-v3-${surface}`;
     materials[key] = material;
   }
 
@@ -254,7 +297,7 @@ export function createMaterials(THREE) {
 
   function setStyle(id) {
     const preset = PALETTES[id] || PALETTES.fantasy;
-    for (const key of SURFACES) materials[key].color.setHex(preset[key]);
+    for (const key of SURFACES) materials[key].color.setHex(preset[key === 'leafDetail' ? 'leaf' : key]);
     shared.uPaintContrast.value = preset.contrast;
     shared.uPaintBands.value = preset.bands;
     shared.uPaintSoftness.value = preset.softness;

@@ -1,6 +1,6 @@
 # Four styles in real 3D
 
-Every preview uses the same detailed geometry and camera angle. All four styles share the camera controls, castle masonry, roof tiles, doors, balconies, bridge, shoreline gardens, ivy, and foreground path. The buttons change palette, material shaders, lighting, outlines, and grain while keeping the current view. [3D guide](threejs-3d.md) · [Illustrated gallery](style-gallery.md)
+Every preview uses the same detailed geometry and camera angle. All four styles share the camera controls, castle masonry, roof tiles, doors, balconies, bridge, shoreline gardens, ivy, foreground path, individual tree leaves, meadow plants, and weathered rock texture. The buttons change palette, material shaders, lighting, outlines, and grain while keeping the current view. [3D guide](threejs-3d.md) · [Illustrated gallery](style-gallery.md)
 
 ## 1. Golden ruins
 

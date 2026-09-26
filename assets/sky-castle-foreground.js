@@ -14,12 +14,13 @@ export function buildForegroundDetails(THREE, materials, ledge) {
   const transform = new THREE.Object3D();
   function instances(geometry, material, points) {
     const mesh = new THREE.InstancedMesh(geometry, material, points.length);
-    points.forEach(({x, y, z, scale, rotation = [0, 0, 0]}, index) => {
+    points.forEach(({x, y, z, scale, rotation = [0, 0, 0], tint}, index) => {
       transform.position.set(x, y, z);
       transform.rotation.set(...rotation);
       transform.scale.set(...scale);
       transform.updateMatrix();
       mesh.setMatrixAt(index, transform.matrix);
+      if (tint) mesh.setColorAt(index, new THREE.Color(tint));
     });
     mesh.castShadow = mesh.receiveShadow = true;
     group.add(mesh);
@@ -71,5 +72,61 @@ export function buildForegroundDetails(THREE, materials, ledge) {
   instances(new THREE.SphereGeometry(1,6,4), materials.flower, petals);
   instances(new THREE.SphereGeometry(1,6,4), materials.gold, hearts);
   instances(new THREE.SphereGeometry(1,6,4), materials.grass, leaves);
+
+  // Fine plants live beside the existing trail and shrubs, leaving the viewing
+  // clearing open. A folded, tapered leaf carries its own restrained vein shader.
+  const leafPositions = [], leafUvs = [], leafIndices = [];
+  for(let i=0;i<=4;i++){
+    const t=i/4, width=Math.sin(t*Math.PI)*.23;
+    for(const side of [-1,0,1]){
+      leafPositions.push(t,Math.sin(t*Math.PI)*(.09+(side===0?.035:0)),side*width);
+      leafUvs.push(t,(side+1)/2);
+    }
+    if(i<4)for(let j=0;j<2;j++){
+      const q=i*3+j;leafIndices.push(q,q+1,q+3,q+1,q+4,q+3);
+    }
+  }
+  const leafGeometry=new THREE.BufferGeometry();
+  leafGeometry.setAttribute('position',new THREE.Float32BufferAttribute(leafPositions,3));
+  leafGeometry.setAttribute('uv',new THREE.Float32BufferAttribute(leafUvs,2));
+  leafGeometry.setIndex(leafIndices);leafGeometry.computeVertexNormals();
+  const fineLeaves=[], fernStems=[];
+  const up=new THREE.Vector3(0,1,0);
+  function stemBetween(a,b){
+    const length=a.distanceTo(b), middle=a.clone().add(b).multiplyScalar(.5);
+    const quaternion=new THREE.Quaternion().setFromUnitVectors(up,b.clone().sub(a).normalize());
+    const rotation=new THREE.Euler().setFromQuaternion(quaternion);
+    fernStems.push({x:middle.x,y:middle.y,z:middle.z,scale:[.004,length,.004],rotation:[rotation.x,rotation.y,rotation.z]});
+  }
+  for(const [cx,cz] of [[-12.4,10.65],[-9.9,9.65],[-7.75,11.3],[-4.8,10.6]]){
+    const base=groundHeight(cx,cz);
+    for(let frond=0;frond<5;frond++){
+      const angle=frond/5*Math.PI*2+random(), length=.30+random()*.16;
+      let previous=new THREE.Vector3(cx,base,cz);
+      for(let j=1;j<=6;j++){
+        const t=j/6, reach=length*t, y=base+Math.sin(t*Math.PI*.76)*length*.72;
+        const center=new THREE.Vector3(cx+Math.cos(angle)*reach,y,cz+Math.sin(angle)*reach);
+        stemBetween(previous,center);previous=center;
+        const size=length*.32*Math.sin(t*Math.PI*.88);
+        for(const side of [-1,1])fineLeaves.push({x:center.x,y,z:center.z,
+          scale:[size,size,size],rotation:[0,-angle+side*1.05,.10]});
+      }
+    }
+    // A few fallen leaves and pebble-sized fragments give the path a lived-in edge.
+    for(let i=0;i<6;i++){
+      const angle=random()*Math.PI*2,r=.18+random()*.48;
+      const x=cx+Math.cos(angle)*r,z=cz+Math.sin(angle)*r,size=.07+random()*.07;
+      fineLeaves.push({x,y:groundHeight(x,z)+.013,z,scale:[size,size*.45,size],rotation:[0,random()*6.28,0],tint:0xd4cc9c});
+    }
+  }
+  // Small leaf sprays follow the shrub crown instead of floating above it.
+  for(const shrub of shrubs)for(let i=0;i<7;i++){
+    const angle=i/7*Math.PI*2+random()*.3, h=.2+random()*.55;
+    const x=shrub.x+Math.cos(angle)*shrub.scale[0]*Math.sqrt(1-h*h);
+    const z=shrub.z+Math.sin(angle)*shrub.scale[2]*Math.sqrt(1-h*h);
+    fineLeaves.push({x,y:shrub.y+shrub.scale[1]*h,z,scale:[.10,.10,.10],rotation:[0,-angle,.35]});
+  }
+  instances(leafGeometry,materials.leafDetail,fineLeaves);
+  instances(new THREE.CylinderGeometry(1,1,1,5),materials.trunk,fernStems);
   return {group, groundHeight};
 }

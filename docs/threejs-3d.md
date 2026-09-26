@@ -35,16 +35,23 @@ The scene uses Three.js with custom material shading, real directional shadows, 
 
 All four styles share the detailed castle masonry, staggered roof tiles, arched wooden doors, balcony railings, terrace paving, and sparse climbing ivy. The same shared landscape includes a real arched bridge, shoreline stones, gardens, trailing ivy, and a foreground viewing ledge with a path, flowers, and shrubs. These are geometry additions, so improvements carry through every style.
 
+Trees have finer branching and individual folded leaves: broadleaf crowns use overlapping leaf sprigs, while cypress trees use upward sprays. Their shared `leafDetail` material adds subtle midribs, branching veins, and tip color variation using each leaf's UV coordinates. The foreground also includes ferns, fallen leaves, and leaves on the shrubs. Fine details are easiest to see when zoomed in.
+
+Instanced meadow plants add **230 grass tufts containing 1,090 blades, 12 ferns, 60 clovers, and 12 reeds**. These plants share geometry and live style materials. Grass and reeds sway in slow wind while their roots stay fixed; the wind uses the same normalized loop phase as the scene and returns exactly to its starting pose.
+
+Procedural rock shading adds broken strata, mineral color flecks, and fine pits. Screen-space derivatives filter the smallest marks as they recede, limiting distant visual noise. Broad, shallow bump shading supplies surface relief; the thin cracks affect color only, keeping them from turning into sharp ridges.
+
 The sky is a procedural shader on a surrounding dome, with soft cloud fields. It is an illustrated atmosphere, not a volumetric weather simulation. The overall rendering aims for stylized illustration rather than photorealism.
 
 The source is split into shared modules:
 
 - [Scene and interaction](../assets/sky-castle-scene.js): camera, lighting, sky, controls, style switching, and screen effects.
 - [Terrain](../assets/sky-castle-terrain.js): island geometry, terrain height, lake, waterfall, paths, and small vegetation.
-- [Materials](../assets/sky-castle-materials.js): four palettes and the surface/water shader implementations.
-- [Models](../assets/sky-castle-models.js): castle, pavilion, and tree geometry, including the architectural detail, batched by material.
+- [Materials](../assets/sky-castle-materials.js): four palettes, surface/water shaders, rock detail, and UV-based leaf veins.
+- [Models](../assets/sky-castle-models.js): castle, pavilion, and detailed leafy tree geometry, batched by material.
 - [Landscape details](../assets/sky-castle-details.js): bridge, shoreline, gardens, and cliff ivy.
-- [Foreground](../assets/sky-castle-foreground.js): grounded viewing-ledge path, flowers, and shrubs.
+- [Foreground](../assets/sky-castle-foreground.js): grounded viewing-ledge path, flowers, shrubs, ferns, and fallen leaves.
+- [Botany](../assets/sky-castle-botany.js): shared instanced grass, ferns, clovers, reeds, and looping wind.
 
 The [viewer HTML](../assets/animation-3d.html) loads the locally vendored Three.js runtime. No public backend, API key, remote textures, or externally hosted runtime assets are needed.
 
@@ -74,4 +81,4 @@ node scripts/render-animation.cjs \
   /tmp/castle-3d-export --style=fantasy --gif
 ```
 
-Replace the style value with any ID in the table. Omit `--gif` to save only PNG frames. The capture API samples a normalized loop phase, so water and camera motion return to their starting state together. A 960 × 600 GIF covering the entire 60-second orbit can be large; the interactive viewer is the more practical way to explore every angle and style.
+Replace the style value with any ID in the table. Omit `--gif` to save only PNG frames. The capture API samples a normalized loop phase, so water, plant wind, and camera motion return to their starting state together. A 960 × 600 GIF covering the entire 60-second orbit can be large; the interactive viewer is the more practical way to explore every angle and style.

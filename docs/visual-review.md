@@ -47,3 +47,13 @@ This pass adds shared model detail: fine masonry joints, overlapping roof course
 Four front views and four orbit angles were inspected. The first pass made the foreground stones overlap into a cream ribbon and the lake stones too evenly spaced; the revisions separate the steps and leave longer open shore stretches. A short bridge approach connects it toward the castle path. No floating architecture, blocked water channel, or major framing issue was found. Fine castle details are easiest to read while zoomed in; Cozy deliberately reduces their contrast.
 
 The four remaining 3D styles pass exact loop-endpoint comparisons without browser or WebGL errors. Orbit/zoom/reset controls, paused theme changes, URL persistence, reduced motion, mobile width, and both viewer links pass. The illustrated viewer also passes its four-theme rendering and loop checks. The profile GIF retains the illustrated scene; the new details are in the interactive 3D viewer.
+
+## Botanical and rock texture pass
+
+Tree crowns now have overlapping pointed leaves, gently folded surfaces, finer branch forks, and small cypress sprays. A separate leaf material uses leaf-aligned UVs for restrained vein and tip-color detail. The foreground adds small fern fronds, fallen leaves, and leaf sprays on shrubs. The island's old triangle grass is replaced by clustered curved blades, paired-leaflet ferns, clover, and shoreline reeds. Clear areas remain around the lake, bridge, and castle path.
+
+The first rock bump render was too grainy at profile size. Its relief was reduced and the smallest pores filtered by the screen footprint. A close-up review then caught dotted marks where narrow bumps crossed the toon lighting bands. Fine cracks and pores now affect color only; the normal relief comes from broader shallow flakes. This preserves the broad cliff form and distinct Ink/Cozy lighting while adding broken strata and mineral variation.
+
+The first grass pass looked wiry at close range. Tall blades were shortened and widened, and short clumps were moved to the lighter grass material. Plant counts stayed constant. Default and zoomed views are reviewed separately: fine leaves and veins should reward zooming without turning the profile-size scene into a field of dark scratches.
+
+All four styles passed the final default/1.8×-zoom render checks, exact phase-0/phase-1 image comparisons, and quarter-orbit motion checks, with no browser or WebGL errors. The added botanical module uses six draw calls and 27,232 triangles; individual tree leaves remain batched by material. Four orbit views were inspected after the grass revision.

@@ -3,6 +3,7 @@ import { createMaterials } from './sky-castle-materials.js';
 import { buildTerrain } from './sky-castle-terrain.js';
 import { buildCastle, buildTree, buildPavilion } from './sky-castle-models.js';
 import { buildLandscapeDetails } from './sky-castle-details.js';
+import { buildBotany } from './sky-castle-botany.js';
 import { buildForegroundDetails } from './sky-castle-foreground.js';
 import { STYLES, DEFAULT_STYLE } from './castle-styles.js';
 
@@ -34,6 +35,7 @@ sunlight.shadow.bias = -.00015; sunlight.shadow.normalBias = .035;
 scene.add(ambient,sunlight);
 const terrain = buildTerrain(THREE,m); scene.add(terrain.group);
 const landscapeDetails = buildLandscapeDetails(THREE,m,terrain); scene.add(landscapeDetails.group);
+const botany = buildBotany(THREE,m,terrain); scene.add(botany.group);
 const castle = buildCastle(THREE,m); castle.scale.setScalar(.64);
 castle.position.copy(terrain.castleAnchor); castle.position.y-=.09;castle.rotation.y = .17;
 scene.add(castle);
@@ -173,7 +175,7 @@ window.renderFrame=phase=>{
  const cycle=phase-Math.floor(phase),t=cycle*Math.PI*2;
  // Flow stays lively during the slow camera orbit; eight water cycles still
  // meet the camera at exactly the same seamless loop boundary.
- palette.animate(cycle*8);landscapeDetails.animate(cycle);skyUniforms.time.value=t;
+ palette.animate(cycle*8);landscapeDetails.animate(cycle);botany.animate(cycle);skyUniforms.time.value=t;
  window.castleState.phase=cycle;
  const angle=t+azimuthOffset;camera.position.set(Math.sin(angle)*32,Math.sin(elevation)*32+1,Math.cos(angle)*32);camera.zoom=zoom;camera.updateProjectionMatrix();camera.lookAt(0,0,0);
  mists.forEach((mist,i)=>{const a=i*2.4+t;mist.position.set(terrain.lip.x+Math.sin(a)*.35,-5.8+Math.sin(t+i)*.18,terrain.lip.z+.5+Math.cos(a)*.20);});
