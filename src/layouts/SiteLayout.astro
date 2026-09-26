@@ -1,0 +1,7 @@
+---
+import '../styles/global.css';
+const { title } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><meta name="description" content="A small collection of product ideas, useful tools, and creative experiments. Explore different visual interpretations of the same portfolio."/><link rel="icon" href={`${base}/favicon.svg`}/><link rel="sitemap" href={`${base}/sitemap-index.xml`}/><title>{title} | Leon's workshop</title></head><body><slot/></body></html>
