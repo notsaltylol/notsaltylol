@@ -22,52 +22,48 @@ Objective: achieve AAA quality in the five requested styles. This is a visual pr
 7. **Presentation and motion:** inspect at full display resolution, a phone viewport, and detailed camera views. No shader errors, obvious clipping, stale shadows, flashing LOD, abrupt loop seams, or unusable startup/interaction. Capture actual frame timings on the test device; do not infer performance from triangle counts.
 8. **Delivered state:** published source and previews must match the tested scene. Verify the public deployment and record the exact revision.
 
-## Current pass: sky framing, cliff structure and a closer lookout
+## Current pass: castle hierarchy and weathered masonry
 
-Comparison baseline: source `b24448e31888b57edcec02bcfb490995798b5c56`, canonical output `3b3ff708019c06d2f6ce2ad2a137d19cdb188a7b`. Earlier production audits remain in Git history. Gallery previews are captured from the source accompanying this document.
+Comparison baseline: source `e42242418ae758f68df74641d4f95d009d1d135e`, canonical output `bc4bddb831dd1acd4d3e2c8ae1dfd5548a17735b`. Earlier production audits remain in Git history. Gallery previews are captured from the source accompanying this document.
 
-- Wider angular sky mapping puts a large painted cloud bank beside the island and a cloud sea below it, while leaving blue around the summit. Fantasy has a restrained blue grade that preserves cream highlights. Soft polar haze prevents edge-row streaks at steep elevations. The existing locally stored painting is reused.
-- Five connected buttress-and-cleft systems and three partial dipping recesses add secondary structure to the accepted cliff envelope. Their ends remain attached to the supporting body. A narrower lettering protection band restores existing erosion below the name; it does not add another fine noise layer.
-- The lookout ridge moves laterally and has a real cove beside its viewing point. A camera near the unchanged-size travelers frames them against the sky, with the summit visible and an air gap below the distant island. This replaces the former distant, nearly unreadable foreground figures. The default overview keeps the main island unobscured.
-- The path, landmark trees, grove exclusions and travelers follow the new ridge and its rendered ground. Two small patches of short grass and clover frame the nearby clearing. Existing landscape populations and physical detail sizes remain intact.
-- Lookout retains its wider lens and near-horizontal camera limits while orbiting or panning. Style changes preserve the view; other presets and Reset restore the usual landscape lens and elevation limits.
+- One dominant copper dome sits above a real open octagonal belfry. Lower secondary turrets give the keep a clearer stepped silhouette without increasing its footprint, group scale or highest point. The front loggia remains open.
+- Ruined walls use staggered, unequal masonry courses and foundations that follow the actual ground. Their broken upper stones vary in depth and fracture shape instead of forming repeated cubic steps.
+- Connected limestone washes, restrained vertical weathering and filtered brushwork break up large clean stone faces. The existing painted rock asset supplies subtle palette-relative color variation; no new image or material asset is loaded. Bright trim remains cleaner, with lower pigment strength in Ink and Cozy.
+
+- The cloud-shadow opening now uses the actual lookout station. Its former hardcoded anchor did not follow the ridge relocation; the periodic drift remains unchanged.
 
 ### Visual completion audit
 
-**The AAA quality objective remains open.** The sky now provides more depth, local cliff cuts break broad faces, and the Lookout view has a readable relationship between people and the floating island. These changes improve the composition, but do not establish reference-quality finish across the whole environment.
+**The AAA quality objective remains open.** Matched close views in Fantasy, Ink and Cozy show a clearer dominant tower, including from the side and rear. The full-island overview changes little at the retained small building scale. This pass improves construction and material finish; it does not establish reference-quality finish across the environment.
 
 Remaining priorities:
 
-1. The cliff still reads as a broad slab from some low views. Further work needs deliberate large and secondary forms, not equal detail everywhere.
-2. The castle remains a weak focal cue in overview, and repeated ruin blocks are visible close up. Keep the requested small physical scale while improving architectural and terrain composition.
-3. The new foreground composition needs more deliberate light and shadow. The clearing should remain spacious; adding props or filling the lawn is not a substitute for that design.
-4. Close waterfall foam remains stylized and graphic. Lake reflections use art-directed sky color rather than scene-object reflections.
-5. Sky and terrain still differ in edge treatment and finish. Review the five styles as complete images, particularly clean-line shape grouping and Cozy depth. The sky remains a painted environment dome.
-6. Fine vegetation and the dense terrain remain substantial rendering work. Performance must be measured on the final scene, rather than inferred from counts or a shader-only benchmark.
+1. The castle is still a weak focal cue in overview. Improve its relationship with terrain, color and light while preserving the requested tiny building scale.
+2. The cliff still reads as a broad slab in some low views. Further work needs deliberate large and secondary forms, not equal detail everywhere.
+3. The foreground needs more deliberate light and shadow. Its clearing should remain spacious.
+4. Close waterfall foam remains graphic, and lake reflections use art-directed sky color rather than scene-object reflections.
+5. Sky and terrain differ in edge treatment and finish. The five directions need review as complete images, particularly Ink shape grouping and Cozy depth. The sky remains a painted environment dome.
+6. Fine vegetation and dense terrain remain substantial rendering work. High-resolution performance needs further work.
 
 ### Geometry and motion evidence
 
-At scales 1 and 10, the cliff retains 46,400 and 184,960 triangles respectively. Both have finite attributes, no degenerate triangles or internal nonmanifold edges, and zero measured seam or meadow-rim error. The only open cliff boundaries are the expected attachment rings. The best fitted username location and score are exactly unchanged.
+The keep retains exactly the same measured bounds, including its highest point at 4.6799998 local units, and the same ten material draw calls. Its triangle count falls from 60,994 to 59,190. Both versions have finite attributes. Existing degenerate triangles at primitive poles remain unchanged; this is not a claim that all legacy geometry is watertight or free of degenerate faces.
 
-The castle anchor and waterfall lip remain fixed. A 19-phase waterfall sweep at scales 1 and 10 found no sampled rock or meadow penetrations across 89,847 and 573,700 covered vertex checks. Minimum front clearance remains 0.0489 and 0.0740 world units. River joins and phase 0/1 positions match exactly.
+Matched before/after renders freeze the rest of the scene at the baseline revision, isolating the keep hierarchy, ruin construction and material changes. The island dimensions, terrain, paths, water, vegetation and camera controls are unchanged in source.
 
-The reshaped lookout passes finite-attribute, closed-topology, nondegenerate-triangle and exact-rim checks at both scales. Its path samples actual mesh triangles, and both travelers have valid support footprints. A 1,441-position camera sweep checks the full Lookout orbit against the ridge; the camera stays at least 3.0 world units above the land wherever its orbit crosses it.
+The precinct contains 307 newly bonded wall stones and twelve continuous footings. The new stone shapes have no degenerate triangles or inverted volumes. Sampled footing bottoms are at least 0.092 world units below the rendered ground. Gate position, paving count, maximum precinct height and the occupied radius are unchanged. The precinct increases from 75,804 to 79,772 triangles and remains nine material draws.
 
-The sky passed five-style image-loop checks in overview, Castle and Lookout. Its pixels stay identical under camera translation and dolly zoom at a fixed orientation, and extreme elevation captures show no former edge-row streaks or pole starburst.
-
-The combined scene passed three fresh-browser repetitions of the full five-style overview/Lookout sequence, four camera presets and quarter-orbit captures. Each loop endpoint matched its starting PNG exactly. Five-style Castle, Lake and Lookout checks also passed at a 1920×1200 rendering resolution. Controls, view-preserving style changes, reset, reduced motion and a 390-pixel phone layout passed without page or WebGL errors.
-
-One earlier Ink Lookout endpoint comparison failed. Its saved start differs from the three subsequent matching starts at only two waterfall pixels, by one channel level each. The original endpoint was not retained, so the precise cause of that failure is unproven. The three bounded repetitions used the same sequence without extra warming renders or relaxed comparisons; no source change was made for this observation.
+Final combined checks passed at 960×600 for all five styles in Overview, Castle and Lookout, plus the four presets and quarter-orbit images. Five-style Castle, Lake and Lookout checks also passed at 1920×1200. Starting and ending PNGs match exactly after an intermediate animation phase, with no page or WebGL errors. Presets, pan, zoom, view-preserving style changes, reset, reduced motion and the 390-pixel phone layout also pass. The lookout cloud-opening projection matches the actual station under two sun directions, and its periodic drift has equal endpoints.
 
 ### Performance on the final source
 
-Hardware Chrome on Apple M2 Pro, with synchronized GPU completion/readback, three warmup frames and twelve moving frames per view. These short measurements are device-specific samples, not a sustained frame-rate guarantee. Startup was approximately 4.7 seconds at both rendering resolutions.
+Hardware Chrome on Apple M2 Pro, with synchronized GPU completion/readback, three warmup frames and twelve moving frames per view. Other test browsers were closed. These short measurements are device-specific samples, not sustained frame-rate guarantees. Startup measured 7.3 seconds for the first normal-resolution load and 4.4 seconds for the later Retina load.
 
 | View | 960×600 median / maximum | 1920×1200 median / maximum |
 | --- | ---: | ---: |
-| Overview | 18.3 / 42.7 ms | 24.1 / 49.4 ms |
-| Castle | 15.9 / 39.3 ms | 18.8 / 45.8 ms |
-| Lake | 21.3 / 36.9 ms | 26.0 / 79.1 ms |
-| Lookout | 12.2 / 17.1 ms | 16.8 / 27.0 ms |
+| Overview | 18.4 / 34.3 ms | 21.2 / 44.3 ms |
+| Castle | 12.9 / 28.0 ms | 17.3 / 49.1 ms |
+| Lake | 18.3 / 35.8 ms | 25.0 / 65.2 ms |
+| Lookout | 10.7 / 190.1 ms | 13.2 / 26.4 ms |
 
-Rendering cost is broadly similar to the baseline. The 16.7 ms budget for 60 fps is not consistently met, particularly at higher resolution. A separately tested terrain shader shortcut gave mixed timings and was reverted; it is not part of this release.
+The normal-resolution Lookout sample includes a substantial timing spike whose cause was not isolated. Median timings alone cannot establish consistently smooth interaction. This pass makes no performance-improvement claim; the 16.7 ms frame budget is still exceeded in several views.

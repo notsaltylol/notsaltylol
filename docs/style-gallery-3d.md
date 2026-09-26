@@ -6,6 +6,12 @@ The scene uses a perspective camera, painted sky, side sunlight, and slow art-di
 
 The summit now has unequal rock shoulders and a drainage hollow. Grass blends into exposed stone on the same mesh, and plants avoid the bare faces. Below it, unequal oblique cliff wedges meet a broader supporting mass, with local buttresses, clefts, recessed beds and a thin turf edge. Cozy retains cream lights with more readable sage and cool shadow values. The castle road meets its paving using the [actual ground sampler](../assets/sky-castle-ground.js). A [joined ballistic waterfall](../assets/sky-castle-waterfall.js) rolls over the river lip, then breaks into an uneven falling veil and three-dimensional spray. An animated water-coverage pass softens the cliff outlines beneath its foam. The [sky asset](sky-environment.md) and [surface textures](painted-materials.md), including their generation prompts, are published alongside the Three.js source.
 
+## Castle detail
+
+Select **Castle** in the viewer to inspect the open belfry, lower secondary turrets, staggered ruined masonry and limestone washes. The keep retains its footprint and maximum height. This close view makes the architectural hierarchy readable at the intentionally small building scale.
+
+![Open belfry and weathered hilltop precinct](../assets/style-previews-3d/castle.png)
+
 ## Lookout
 
 Select **Lookout** in the viewer for the foreground composition. The camera stands near the travelers, whose physical size is unchanged, with the distant summit visible and open air beneath the island. The same view is available in all five styles.
