@@ -17,20 +17,20 @@ export default function Website({ initialPage }: { initialPage: Page }) {
   const [selected, setSelected] = useState<Project | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
+    const styles = ["glass", "gothic", "brutalist", "minimal"];
+    let previousStyle = "glass";
     try {
-      const saved = localStorage.getItem("portfolio-theme");
-      if (
-        saved === "hyper" ||
-        saved === "daisy" ||
-        saved === "tailwind" ||
-        saved === "starwind"
-      )
-        setTheme(saved);
-      const savedStyle = localStorage.getItem("portfolio-style");
-      if (savedStyle && ["glass", "brutalist", "minimal"].includes(savedStyle))
-        setStyle(savedStyle);
+      previousStyle = localStorage.getItem("portfolio-style") ?? "glass";
     } catch {
       /* Storage may be unavailable in private browsing. */
+    }
+    const choices = styles.filter((candidate) => candidate !== previousStyle);
+    const nextStyle = choices[Math.floor(Math.random() * choices.length)];
+    setStyle(nextStyle);
+    try {
+      localStorage.setItem("portfolio-style", nextStyle);
+    } catch {
+      /* The current visit still works without persistent storage. */
     }
     const back = () => {
       setPage(
@@ -59,11 +59,6 @@ export default function Website({ initialPage }: { initialPage: Page }) {
   }
   function changeTheme(next: ThemeId) {
     setTheme(next);
-    try {
-      localStorage.setItem("portfolio-theme", next);
-    } catch {
-      /* Storage may be unavailable in private browsing. */
-    }
   }
   const visible = projects.filter(
     (p) =>
@@ -154,6 +149,7 @@ export default function Website({ initialPage }: { initialPage: Page }) {
                 }}
               >
                 <option value="glass">Glass</option>
+                <option value="gothic">Gothic</option>
                 <option value="brutalist">Brutalist</option>
                 <option value="minimal">Minimal</option>
               </select>

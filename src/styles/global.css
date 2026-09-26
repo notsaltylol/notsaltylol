@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./starwind.css";
+@import "./gothic.css";
 @plugin "daisyui" {
   themes: light;
 }
@@ -608,7 +609,7 @@ footer span:first-child {
   --surface: #ffffff80;
   --edge: #ffffffcc;
   --round: 24px;
-  --depth: 0 14px 45px #4d61951a;
+  --depth: inset 0 1px 0 #ffffffdd, 0 14px 45px #4d61951a;
   --blur: 18px;
   background:
     radial-gradient(ellipse at 10% 5%, #c1dff4 0, transparent 50%),
@@ -788,4 +789,18 @@ footer span:first-child {
   .theme-picker button {
     padding: 6px 10px;
   }
+}
+
+.theme-tailwind.style-glass .custom-card .artwork {
+  background: transparent !important;
+  border-bottom: 1px solid #ffffff99;
+}
+.theme-tailwind.style-glass .brand-mark {
+  background: #ffffff70;
+  border: 1px solid white;
+  color: #2859c5;
+  box-shadow: 0 6px 20px #4d619515;
+}
+.theme-tailwind.style-glass .custom-card:hover {
+  background: #ffffffa6;
 }

@@ -3,7 +3,7 @@
 Two routes (`/` and `/projects/`) share content and a React controller. The theme
 selector changes the presentation without reloading the page.
 
-- **Tailwind:** custom Glass, Brutalist, and Minimal styles.
+- **Tailwind:** custom Glass, Gothic, Brutalist, and Minimal styles.
 - **daisyUI:** actual daisyUI cards, buttons, badges, and input styling.
 - **HyperUI:** adapted Tailwind markup from HyperUI's marketing card patterns.
 - **Starwind:** generated Starwind React Button, Card, Badge, and Input components.
@@ -20,7 +20,9 @@ mise exec -- pnpm dev
 ```
 
 Use the presentation buttons in the header. The Tailwind group has a second
-selector for its custom styles. Preferences persist in localStorage. Gallery
+selector for its custom styles. Each full page load starts in Tailwind with a randomly chosen style different
+from the previous saved style. Manual choices last for the current visit;
+navigation between Home and Projects keeps the current presentation. Gallery
 search, category, and selected project are owned by the shared controller and
 survive presentation changes. Search/filter state is in-memory, not saved on reload.
 
