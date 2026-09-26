@@ -217,6 +217,10 @@ mirrors the root assets into its public directory during startup, preserving
 redirect remains available at `/island.html`. Edit the root asset originals,
 not the generated copies in `site/public/assets/`.
 
-GitHub Pages builds this directory and deploys at
-https://notsaltylol.github.io/notsaltylol/. The original `personal` repository
-remains available as a historical copy.
+The canonical website is https://notsaltylol.github.io/. The source stays here.
+The `notsaltylol/notsaltylol.github.io` repository contains only generated output
+and a Pages publishing workflow. Build this app with base `/` and site
+`https://notsaltylol.github.io`, then publish `dist/` to that repository's `public/`
+directory. Automatic publishing from this source repository is awaiting deploy-key
+approval. The existing project Pages workflow keeps the old
+https://notsaltylol.github.io/notsaltylol/ links working too.
