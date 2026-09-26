@@ -196,3 +196,12 @@ font delivery. Light/dark colors are bridged to the shared semantic palette.
 bundled with 98.css use Astro’s local font provider (regular and bold). NES.css
 uses Fontsource through Astro. Both styles map their light/dark palettes onto
 the shared semantic tokens.
+
+### Liquid glass
+
+The Glass presentation uses an Astro SVG filter and the Tailwind `liquid-surface`
+utility, inspired by [daftplug’s liquid glass pen](https://codepen.io/daftplug/pen/QwbaYGO).
+Refraction is isolated behind card, style-picker, and dialog content. The edge
+highlights use semantic light/dark tokens. No JavaScript is needed for the effect;
+browsers without backdrop filters and reduced-transparency preferences get solid
+surfaces. SVG filter rendering can vary by browser.

@@ -971,16 +971,65 @@ footer span:first-child {
   }
 }
 
-/* Glass surfaces blur the scenery behind them, never their own content. */
+/* A separate backdrop layer refracts the scenery without warping the content.
+   Technique: https://codepen.io/daftplug/pen/QwbaYGO */
+@utility liquid-surface {
+  isolation: isolate;
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  &::before {
+    z-index: 1;
+    @apply shadow-glass-edge;
+  }
+  &::after {
+    z-index: -1;
+    background: var(--ui-surface);
+    -webkit-backdrop-filter: blur(var(--ui-glass-blur));
+    backdrop-filter: blur(var(--ui-glass-blur));
+    filter: url("#portfolio-liquid-glass");
+  }
+}
+.theme-glass :is([data-project-card], .style-buttons, .project-dialog) {
+  @apply liquid-surface;
+}
+.theme-glass :is([data-project-card], .style-buttons) {
+  position: relative;
+}
 .theme-glass .style-buttons {
-  @apply isolate bg-surface shadow-panel ring-1 ring-surface-edge backdrop-blur-surface;
+  @apply shadow-panel;
 }
-.theme-glass .project-dialog {
-  @apply isolate bg-surface ring-1 ring-surface-edge backdrop-blur-surface;
+.theme-glass [data-project-card]:hover::after {
+  background: var(--ui-surface-hover);
 }
-@supports not (backdrop-filter: blur(1px)) {
+/* Inputs cannot host pseudo-elements; retain the frosted surface there. */
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
   .theme-glass {
     --ui-surface: var(--ui-surface-solid);
+    --ui-surface-hover: var(--ui-surface-solid);
+  }
+  .theme-glass
+    :is([data-project-card], .style-buttons, .project-dialog)::after {
+    filter: none;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .theme-glass
+    :is([data-project-card], .style-buttons, .project-dialog)::after {
+    background: var(--ui-surface-solid);
+    backdrop-filter: none;
+    filter: none;
   }
 }
 

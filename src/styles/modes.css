@@ -30,6 +30,8 @@
   --ui-backdrop: #030712bb;
 }
 :root[data-mode="dark"] .theme-glass {
+  --ui-glass-edge:
+    inset 2px 2px 1px -1px #e5efff80, inset -1px -1px 2px #e5efff33;
   --ui-canvas: #111c30;
   --ui-canvas-art:
     radial-gradient(

@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { themes } from "../experience/themes";
+import GlassFilters from "../themes/GlassFilters.astro";
 import NesStyles from "../themes/NesStyles.astro";
 import RetroStyles from "../themes/RetroStyles.astro";
 import PaperStyles from "../themes/PaperStyles.astro";
@@ -71,6 +72,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
     <title>{title} | Leon's workshop</title>
   </head>
   <body>
+    <GlassFilters />
     <slot />
   </body>
 </html>

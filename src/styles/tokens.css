@@ -29,6 +29,7 @@
   --radius-brand: var(--ui-radius-brand);
   --radius-picker: var(--ui-radius-picker);
   --radius-detail: var(--ui-radius-detail);
+  --shadow-glass-edge: var(--ui-glass-edge);
   --shadow-panel: var(--ui-shadow-panel);
   --shadow-action: var(--ui-shadow-action);
   --shadow-dialog: var(--ui-shadow-dialog);
@@ -156,6 +157,9 @@
   --accent-foreground: var(--ui-content);
 }
 .theme-glass {
+  --ui-glass-edge:
+    inset 2px 2px 1px -1px #ffffffcc, inset -1px -1px 2px #ffffff66;
+  --ui-glass-blur: 2px;
   --ui-canvas: #e5ecfa;
   --ui-canvas-art:
     radial-gradient(
