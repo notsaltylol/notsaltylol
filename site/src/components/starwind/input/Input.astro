@@ -1,0 +1,13 @@
+---
+import { input } from "./variants";
+import type { ComponentProps } from "astro/types";
+import type { VariantProps } from "tailwind-variants";
+interface Props
+  extends
+    Omit<ComponentProps<typeof Primitive.Root>, "size">,
+    VariantProps<typeof input> {}
+const { size, class: className, ...rest } = Astro.props;
+import Primitive from "@starwind-ui/astro/input";
+---
+
+<Primitive.Root class={input({ size, class: className })} {...rest} />

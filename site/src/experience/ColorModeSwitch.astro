@@ -1,0 +1,56 @@
+---
+import Switch from "@starwind-ui/astro/switch";
+import type { ThemeId } from "./types";
+const { theme } = Astro.props as { theme: ThemeId };
+---
+
+{theme === "starwind" ? (
+  <div class="mode-switch">
+    <span>Light</span>
+    <Switch.Root
+      nativeButton
+      aria-label="Dark mode"
+      data-mode-switch
+      class="inline-flex h-6 w-11 cursor-pointer items-center rounded-full border border-border bg-muted p-0.5 data-[checked]:bg-primary"
+    >
+      <Switch.Thumb class="size-4 rounded-full bg-foreground transition-transform data-[checked]:translate-x-5 data-[checked]:bg-primary-foreground" />
+    </Switch.Root>
+    <span>Dark</span>
+  </div>
+) : theme === "retro" ? (
+  <div class="mode-switch retro-surface">
+    <input
+      id="retro-dark-mode"
+      type="checkbox"
+      role="switch"
+      aria-label="Dark mode"
+      data-mode-switch
+    />
+    <label for="retro-dark-mode">Dark mode</label>
+  </div>
+) : theme === "nes" ? (
+  <label class="mode-switch nes-surface">
+    <input
+      class="nes-checkbox"
+      type="checkbox"
+      role="switch"
+      aria-label="Dark mode"
+      data-mode-switch
+    />
+    <span>Dark mode</span>
+  </label>
+) : (
+  <div class="mode-switch">
+    <span>Light</span>
+    <input
+      type="checkbox"
+      role="switch"
+      aria-label="Dark mode"
+      data-mode-switch
+      class={
+        theme === "daisy" ? "toggle toggle-primary toggle-sm" : "color-switch"
+      }
+    />
+    <span>Dark</span>
+  </div>
+)}

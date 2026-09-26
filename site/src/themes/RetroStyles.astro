@@ -1,0 +1,13 @@
+---
+import retroCSS from "98.css/dist/98.css?raw";
+// Astro serves the two bundled font files. Keep the library scoped so its
+// global element selectors cannot restyle the other presentations.
+const scopedCSS = retroCSS
+  .replace(/@font-face\s*\{[^}]*\}/g, "")
+  .replaceAll('"Pixelated MS Sans Serif",Arial', "var(--font-ms-sans)");
+---
+
+<style
+  is:global
+  set:html={`@layer theme, base, components, utilities; @layer components { @scope (.retro-surface) { ${scopedCSS} } }`}
+/>

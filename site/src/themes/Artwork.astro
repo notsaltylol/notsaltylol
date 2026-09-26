@@ -1,0 +1,17 @@
+---
+import type { Project } from "../content/site";
+interface Props {
+  project: Project;
+}
+const { project } = Astro.props;
+---
+
+<div
+  class="artwork bg-project-art"
+  style={{ "--project-color": project.color }}
+  aria-hidden="true"
+>
+  <span class="art-orbit"></span>
+  <span class="art-symbol">{project.symbol}</span>
+  <span class="art-name">{project.name}</span>
+</div>

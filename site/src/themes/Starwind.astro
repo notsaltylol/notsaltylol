@@ -1,0 +1,100 @@
+---
+import { projects } from "../content/site";
+import Button from "../components/starwind/button/Button.astro";
+import Card from "../components/starwind/card/Card.astro";
+import Badge from "../components/starwind/badge/Badge.astro";
+import Input from "../components/starwind/input/Input.astro";
+import { site } from "../content/site";
+import type { PresentationProps } from "../experience/types";
+import Artwork from "./Artwork.astro";
+
+const { page, theme } = Astro.props as PresentationProps;
+const home = page === "home";
+const p = { page, projects, query: "", category: "All" };
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+
+<div class="starwind-presentation">
+  <header class="starwind-heading">
+    <div>
+      <Badge variant="secondary">The workshop</Badge>
+      <h1>{home ? site.headline : "Projects & experiments"}</h1>
+      <p>
+        {home
+          ? site.intro
+          : "A growing collection of small tools, product concepts, and things made for the joy of it."}
+      </p>
+      {home && (
+        <Button data-navigate={`${base}/projects/`}>Browse projects</Button>
+      )}
+    </div>
+    <aside>
+      <span aria-hidden="true">✧</span>
+      <p>
+        Make something.
+        <br />
+        Learn something.
+        <br />
+        Make it better.
+      </p>
+    </aside>
+  </header>
+  <section aria-label={home ? "Selected projects" : "All projects"}>
+    {home ? (
+      <div class="section-heading">
+        <h2>From the workbench</h2>
+        <Badge variant="outline">Three highlights</Badge>
+      </div>
+    ) : (
+      <div class="gallery-controls">
+        <div class="w-full sm:w-80">
+          <Input
+            aria-label="Search projects"
+            placeholder="Search projects…"
+            value={p.query}
+            data-search
+          />
+        </div>
+        <div class="filter-group" aria-label="Filter projects">
+          {["All", "Product", "Tool", "Experiment"].map((c) => (
+            <Button
+              size="sm"
+              variant="ghost"
+              aria-pressed={p.category === c}
+              data-category={c}
+            >
+              {c}
+            </Button>
+          ))}
+        </div>
+      </div>
+    )}
+    <div class="starwind-grid">
+      {(home ? p.projects.slice(0, 3) : p.projects).map((project) => (
+        <Card
+          id={theme === "glass" ? project.id : `${theme}-${project.id}`}
+          data-project-card={project.id}
+          class="gap-0 overflow-hidden border border-border p-0"
+        >
+          <Artwork project={project} />
+          <div class="p-6">
+            <div class="card-meta">
+              <Badge variant="outline">{project.category}</Badge>
+              <span>{project.year}</span>
+            </div>
+            <h2 class="mt-5 mb-3 text-2xl font-semibold">{project.name}</h2>
+            <p class="mb-6 leading-relaxed">{project.description}</p>
+            <Button variant="outline" size="sm" data-open-project={project.id}>
+              Explore {project.name}
+            </Button>
+          </div>
+        </Card>
+      ))}
+    </div>
+    {!home && (
+      <p class="empty-state" data-empty hidden>
+        No matching projects. Try another search or category.
+      </p>
+    )}
+  </section>
+</div>

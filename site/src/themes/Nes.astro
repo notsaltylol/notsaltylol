@@ -1,0 +1,83 @@
+---
+import { projects } from "../content/site";
+import { site } from "../content/site";
+import type { PresentationProps } from "../experience/types";
+import Artwork from "./Artwork.astro";
+
+const { page, theme } = Astro.props as PresentationProps;
+const home = page === "home";
+const p = { page, projects, query: "", category: "All" };
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+
+<div class="nes-presentation nes-surface">
+  <header class="nes-container with-title nes-heading">
+    <p class="title">{home ? "Player one" : "Select a project"}</p>
+    <h1>{home ? site.headline : "Project select"}</h1>
+    <p>
+      {home
+        ? site.intro
+        : "Tools, experiments, and small adventures. Choose a project to continue."}
+    </p>
+    {home && (
+      <button class="nes-btn is-primary" data-navigate={`${base}/projects/`}>
+        Start exploring
+      </button>
+    )}
+  </header>
+  <section aria-label={home ? "Selected projects" : "All projects"}>
+    {home ? (
+      <h2 class="nes-section-title">Choose your next adventure</h2>
+    ) : (
+      <div class="gallery-controls">
+        <input
+          class="nes-input"
+          type="text"
+          aria-label="Search projects"
+          placeholder="Find a project"
+          value={p.query}
+          data-search
+        />
+        <div class="filter-group" aria-label="Filter projects">
+          {["All", "Product", "Tool", "Experiment"].map((category) => (
+            <button
+              class={`nes-btn ${p.category === category ? "is-primary" : ""}`}
+              aria-pressed={p.category === category}
+              data-category={category}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
+    <div class="nes-project-grid">
+      {(home ? p.projects.slice(0, 3) : p.projects).map((project) => (
+        <article
+          class="nes-container nes-project"
+
+          id={theme === "glass" ? project.id : `${theme}-${project.id}`}
+          data-project-card={project.id}
+        >
+          <Artwork project={project} />
+          <div class="nes-project-copy">
+            <p class="card-meta">
+              <span>{project.category}</span>
+              <span>{project.year}</span>
+            </p>
+            <h2>{project.name}</h2>
+            <p>{project.description}</p>
+            <button class="nes-btn" data-open-project={project.id}>
+              Explore {project.name}
+            </button>
+          </div>
+        </article>
+      ))}
+    </div>
+    {!home && (
+      <p class="empty-state" data-empty hidden>
+        No projects found. Try another search.
+      </p>
+    )}
+  </section>
+</div>

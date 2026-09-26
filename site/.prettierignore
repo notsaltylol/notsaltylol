@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+.playwright-cli/
+output/
+pnpm-lock.yaml
+.husky/_/
+CLAUDE.md
+
+public/assets/
+public/island.html

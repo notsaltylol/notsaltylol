@@ -1,0 +1,78 @@
+---
+import "../styles/global.css";
+import { themes } from "../experience/themes";
+import GlassFilters from "../themes/GlassFilters.astro";
+import NesStyles from "../themes/NesStyles.astro";
+import RetroStyles from "../themes/RetroStyles.astro";
+import PaperStyles from "../themes/PaperStyles.astro";
+import { ClientRouter } from "astro:transitions";
+import { Font } from "astro:assets";
+const { title } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+
+<!doctype html>
+<html lang="en" data-mode="light" data-style="glass">
+  <head>
+    <meta charset="utf-8" />
+    <ClientRouter />
+    <script define:vars={{ styleIds: themes.map(({ id }) => id) }}>
+      // CSS selects pre-rendered Astro markup before the first paint.
+      (() => {
+        let mode;
+        let previousStyle = "glass";
+        try {
+          mode = localStorage.getItem("portfolio-mode");
+          previousStyle = localStorage.getItem("portfolio-style") ?? "glass";
+        } catch {
+          /* Fall back to light mode. */
+        }
+        const choices = styleIds.filter((id) => id !== previousStyle);
+        const selected = choices[Math.floor(Math.random() * choices.length)];
+        const root = document.documentElement;
+        root.dataset.mode = mode === "dark" ? "dark" : "light";
+        root.dataset.style = selected;
+        try {
+          localStorage.setItem("portfolio-style", selected);
+        } catch {
+          /* The current visit still works without storage. */
+        }
+      })();
+    </script>
+    <style
+      is:global
+      set:html={`[data-presentation] { display: none; } ${themes.map(({ id }) => `html[data-style="${id}"] [data-presentation="${id}"] { display: block; }`).join("\n")}`}
+    />
+    <Font cssVariable="--font-manrope" />
+    <Font cssVariable="--font-cinzel" />
+    <Font cssVariable="--font-source-serif" />
+    <Font cssVariable="--font-nunito-sans" />
+    <Font cssVariable="--font-space-grotesk" />
+    <Font cssVariable="--font-dm-sans" />
+    <Font cssVariable="--font-neucha" />
+    <Font cssVariable="--font-patrick-hand" />
+    <Font cssVariable="--font-ms-sans" />
+    <PaperStyles />
+    <RetroStyles />
+    <Font cssVariable="--font-press-start" />
+    <NesStyles />
+    <meta name="viewport" content="width=device-width" />
+    <meta
+      name="description"
+      content="A small collection of product ideas, useful tools, and creative experiments. Explore different visual interpretations of the same portfolio."
+    />
+    <link rel="icon" href={`${base}/favicon.svg`} />
+    <link rel="sitemap" href={`${base}/sitemap-index.xml`} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Leon’s workshop — projects"
+      href={`${base}/rss.xml`}
+    />
+    <title>{title} | Leon's workshop</title>
+  </head>
+  <body>
+    <GlassFilters />
+    <slot />
+  </body>
+</html>

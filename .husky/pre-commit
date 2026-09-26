@@ -1,0 +1,5 @@
+cd site
+if command -v mise >/dev/null 2>&1; then
+  export PATH="$(mise where node)/bin:$(mise where pnpm):$PATH"
+fi
+pnpm exec lint-staged

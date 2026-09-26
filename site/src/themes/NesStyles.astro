@@ -1,0 +1,12 @@
+---
+import nesCSS from "nes.css/css/nes.min.css?raw";
+const scopedCSS = nesCSS.replaceAll(
+  '"Press Start 2P"',
+  "var(--font-press-start)",
+);
+---
+
+<style
+  is:global
+  set:html={`@layer theme, base, components, utilities; @layer components { @scope (.nes-surface) { ${scopedCSS} } }`}
+/>

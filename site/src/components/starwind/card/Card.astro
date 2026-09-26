@@ -1,0 +1,12 @@
+---
+import { card } from "./variants";
+import type { HTMLAttributes } from "astro/types";
+import type { VariantProps } from "tailwind-variants";
+interface Props
+  extends Omit<HTMLAttributes<"article">, "size">, VariantProps<typeof card> {}
+const { size, class: className, ...rest } = Astro.props;
+---
+
+<article class={card({ size, class: className })} {...rest}>
+  <slot />
+</article>

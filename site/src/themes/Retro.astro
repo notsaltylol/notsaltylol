@@ -1,0 +1,94 @@
+---
+import { projects } from "../content/site";
+import { site } from "../content/site";
+import type { PresentationProps } from "../experience/types";
+import Artwork from "./Artwork.astro";
+
+const { page, theme } = Astro.props as PresentationProps;
+const home = page === "home";
+const p = { page, projects, query: "", category: "All" };
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+
+<div class="retro-presentation retro-surface">
+  <header class="window retro-heading">
+    <div class="title-bar">
+      <div class="title-bar-text">
+        {home ? "Welcome.exe" : "Project Explorer"}
+      </div>
+    </div>
+    <div class="window-body">
+      <p>Leon's workshop — Personal Edition</p>
+      <h1>{home ? site.headline : "Project Explorer"}</h1>
+      <p>
+        {home
+          ? site.intro
+          : "Browse the collection, search for an idea, or open a project to see more."}
+      </p>
+      {home && (
+        <button data-navigate={`${base}/projects/`}>Browse projects</button>
+      )}
+    </div>
+    <div class="status-bar">
+      <p class="status-bar-field">Ready</p>
+      <p class="status-bar-field">{p.projects.length} projects</p>
+    </div>
+  </header>
+  <section aria-label={home ? "Selected projects" : "All projects"}>
+    {home ? (
+      <h2 class="retro-section-title">Selected projects</h2>
+    ) : (
+      <div class="window gallery-controls retro-controls">
+        <label class="field-row">
+          Find:{" "}
+          <input
+            type="text"
+            aria-label="Search projects"
+            placeholder="Search projects…"
+            value={p.query}
+            data-search
+          />
+        </label>
+        <div class="filter-group" aria-label="Filter projects">
+          {["All", "Product", "Tool", "Experiment"].map((category) => (
+            <button
+              aria-pressed={p.category === category}
+              data-category={category}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
+    <div class="retro-grid">
+      {(home ? p.projects.slice(0, 3) : p.projects).map((project) => (
+        <article
+          class="window"
+          id={theme === "glass" ? project.id : `${theme}-${project.id}`}
+          data-project-card={project.id}
+        >
+          <div class="title-bar">
+            <h2 class="title-bar-text">{project.name}</h2>
+          </div>
+          <Artwork project={project} />
+          <div class="window-body">
+            <p>{project.description}</p>
+            <button data-open-project={project.id}>
+              Explore {project.name}
+            </button>
+          </div>
+          <div class="status-bar">
+            <span class="status-bar-field">{project.category}</span>
+            <span class="status-bar-field">{project.year}</span>
+          </div>
+        </article>
+      ))}
+    </div>
+    {!home && (
+      <p class="empty-state" data-empty hidden>
+        No projects match. Try another search or category.
+      </p>
+    )}
+  </section>
+</div>
