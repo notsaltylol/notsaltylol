@@ -32,51 +32,52 @@ The painted panorama replaced the procedural cloud field, and the main cliff gai
 
 That pass was published and verified on both the source repository's Pages site and the canonical root site. It established technical progress, not completion of the visual objective.
 
-## Published baseline at 22f7d45
+## Published baselines at 22f7d45 and 41486b0
 
-Painted meadow and rock surfaces, clearer light, asymmetric secondary islands, a small castle precinct, and cloaked travelers were published and verified on both Pages sites. The images still exposed a broad tapered cliff, a sterile courtyard, smooth sheet-like water, and dense rounded shrub beds. The 10× width and fine physical-size detail remained intact.
+Painted meadow and rock surfaces, asymmetric secondary islands, a small castle precinct, and cloaked travelers were followed by a perspective camera, fractured cliff, broken enclosure walls, layered water, and natural lookout planting. Perspective-aware detail selection retained nearby leaves while reducing distant work. Both passes were published and verified on both Pages sites; the most recent baseline is source revision `41486b02df965f074596a68209182a7e25c2d6ee` and canonical output revision `d485db90e4e2e092c2252986bf41b1b30805b189`.
 
-## Current production pass: form, water, and perspective
+That baseline still exposed an oval-looking lake, a mostly parallel waterfall sheet, a smooth castle mound, disconnected paving, pale submerged bridge supports, and a busy sky. At 1920 × 1200, its measured median frames were 18.7ms overview, 12.0ms castle, 23.1ms lake, and 16.2ms lookout. These establish a comparison, not visual completion.
 
-- Main cliff massing now has unequal projecting blocks, a broad blunt western foot, a shorter offset taper, deep structural breaks, and interrupted bedding shelves. The turf boundary trails irregularly over its upper beds. The inscription occupies a continuous fracture face rather than a separate plaque.
-- Four attached low wings and an incomplete planted cloister replace the bare rectangular fortress court. The enclosure breaks into unequal remnants and eroded tower shells; beveled masonry and subtle mineral/rain washes reduce its pristine appearance. The keep remains tallest and its physical height is unchanged.
-- The water borrows the already-loaded sky texture for blurred reflected color. Depth, shoreline foam, layered falling lanes, and irregular fading edges provide more structure. The sky reflection does not include buildings or plants; the waterfall is still based on the existing connected mesh.
-- The lookout's 600 loosely spaced habitat patches replace six dense circular shrub beds. Close shrubs use branch sprays and folded leaves; a worn path with occasional embedded stones replaces the repetitive stepping-stone chain. Nearly 3,000 shrubs and 9,000 flowers remain, at their existing physical size.
-- A 30-degree perspective camera separates foreground and distant islands. Zoom moves the camera toward its focus rather than magnifying the lens. Panning uses the actual projected width at the focus plane. Ink contours linearize perspective depth before finding edges. The sky uses a translation-free view so dolly motion and panning do not change cloud size.
-- Detail selection measures actual perspective depth for each spatial chunk and projected coverage for each tree. Far-away plants no longer receive close-up geometry simply because the camera focuses on a nearby object. Existing populations, physical geometry, detail thresholds, and near-detail budgets remain intact; fine/coarse shrub representations share bounds at transitions. Shadow caches refresh when caster visibility changes.
+## Current production pass: water, approach, and open sky
 
-All five styles still share one geometry composition. Islands remain 10× wide with 100× the land area, small buildings and trees, slow exact-loop motion, responsive controls, and public source. The separate illustrated scene and profile GIF are unchanged.
+- Two substantial peninsulas and unequal bays replace the weakly perturbed oval lake. One radial boundary drives excavation, water mesh, depth and plant habitats. Shore stones find the new banks using a bounded search and remain above the water.
+- The castle's smaller buildable bench blends into unequal ridge shoulders and an approach saddle. The anchor and small keep footprint remain fixed; the vast island scale is unchanged.
+- Three uneven waterfall lobes share a continuous river lip, then curl, narrow and separate. Local edge attributes feather each stream. Unequal spray veils occupy the lower fall rather than collecting into one opaque ball. A small exposed bank beside the lip uses rock instead of grass, with identical underlying geometry.
+- Opaque depth-colored lake/river surfaces remove pale submerged masonry showing through under the bridge. The lake retains a quiet sky reflection; the river has restrained directional flow. Their material inputs match through the shared mouth so overlapping triangles do not form a visible patch. Water depth remains stylized color, without scene-object reflections.
+- Hipped roofs, dormers, overhanging eaves, rafters, diagonal caps and a roofed cloister improve construction. Ground-following flagstones connect the gate, court, wings and keep steps. Foundations adapt to the final hill; the keep remains tallest and its height is unchanged.
+- A new locally stored painted sky has fewer, larger cloud banks and more open blue space. Angular longitude mapping avoids a false projection pole at steep camera elevations; a broader latitude range prevents stretched edge rows. Near/far landscape separation is stronger through aerial perspective. The sky stays fixed in apparent size when zooming or panning.
+- Rock material emphasizes broad mineral families and real fracture orientation, reducing repeated horizontal bed contrast while retaining the fine weathering and painted texture.
+
+All five styles still share real 3D geometry and preserve the 10× width, tiny architecture and trees, physical-size fine detail, slow exact loop, responsive controls, and published source. The separate illustrated scene and profile GIF are unchanged. The [new sky and full generation prompt](sky-environment.md) are published with the source.
 
 ## Visual critique and next priorities
 
-**The AAA objective remains open.** The perspective camera, fractured cliff, inhabited architecture, and layered water make the scene more spatially coherent. The worn lookout trail and leafy planting remove obvious repeated garden blobs. The result still does not match the reference's finished painterly environment.
+**The AAA objective remains open.** Lake silhouette, connected construction, cleaner water and calmer sky are concrete improvements, but the scene still falls short of the requested finished painterly environment.
 
-1. The castle remains very small in the overview, as required by the expanded scale. Its silhouette and approach need a stronger focal hierarchy through landform, lighting, and connected architecture, without simply enlarging every building.
-2. The cliff's broad breaks are stronger, but some faces and shelves still read as procedural slabs. The meadow silhouette and hill transitions need more deliberate geological structure.
-3. The lake is still a broad oval-looking surface and the waterfall retains a sheet-like outline in close views. More natural bank shapes, breakup at the lip, and integrated spray would improve the connected water system.
-4. Architecture is more coherent, but roof/plaster surfaces and large wall fragments remain visually simple beside the painted land. Material variation should follow construction and exposure rather than adding uniform noise.
-5. The cloud painting competes with the land in rear views. The five directions are distinguishable, but their combined lighting, shapes, and surface marks still need a more unified illustration finish.
+1. The main cliff still reads as two large procedural slabs with a few shelves. Its broad topology and the foreground ledge's elongated silhouette need a more deliberate geological design before more tiny rock noise is useful.
+2. The tiny castle is now better built in close-up, but its overview silhouette and approach remain weak focal cues. Improve terrain/lighting hierarchy without enlarging all the buildings or abandoning the requested vast scale.
+3. The split waterfall reads as long parallel ribbons in the overview. More convincing lip acceleration, spray and turbulence should preserve water continuity and exact-loop motion.
+4. Plant crowns remain too uniform and rounded at middle distances, and some meadow detail still reads as even scatter. Cluster scale, gaps, silhouette variety and ground-color grouping need another art-direction pass.
+5. The five palettes/shading treatments are distinguishable but do not yet produce five fully resolved illustrations. Clouds and terrain need more unified value/edge treatment; the new sky removes clutter but is still a painted dome rather than volumetric weather.
 
-Continue from fresh renders rather than counting added objects as progress. Rendering correctness and performance do not establish visual completion.
+Continue from fresh renders. Object counts, performance results and passing shader checks do not establish visual completion.
 
 ## Verification for this pass
 
-- Final geometry was checked at scales 1 and 10: exact meadow/cliff rim error is zero; no nonfinite attributes, degenerate triangles, or unexpected nonmanifold boundaries. Meadow, lake, river, and the shared fine `fractalRock` function are unchanged by the cliff revision.
-- Six hundred actual waterfall-sheet samples per scale found no rock intersections; minimum clearance at scale 10 is 0.86 world units. The 184,960-triangle cliff count is unchanged.
-- The revised keep and precinct total 139,724 triangles (+2.7%) across 19 material batches (previously 20). Precinct radius 7.917 stays inside the reserved footprint, with grounded foundations and the keep still tallest.
-- All 2,425 lookout path vertices lie on the actual ground mesh within 0.000004 units of their intended offset. Plant and traveler transforms are finite and grounded.
-- Direct browser checks prove identical sky pixels at zoom 1 and 16 and after panning. A 100px by 50px pointer pan moves a marker on the focus plane by exactly those screen distances.
-- All five styles and the four view presets passed JavaScript/WebGL and exact loop-endpoint checks. Side/rear close views were also inspected. Presets, orbit, pan, zoom, reset, style persistence, reduced motion, and phone layout passed with the perspective camera.
+- Geometry checks at scales 1 and 10 found no invalid attributes or degenerate triangles. Castle anchor remains exactly `(-31, 27.8, -17)` at scale 10; its central 1.3-unit footprint stays flat.
+- The river and waterfall meet within 0.0000011 world units. At scale 10, 1,440 actual waterfall samples had no rock intersections; minimum clearance was 2.845 units. The lip-bank material split preserves every position, normal and oriented triangle (1,209 rock-bank triangles at scale 10; 24 at scale 1).
+- The keep and precinct have 148,074 triangles (+8,350, or 5.98%) across the same 19 material batches. Maximum precinct radius is 7.964, inside its 9.85-unit reservation. The keep height, tree geometry and pavilion geometry are unchanged. The connected court and approach have 194 solid flagstones, with sampled grounding checks.
+- All five water styles pass shared depth/flow/edge contract checks. Surface water writes depth; the falling streams and mist retain transparency. Material changes add no draw calls; the exposed bank adds one material batch.
+- All five styles, four view presets and quarter-orbit views pass JavaScript/WebGL and exact loop-endpoint checks. Castle/lake views also pass at 1920 × 1200. Orbit, pan, zoom, reset, style persistence, reduced motion and phone layout were exercised.
+- Sky-only pixels remain identical across zoom 1→16 and panning; a 100px by 50px pointer movement maps exactly to the focus plane. Both elevation limits were inspected to find and correct the sky starburst and stretched-edge defects.
 
-- A CPU comparison found identical initial populations across the detail-selection correction (276,277 instanced placements in its test scene), finite bounds, and deterministic selections after revisiting views. Lake grove geometry fell from 1.952M to 0.658M triangles; nearby castle botany remains exactly 644,052 triangles.
-
-Hardware Chrome on an Apple M2 Pro loaded the frozen scene in about 3.8 seconds. Synchronized 12-frame samples used GPU readback after each frame, including any detail-triggered shadow refreshes. These measurements are device-specific, not an FPS guarantee.
+Hardware Chrome on an Apple M2 Pro loaded the frozen scene in about 3.7–3.8 seconds. Twelve synchronized moving frames per view used GPU readback and included detail-triggered shadow refreshes. Device-specific results are not an FPS guarantee.
 
 | View | 960 × 600 median | 1920 × 1200 median |
 | --- | ---: | ---: |
-| Islands | 14.4ms | 18.7ms |
-| Castle | 10.3ms | 12.0ms |
-| Lake | 15.6ms | 23.1ms |
-| Lookout | 12.0ms | 16.2ms |
+| Islands | 14.9ms | 18.5ms |
+| Castle | 10.2ms | 12.4ms |
+| Lake | 15.0ms | 21.3ms |
+| Lookout | 11.8ms | 16.5ms |
 
-The perspective correction reduced the measured lake frame from 11.34M to 5.05M submitted triangles including shadow work; the Retina median improved from 27.4ms to 23.1ms. The slowest final sample was 52.8ms in the Retina lake view. Intermittent stalls and the demanding lake view remain performance targets. No additional texture asset or sky render pass was introduced by the water reflection.
+The slowest sampled frame was 49.2ms in the Retina lake view. Intermittent stalls and high-detail shadow work remain performance targets. The new sky is one local 1.6MB texture, replacing the selected 2.1MB v1 texture; there is still one sky draw call and no additional reflection render pass.
