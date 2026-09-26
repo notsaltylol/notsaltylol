@@ -4,7 +4,7 @@
 - [DenverCoder1](https://github.com/DenverCoder1/DenverCoder1): activity, stats, and content cards. Useful if you want a richer profile later.
 - [Awesome GitHub Profile README](https://github.com/abhisheknaiidu/awesome-github-profile-readme): a large gallery for exploring other directions.
 
-The current design uses an original local SVG banner, a dark ink/mint palette, three project links, and two matching stats cards. Name and LinkedIn come from the public GitHub profile; project links and languages come from public repositories.
+The current design uses a full-width floating-castle landscape animation, three project links, and two matching dark ink/mint stats cards. Name and LinkedIn come from the public GitHub profile; project links and languages come from public repositories.
 
 ## Stats
 
@@ -16,17 +16,10 @@ Edit URL parameters in README.md to customize the cards, or use the [card wizard
 
 ## Profile setup
 
-The repository already has the special name notsaltylol/notsaltylol. Its default-branch README appears on the profile. Keep the banner at assets/header.svg when publishing.
+The repository already has the special name notsaltylol/notsaltylol. Its default-branch README appears on the profile. The castle GIF is the full-width profile hero.
 
-## Three.js animation
+## Three.js animations
 
-`assets/castle-in-the-sky.gif` is a six-second seamless loop rendered from a real Three.js scene at 800 × 500, 15 fps. GitHub displays the GIF; it does not execute JavaScript. The scene has three depth layers: a floating rocky garden, a sandstone castle with an oxidized dome, and golden cumulus clouds. A closed camera path produces gentle parallax. The palette follows the supplied reference, interpreted as faceted 3D geometry. The source is `assets/animation.html`, with deterministic frame capture in `scripts/render-animation.cjs`.
+The castle is a 24-second, 960 × 600 loop at 12 fps. Its fantasy default uses deep earthy cliffs, green gardens, a hilltop castle, and a painted blue sky; five alternate styles remain available in the live viewer. Three illustrated depth layers move in slow parallax, with animated water and a small cliff inscription. Illustration quality takes priority over a full 360° orbit.
 
-To regenerate, install Playwright and Chrome, and have ffmpeg available. Download `three.module.js` and `three.core.js` from `https://cdn.jsdelivr.net/npm/three@0.180.0/build/` into a temporary directory alongside a copy of `assets/animation.html`. Serve that directory locally, then run:
-
-```sh
-node scripts/render-animation.cjs http://127.0.0.1:8767/animation.html /tmp/profile-animation/frames
-ffmpeg -y -framerate 15 -i /tmp/profile-animation/frames/%03d.png -filter_complex '[0:v]split[a][b];[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=bayer:bayer_scale=3' -loop 0 assets/castle-in-the-sky.gif
-```
-
-If Playwright is installed outside this repository, set `NODE_PATH` to its parent `node_modules` directory. The third-party runtime and intermediate PNG frames are not committed.
+All six castle styles, the original orbital scene, the frame renderer, and the pinned Three.js runtime are published. See [the complete running and rendering guide](threejs.md). GitHub displays the rendered GIF; open the source through a local web server to see live WebGL playback.

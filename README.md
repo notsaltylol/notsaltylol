@@ -1,5 +1,10 @@
 <p align="center">
-  <img src="./assets/header.svg" width="100%" alt="Leon Kwan — notsaltylol. A little curiosity. A lot of commits." />
+  <img src="./assets/castle-in-the-sky.gif" width="100%" alt="A painted floating castle above green meadows, with a lake, cascading waterfalls, two travelers, and NOTSALTYLOL inscribed on the cliffs; a slow, seamless parallax loop" />
+</p>
+
+<p align="center">
+  <a href="https://notsaltylol.github.io/notsaltylol/"><b>Explore the island in six styles ↗</b></a><br />
+  <sub><a href="https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=original">1 · Golden ruins</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=pastel">2 · Pastel</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=pixel">3 · Pixel</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=fantasy">4 · Fantasy</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=ink">5 · Clear line</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=cozy">6 · Cozy</a></sub>
 </p>
 
 <p align="center">
@@ -12,9 +17,7 @@
 
 Welcome to my corner of GitHub. A little Python, a little Swift, some C++, and plenty of JavaScript in between.
 
-<p align="center">
-  <img src="./assets/castle-in-the-sky.gif" width="800" alt="A three-layer floating castle diorama: weathered golden stone, an oxidized dome, rocky gardens, and sunlit clouds in a muted blue sky" />
-</p>
+<p align="center"><sub><a href="./assets/castle-illustration.js">Castle source</a> · <a href="./assets/orbital.html">Orbital source</a> · <a href="./docs/threejs.md">Run and render the Three.js scenes</a></sub></p>
 
 ### A few things to explore
 
