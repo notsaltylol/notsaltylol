@@ -67,6 +67,7 @@ window.setStyle=(id,{persist=true}={})=>{
  satellite.material.uniforms.map.value=distant.material.uniforms.map.value=illustrated?cozySatellite:satelliteTexture;
  document.querySelectorAll('[data-style]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.style===id)));
  document.getElementById('description').textContent=STYLES[id].description;
+ document.getElementById('three-d-link').href='./animation-3d.html?style='+id;
  if(persist&&!capture){const url=new URL(location.href);url.searchParams.set('style',id);history.replaceState(null,'',url);try{localStorage.setItem('castle-style',id);}catch{}}
  window.castleState.style=id;
 };

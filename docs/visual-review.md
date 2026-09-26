@@ -27,3 +27,13 @@ Functional checks cover theme changes, URL persistence, pause, reduced-motion be
 ## Remaining artistic limits
 
 The motion is deliberately subtle parallax; it cannot reveal new views of the painted castle. The first and fifth themes share the inked island but differ in color treatment. The pixel version filters an illustration rather than replacing it with hand-drawn pixel sprites. GIF's limited palette loses some of the original paintings' color detail; the live viewer retains it.
+
+## Real 3D follow-up
+
+The scene now also has a separate real 3D interpretation in all six styles. Its geometry includes a continuous terrain height field, an excavated lake, a river and waterfall, architectural arcades, foliage, and a foreground ledge. Four orbit angles were reviewed through three iterations.
+
+The first integrated render still looked like a smooth brown bowl, with noisy upright grass and an oversized narrow castle. Revisions introduced broad unequal cliff buttresses, a smaller and more spread-out castle, fewer shorter grass tufts, stronger normal-based form shading, colored shadows, and a foreground viewing ledge. The waterfall channel was carved back after a new cliff rib interrupted the stream. Cliff lettering was moved onto a coherent facet after individual letters disappeared into folds.
+
+All six styles pass exact loop-endpoint image comparisons. Interaction checks cover pointer and keyboard orbiting, zoom, reset, style changes while paused, URL persistence, reduced motion, mobile width, and mode links that preserve the selected style. No browser or shader errors were reported.
+
+The illustrated scene is still the closer match to the painted reference. The 3D version offers genuine camera freedom and model-based shading, with an intentionally stylized model appearance and procedural cloud fields. Neither geometry tests nor shader compilation should be described as proof that the two artistic results are identical.

@@ -3,8 +3,8 @@
 </p>
 
 <p align="center">
-  <a href="https://notsaltylol.github.io/notsaltylol/"><b>Explore the island in six styles ↗</b></a><br />
-  <sub><a href="https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=original">1 · Golden ruins</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=pastel">2 · Pastel</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=pixel">3 · Pixel</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=fantasy">4 · Fantasy</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=ink">5 · Clear line</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=cozy">6 · Cozy</a></sub>
+  <a href="https://notsaltylol.github.io/notsaltylol/"><b>Explore the 3D island in six styles ↗</b></a><br />
+  <sub><a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=original">1 · Golden ruins</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=pastel">2 · Pastel</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=pixel">3 · Pixel</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=fantasy">4 · Fantasy</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=ink">5 · Clear line</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=cozy">6 · Cozy</a></sub>
 </p>
 
 <p align="center">
@@ -17,7 +17,7 @@
 
 Welcome to my corner of GitHub. A little Python, a little Swift, some C++, and plenty of JavaScript in between.
 
-<p align="center"><sub><a href="./assets/castle-illustration.js">Castle source</a> · <a href="./assets/orbital.html">Orbital source</a> · <a href="./docs/threejs.md">Run and render the Three.js scenes</a></sub></p>
+<p align="center"><sub><a href="./docs/threejs-3d.md">3D source and shaders</a> · <a href="./assets/castle-illustration.js">Illustration source</a> · <a href="./assets/orbital.html">Orbital source</a> · <a href="./docs/threejs.md">Run and render the Three.js scenes</a></sub></p>
 
 ### A few things to explore
 

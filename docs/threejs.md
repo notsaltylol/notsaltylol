@@ -1,10 +1,12 @@
 # Castle in the sky — six illustrated themes
 
+**Also available:** [Real 3D version in all six styles](threejs-3d.md), with terrain, architectural geometry, custom materials, and a full orbit.
+
 A painted landscape with a hilltop castle, broad floating island, central lake, waterfalls, small pavilion islands, and two travelers. The profile uses a 24-second parallax loop rendered in Three.js. The sky, island group, and foreground move at different speeds; a small shader animation adds movement to the water.
 
 This version prioritizes illustration quality. It is **2.5D**, made from transparent illustrated planes, rather than a full 360° model. The same layout and motion are shared by all six themes.
 
-[Open the live style picker](https://notsaltylol.github.io/notsaltylol/) · [Compare the six previews](style-gallery.md)
+[Open the illustrated style picker](https://notsaltylol.github.io/notsaltylol/assets/animation.html) · [Compare the six previews](style-gallery.md)
 
 | # | Style ID | Direction | How it changes |
 | --- | --- | --- | --- |
@@ -23,7 +25,7 @@ These are interpretations of the requested directions, not proprietary game shad
 - [Active Three.js scene, layer materials, water animation, color grading, and parallax](../assets/castle-illustration.js)
 - [Style labels and presets](../assets/castle-styles.js); the lighting fields remain available to the earlier 3D study
 - [Transparent illustration layers](../assets/illustration/) and [detailed painted sky](../assets/painted-sky.png)
-- [Earlier procedural 3D study](../assets/animation-3d.html) and its [geometry/shader source](../assets/castle-scene.js)
+- [Earlier procedural 3D study](../assets/study-3d.html) and its [geometry/shader source](../assets/castle-scene.js)
 - [Original orbital scene](../assets/orbital.html)
 - [Frame and GIF exporter](../scripts/render-animation.cjs)
 - [Vendored Three.js 0.180.0](../assets/vendor/three/), with its [MIT license](../assets/vendor/three/LICENSE)
@@ -71,7 +73,7 @@ for style in original pastel pixel fantasy ink cozy; do
 done
 ```
 
-The earlier `assets/animation-3d.html` and `assets/orbital.html` also work with the exporter. Omit `--style` for the orbital scene, which uses a six-second, 15 fps loop.
+The earlier `assets/study-3d.html` and `assets/orbital.html` also work with the exporter. Omit `--style` for the orbital scene, which uses a six-second, 15 fps loop.
 
 ## GitHub profile
 
