@@ -1,0 +1,13 @@
+---
+import { button } from "./variants";
+import type { HTMLAttributes } from "astro/types";
+import type { VariantProps } from "tailwind-variants";
+interface Props
+  extends Omit<HTMLAttributes<"button">, "size">, VariantProps<typeof button> {}
+const { variant, size, class: className, ...rest } = Astro.props;
+import Primitive from "@starwind-ui/astro/button";
+---
+
+<Primitive.Root class={button({ variant, size, class: className })} {...rest}>
+  <slot />
+</Primitive.Root>

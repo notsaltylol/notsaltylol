@@ -32,11 +32,21 @@
 :root[data-mode="dark"] .theme-glass {
   --ui-canvas: #111c30;
   --ui-canvas-art:
-    radial-gradient(ellipse at 10% 5%, #244763, transparent 50%),
-    radial-gradient(ellipse at 95% 40%, #40315c, transparent 55%);
-  --ui-surface: #24354d99;
-  --ui-surface-hover: #34465dbb;
-  --ui-line: #9bb2d080;
+    radial-gradient(
+      ellipse 320px 280px at 14% 76%,
+      #22516a 65%,
+      transparent 66%
+    ),
+    radial-gradient(
+      ellipse 380px 300px at 84% 60%,
+      #473668 65%,
+      transparent 66%
+    ),
+    radial-gradient(ellipse at 50% 0%, #25334b, transparent 65%);
+  --ui-surface: #ffffff0f;
+  --ui-surface-hover: #ffffff1a;
+  --ui-surface-edge: #ffffff26;
+  --ui-line: #c2d5ef33;
   --ui-line-hover: #c0d6f5;
   --ui-art-ink: #dfebff;
   --ui-art-line: #c0d6f540;

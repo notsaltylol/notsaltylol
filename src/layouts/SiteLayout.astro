@@ -1,30 +1,47 @@
 ---
 import "../styles/global.css";
+import { themes } from "../experience/themes";
 import NesStyles from "../themes/NesStyles.astro";
 import RetroStyles from "../themes/RetroStyles.astro";
 import PaperStyles from "../themes/PaperStyles.astro";
+import { ClientRouter } from "astro:transitions";
 import { Font } from "astro:assets";
 const { title } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
 <!doctype html>
-<html lang="en" data-mode="light">
+<html lang="en" data-mode="light" data-style="glass">
   <head>
     <meta charset="utf-8" />
-    <script is:inline>
-      // Apply the saved preference before the first paint and React hydration.
+    <ClientRouter />
+    <script define:vars={{ styleIds: themes.map(({ id }) => id) }}>
+      // CSS selects pre-rendered Astro markup before the first paint.
       (() => {
         let mode;
+        let previousStyle = "glass";
         try {
           mode = localStorage.getItem("portfolio-mode");
+          previousStyle = localStorage.getItem("portfolio-style") ?? "glass";
         } catch {
           /* Fall back to light mode. */
         }
-        document.documentElement.dataset.mode =
-          mode === "dark" ? "dark" : "light";
+        const choices = styleIds.filter((id) => id !== previousStyle);
+        const selected = choices[Math.floor(Math.random() * choices.length)];
+        const root = document.documentElement;
+        root.dataset.mode = mode === "dark" ? "dark" : "light";
+        root.dataset.style = selected;
+        try {
+          localStorage.setItem("portfolio-style", selected);
+        } catch {
+          /* The current visit still works without storage. */
+        }
       })();
     </script>
+    <style
+      is:global
+      set:html={`[data-presentation] { display: none; } ${themes.map(({ id }) => `html[data-style="${id}"] [data-presentation="${id}"] { display: block; }`).join("\n")}`}
+    />
     <Font cssVariable="--font-manrope" />
     <Font cssVariable="--font-cinzel" />
     <Font cssVariable="--font-source-serif" />

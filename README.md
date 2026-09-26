@@ -1,12 +1,12 @@
 # Portfolio theme playground
 
-Two routes (`/` and `/projects/`) share content and a React controller. The theme
+Two routes (`/` and `/projects/`) share content and a small browser controller. The theme
 selector changes the presentation without reloading the page.
 
 - **Glass, Gothic, and Minimal:** first-class custom Tailwind styles.
 - **daisyUI:** actual daisyUI cards, buttons, badges, and input styling.
 - **HyperUI:** adapted Tailwind markup from HyperUI's marketing card patterns.
-- **Starwind:** generated Starwind React Button, Card, Badge, and Input components.
+- **Starwind:** native Starwind Astro Button, Card, Badge, Input, and Switch components.
 - **PaperCSS:** native hand-drawn cards, badges, buttons, and inputs, scoped to its presentation.
 - **98.css:** native Windows 98 windows, title bars, status bars, buttons, and checkbox.
 - **NES.css:** native pixel-art containers, buttons, inputs, and checkbox.
@@ -19,7 +19,7 @@ Change it once to update every presentation.
 ```sh
 mise install
 mise exec -- pnpm install
-mise exec -- pnpm dev
+mise exec -- pnpm dev --background
 ```
 
 Use the style buttons in the header to choose among all nine presentations.
@@ -33,27 +33,30 @@ The Light / Dark switch is independent of the visual style and persists across
 reloads. Every presentation has both palettes. daisyUI uses its native toggle,
 Starwind uses its Switch primitive, and the custom presentations use native
 checkbox switches styled with semantic tokens.
-The saved mode is applied before hydration to avoid a light-mode flash.
+The saved mode and random style are applied in an inline head script before paint.
+All presentations are rendered by Astro, so the selected style is visible before
+the interaction script loads. Astro’s ClientRouter preserves state between pages.
 
 ## Where things live
 
-- `src/experience/Website.tsx`: shared routing, state, preferences, and dialog.
+- `src/experience/Website.astro`: shared shell and pre-rendered presentations.
+- `src/experience/controller.ts`: browser state, preferences, filtering, and dialogs.
 - `src/experience/types.ts`: presentation contract.
 - `src/themes/`: independent presentation components.
 - `src/styles/global.css`: shared component layout rules.
 - `src/styles/tokens.css`: semantic Tailwind API, theme palettes, and library mappings.
 - `src/styles/modes.css`: light/dark semantic palette overrides.
 - `src/styles/starwind.css`: scoped Starwind tokens.
-- `src/components/starwind-react/`: generated Starwind source.
+- `src/components/starwind/`: native Astro wrappers and Starwind variants.
 - `src/pages/`: static, directly addressable Astro pages.
 
 Add custom Tailwind styles by overriding `--ui-*` values under
 `.theme-NAME` in `src/styles/tokens.css` and provide its mode palette in
 `src/styles/modes.css`, then register its ID in `types.ts` and the `themes` list
-in `Website.tsx`. Components consume the `@theme inline` API:
+in `themes.ts`. Components consume the `@theme inline` API:
 
-```tsx
-<button className="rounded-panel border-frame border-line bg-surface text-content shadow-panel backdrop-blur-surface hover:bg-surface-hover">
+```astro
+<button class="rounded-panel border-frame border-line bg-surface text-content shadow-panel backdrop-blur-surface hover:bg-surface-hover">
   Shared content
 </button>
 ```
@@ -67,11 +70,11 @@ with a themed artwork override where needed. daisyUI and Starwind retain their
 native semantic component tokens; shared chrome uses the same `--ui-*` API.
 
 Add a full presentation by implementing `PresentationProps` and registering it
-in the controller.
+in `themes.ts` and `Website.astro`.
 
 For this small demo, all presentations ship together for immediate switching.
-The controller uses React; daisyUI, HyperUI, and custom Tailwind CSS do not
-inherently require React. Starwind also supports native Astro components.
+The site uses Astro components, native DOM events, and Starwind’s browser runtime;
+no React runtime or hydration is required.
 
 Component references: [HyperUI](https://hyperui.dev/components/marketing/cards/),
 [daisyUI](https://daisyui.com/), [Starwind](https://starwind.dev/).
@@ -97,7 +100,7 @@ Node.js and pnpm versions are pinned in `mise.toml`.
 ```sh
 mise install
 mise exec -- pnpm install
-mise exec -- pnpm dev
+mise exec -- pnpm dev --background
 ```
 
 This site uses the official `@astrojs/cloudflare` adapter on Cloudflare Workers.
@@ -140,7 +143,7 @@ See the [Astro Cloudflare deployment guide](https://docs.astro.build/en/guides/d
 ## Code quality
 
 `pnpm install` enables Husky through the `prepare` script. Each commit runs
-lint-staged: ESLint auto-fixes staged JavaScript, TypeScript, React, and Astro
+lint-staged: ESLint auto-fixes staged JavaScript, TypeScript, and Astro
 files, then Prettier formats them. Other supported text files are formatted too.
 Unfixable lint errors block the commit. The hook uses mise when available.
 

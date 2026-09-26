@@ -1,0 +1,108 @@
+---
+import { projects } from "../content/site";
+import { site } from "../content/site";
+import type { PresentationProps } from "../experience/types";
+import Artwork from "./Artwork.astro";
+
+const { page, theme } = Astro.props as PresentationProps;
+const home = page === "home";
+const p = { page, projects, query: "", category: "All" };
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+
+<div class="daisy-presentation">
+  {home ? (
+    <section class="daisy-hero">
+      <div>
+        <span class="badge badge-outline">An independent maker's notebook</span>
+        <h1>{site.headline}</h1>
+        <p>{site.intro}</p>
+        <button class="btn btn-primary" data-navigate={`${base}/projects/`}>
+          Explore my projects <span aria-hidden="true">↗</span>
+        </button>
+      </div>
+      <div class="featured-stack">
+        <div class="stack-back" />
+        <button
+          class="featured-card card bg-base-100"
+          data-open-project={p.projects[0].id}
+        >
+          <Artwork project={p.projects[0]} />
+          <div class="card-body">
+            <span class="badge badge-soft badge-secondary">
+              Latest exploration
+            </span>
+            <h2 class="card-title">{p.projects[0].name}</h2>
+            <p>{p.projects[0].description}</p>
+          </div>
+        </button>
+      </div>
+    </section>
+  ) : (
+    <header class="gallery-heading">
+      <span class="badge badge-soft badge-primary">The collection</span>
+      <h1>Project gallery</h1>
+      <p>
+        A few things made out of curiosity. Find something that catches yours.
+      </p>
+    </header>
+  )}
+  <section aria-label={home ? "Selected projects" : "All projects"}>
+    {home ? (
+      <div class="section-heading">
+        <h2>Selected projects</h2>
+        <button class="btn btn-ghost" data-navigate={`${base}/projects/`}>
+          View all six
+        </button>
+      </div>
+    ) : (
+      <div class="gallery-controls">
+        <label class="input-bordered search-field input">
+          <span aria-hidden="true">⌕</span>
+          <input
+            aria-label="Search projects"
+            placeholder="Search the collection"
+            value={p.query}
+            data-search
+          />
+        </label>
+        <div class="filter-group" aria-label="Filter projects">
+          {["All", "Product", "Tool", "Experiment"].map((c) => (
+            <button
+              class={`btn btn-sm ${p.category === c ? "btn-primary" : "btn-ghost"}`}
+              aria-pressed={p.category === c}
+              data-category={c}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
+    <div class="daisy-grid">
+      {(home ? p.projects.slice(1, 4) : p.projects).map((project) => (
+        <button
+          id={theme === "glass" ? project.id : `${theme}-${project.id}`}
+          data-project-card={project.id}
+          class="project-card card bg-base-100"
+          data-open-project={project.id}
+        >
+          <Artwork project={project} />
+          <div class="card-body">
+            <div class="card-meta">
+              <span class="badge badge-outline">{project.category}</span>
+              <span>{project.year}</span>
+            </div>
+            <h2 class="card-title">{project.name}</h2>
+            <p>{project.description}</p>
+          </div>
+        </button>
+      ))}
+    </div>
+    {!home && (
+      <p class="empty-state" data-empty hidden>
+        No projects match. Try another search or category.
+      </p>
+    )}
+  </section>
+</div>

@@ -2,6 +2,7 @@
 @theme inline {
   --color-canvas: var(--ui-canvas);
   --color-surface: var(--ui-surface);
+  --color-surface-edge: var(--ui-surface-edge);
   --color-surface-hover: var(--ui-surface-hover);
   --color-surface-solid: var(--ui-surface-solid);
   --color-content: var(--ui-content);
@@ -47,12 +48,14 @@
 @utility bg-project-art {
   background: var(--ui-art-background, var(--project-color));
 }
+@custom-variant glass (&:where(.theme-glass, .theme-glass *));
 @custom-variant gothic (&:where(.theme-gothic, .theme-gothic *));
 
 :root {
   --ui-canvas: #eff3fa;
   --ui-canvas-art: none;
   --ui-surface: #fff;
+  --ui-surface-edge: transparent;
   --ui-surface-solid: #fff;
   --ui-surface-hover: #f5f7fa;
   --ui-content: #24344c;
@@ -153,19 +156,29 @@
   --accent-foreground: var(--ui-content);
 }
 .theme-glass {
-  --ui-canvas: #e9f2f6;
+  --ui-canvas: #e5ecfa;
   --ui-canvas-art:
-    radial-gradient(ellipse at 10% 5%, #c1dff4, transparent 50%),
-    radial-gradient(ellipse at 95% 40%, #dccff7, transparent 55%);
-  --ui-surface: #ffffff80;
-  --ui-surface-hover: #ffffffa6;
-  --ui-line: #ffffffcc;
+    radial-gradient(
+      ellipse 320px 280px at 14% 76%,
+      #95cfe5 65%,
+      transparent 66%
+    ),
+    radial-gradient(
+      ellipse 380px 300px at 84% 60%,
+      #c4b3ed 65%,
+      transparent 66%
+    ),
+    radial-gradient(ellipse at 50% 0%, #f4f7ff, transparent 65%);
+  --ui-surface: #ffffff33;
+  --ui-surface-hover: #ffffff55;
+  --ui-surface-edge: #24344c14;
+  --ui-line: #ffffff70;
   --ui-line-hover: #fff;
   --ui-radius-panel: 1.5rem;
   --ui-radius-control: 1.5rem;
-  --ui-shadow-panel: inset 0 1px 0 #ffffffdd, 0 14px 45px #4d61951a;
+  --ui-shadow-panel: inset 0 1px 0 #ffffff99, 0 10px 30px #33476a1f;
   --ui-shadow-action: 0 6px 20px #4d619515;
-  --ui-blur: 18px;
+  --ui-blur: 24px;
   --ui-art-background: transparent;
 }
 .theme-gothic {

@@ -970,3 +970,25 @@ footer span:first-child {
     font-size: 10px;
   }
 }
+
+/* Glass surfaces blur the scenery behind them, never their own content. */
+.theme-glass .style-buttons {
+  @apply isolate bg-surface shadow-panel ring-1 ring-surface-edge backdrop-blur-surface;
+}
+.theme-glass .project-dialog {
+  @apply isolate bg-surface ring-1 ring-surface-edge backdrop-blur-surface;
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .theme-glass {
+    --ui-surface: var(--ui-surface-solid);
+  }
+}
+
+[hidden] {
+  display: none !important;
+}
+.theme-starwind [data-category][aria-pressed="true"],
+.theme-daisy [data-category][aria-pressed="true"] {
+  background: var(--ui-action);
+  color: var(--ui-on-action);
+}
