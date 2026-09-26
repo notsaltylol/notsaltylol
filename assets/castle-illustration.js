@@ -34,6 +34,7 @@ function layer(texture,width,height,z,flow=false){
     if(grade==1.){c.rgb=mix(vec3(lum),c.rgb,.66)*vec3(1.09,1.025,.83);}
     if(grade==4.){c.rgb=mix(vec3(lum),c.rgb,.72)*vec3(1.06,1.,.86);}
     if(grade==5.){c.rgb=mix(c.rgb,vec3(.68,.76,.60),.08);c.rgb=pow(max(c.rgb,0.),vec3(.9));}
+    if(grade==6.){float sun=smoothstep(.20,.82,lum);c.rgb=mix(vec3(lum),c.rgb,.90)*mix(vec3(.92,1.015,1.05),vec3(1.085,1.035,.89),sun);c.rgb=pow(max(c.rgb,0.),vec3(.96));}
     c.a*=alpha;gl_FragColor=c;
     #include <colorspace_fragment>
    }`
@@ -52,7 +53,7 @@ ctx.fillStyle='#4e4133';ctx.fillText('NOTSALTYLOL',514,82);ctx.fillStyle='#dcc3a
 const nameTexture=new THREE.CanvasTexture(inscription);nameTexture.colorSpace=THREE.SRGBColorSpace;
 const name=layer(nameTexture,2.75,.43,.1);name.material.uniforms.flow.value=0;name.material.uniforms.alpha.value=.58;
 const bases=new Map([[sky,[0,0]],[island,[-1.05,.7]],[satellite,[5.65,1.3]],[distant,[-7.65,2.15]],[foreground,[0,0]]]);
-const grades={original:1,fantasy:0,ink:4,cozy:5};
+const grades={original:1,fantasy:0,ink:4,cozy:5,ghibli:6};
 window.castleStyles=Object.keys(STYLES);window.castleState={style:DEFAULT_STYLE,layerCount:3};
 window.setStyle=(id,{persist=true}={})=>{
  if(!Object.hasOwn(STYLES,id))throw new Error('Unknown castle style: '+id);
@@ -68,6 +69,7 @@ window.setStyle=(id,{persist=true}={})=>{
  document.getElementById('three-d-link').href='./animation-3d.html?style='+id;
  if(persist&&!capture){const url=new URL(location.href);url.searchParams.set('style',id);history.replaceState(null,'',url);try{localStorage.setItem('castle-style',id);}catch{}}
  window.castleState.style=id;
+ if(window.renderFrame)window.renderFrame(window.castleState.phase||0);
 };
 const picker=document.getElementById('style-picker');
 for(const [id,preset] of Object.entries(STYLES)){
@@ -78,7 +80,7 @@ let preferred=params.get('style');if(!preferred&&!capture){try{preferred=localSt
 window.setStyle(Object.hasOwn(STYLES,preferred)?preferred:DEFAULT_STYLE,{persist:false});
 window.animationConfig={duration:24,fps:12};
 window.renderFrame=phase=>{
- const t=(phase-Math.floor(phase))*Math.PI*2;shared.time.value=t;
+ const cycle=phase-Math.floor(phase),t=cycle*Math.PI*2;shared.time.value=t;window.castleState.phase=cycle;
  for(const [mesh,[x,y]] of bases){
   const amount=mesh===foreground?.23:mesh===sky?.035:mesh===island?.12:.06;
   // Whole-pixel capture steps let GIF reuse unchanged regions. Live playback

@@ -1,3 +1,5 @@
+import { fractalRock } from './sky-castle-geology.js';
+
 /** Continuous rolling terrain, an excavated lake, and a connected river/fall. */
 export function buildTerrain(THREE, materials) {
   const group = new THREE.Group();
@@ -51,9 +53,8 @@ export function buildTerrain(THREE, materials) {
   // Large unequal buttresses form a single connected cliff, with smaller strata
   // sitting within the silhouette instead of a necklace of disconnected spikes.
   const cliffP = [], cliffU = [], cliffI = [];
-  const cliffRings = 36;
-  for (let j = 0; j <= cliffRings; j++) for (let i = 0; i <= segments; i++) {
-    const a = i / segments * Math.PI * 2, t = j / cliffRings;
+  const cliffSegments = segments * 2, cliffRings = 72;
+  function cliffBase(a, t) {
     const profile = [[0,1],[.08,1.005],[.23,.98],[.36,.94],[.56,.82],[.74,.61],[.90,.30],[1,.018]];
     let taper = 1;
     for (let k = 1; k < profile.length; k++) if (t >= profile[k-1][0] && t <= profile[k][0]) {
@@ -69,15 +70,53 @@ export function buildTerrain(THREE, materials) {
     const fracture = Math.sin(Math.PI * t) * (.27 * Math.sin(a * 17 + t * 5) + .13 * Math.cos(a * 29));
     const depth=5.55+.65*Math.sin(a*3-.6)+.25*Math.cos(a*7);
     const y = rimY * (1 - t) - depth * t + fracture;
-    cliffP.push(x, y, z); cliffU.push(i / segments, t);
+    return [x, y, z];
   }
-  for (let j = 0; j < cliffRings; j++) for (let i = 0; i < segments; i++) {
-    const a = j * (segments + 1) + i, b = a + segments + 1;
+  for (let j = 0; j <= cliffRings; j++) for (let i = 0; i <= cliffSegments; i++) {
+    const a = (i === cliffSegments ? 0 : i / cliffSegments) * Math.PI * 2, t = j / cliffRings;
+    let [x, y, z] = cliffBase(a, t);
+    if (j === 0 || j === cliffRings) {
+      // The denser mesh subdivides the exact old boundary segments. It does
+      // not move the meadow rim, its attachments, or the original bottom ring.
+      const edge = i / 2, left = Math.floor(edge) % segments, right = (left + 1) % segments, blend = edge % 1;
+      const p = cliffBase(left / segments * Math.PI * 2, t), q = cliffBase(right / segments * Math.PI * 2, t);
+      [x, y, z] = p.map((coordinate, axis) => coordinate + (q[axis] - coordinate) * blend);
+    } else {
+      const channelAngle = Math.abs(Math.atan2(Math.sin(a - fallAngle), Math.cos(a - fallAngle)));
+      const clearFall = smooth(.16, .32, channelAngle);
+      const rimAndTip = smooth(.025, .17, t) * (1 - smooth(.81, .985, t));
+      // Preserve a quiet face for the small raycast stone inscription. This
+      // mask is spatial, so nearby rock still receives geological variation.
+      const nameX = smooth(-5.35, -4.90, x) * (1 - smooth(-1.10, -.65, x));
+      const nameY = smooth(-2.35, -1.98, y) * (1 - smooth(-.42, -.08, y));
+      const nameFront = smooth(.70, .96, Math.sin(a));
+      const nameProtection = 1 - nameX * nameY * nameFront * .94;
+      const envelope = rimAndTip * clearFall * nameProtection;
+      const displacement = fractalRock(x, y, z) * .88 * envelope;
+      // Mostly outward displacement adds face crags. A smaller vertical
+      // component creates irregular shelves without distorting the whole mass.
+      x += Math.cos(a) * displacement;
+      z += Math.sin(a) * displacement * .76;
+      y += fractalRock(x * .67 + 17.3, y * .91 - 4.8, z * .67) * .105 * envelope;
+    }
+    cliffP.push(x, y, z); cliffU.push(i / cliffSegments, t);
+  }
+  for (let j = 0; j < cliffRings; j++) for (let i = 0; i < cliffSegments; i++) {
+    const a = j * (cliffSegments + 1) + i, b = a + cliffSegments + 1;
     cliffI.push(a, a + 1, b, a + 1, b + 1, b);
   }
   const tip=cliffP.length/3;cliffP.push(-.8,-6.48,.22);cliffU.push(.5,1);
-  for(let i=0;i<segments;i++){const a=cliffRings*(segments+1)+i;cliffI.push(a,a+1,tip);}
-  const cliff = add(geometry(cliffP, cliffU, cliffI), materials.rock);
+  for(let i=0;i<cliffSegments;i++){const a=cliffRings*(cliffSegments+1)+i;cliffI.push(a,a+1,tip);}
+  const cliffGeometry = geometry(cliffP, cliffU, cliffI);
+  // The UV seam duplicates vertices. Average their normals explicitly so
+  // rotating around the complete island cannot reveal a lighting seam.
+  const normal = cliffGeometry.attributes.normal;
+  for (let j = 0; j <= cliffRings; j++) {
+    const first = j * (cliffSegments + 1), last = first + cliffSegments;
+    const n = new THREE.Vector3(normal.getX(first) + normal.getX(last), normal.getY(first) + normal.getY(last), normal.getZ(first) + normal.getZ(last)).normalize();
+    normal.setXYZ(first, n.x, n.y, n.z); normal.setXYZ(last, n.x, n.y, n.z);
+  }
+  const cliff = add(cliffGeometry, materials.rock);
   cliff.name = 'continuous-eroded-cliff';
   // A narrow uneven turf skirt integrates meadow and rock at the rim.
   const skirtP = [], skirtU = [], skirtI = [];

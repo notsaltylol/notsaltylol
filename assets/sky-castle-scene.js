@@ -4,6 +4,7 @@ import { buildTerrain } from './sky-castle-terrain.js';
 import { buildCastle, buildTree, buildPavilion } from './sky-castle-models.js';
 import { buildLandscapeDetails } from './sky-castle-details.js';
 import { buildBotany } from './sky-castle-botany.js';
+import { fractalRock } from './sky-castle-geology.js';
 import { buildForegroundDetails } from './sky-castle-foreground.js';
 import { STYLES, DEFAULT_STYLE } from './castle-styles.js';
 
@@ -48,17 +49,22 @@ for(let i=0;i<trees.length;i++) {
 }
 const pavilion=buildPavilion(THREE,m);pavilion.scale.setScalar(.64);pavilion.position.set(4.1,terrain.height(4.1,-2.6),-2.6);scene.add(pavilion);
 
-// Separate distant islands have simple geological bodies and real colonnades.
+// Smaller formations use the same geology at a lighter amplitude. Their rims
+// stay fixed beneath the meadow caps; erosion appears below the planted surface.
 function satellite(x,y,z,scale) {
   const group=new THREE.Group(); group.position.set(x,y,z);group.scale.setScalar(scale);
-  const p=[],ix=[],uv=[],n=64,rr=12;
+  const p=[],ix=[],uv=[],n=80,rr=26;
   for(let j=0;j<=rr;j++)for(let i=0;i<=n;i++){
-    const a=i/n*Math.PI*2,t=j/rr,r=(1.4+.11*Math.sin(a*5))*Math.pow(1-t,.63);
-    p.push(Math.cos(a)*r,-2.1*t+.07*Math.sin(a*3)*Math.sin(Math.PI*t),Math.sin(a)*r*.82);uv.push(i/n,t);
+    const a=i/n*Math.PI*2,t=j/rr,base=(1.4+.11*Math.sin(a*5))*Math.pow(1-t,.63);
+    const erosion=fractalRock(Math.cos(a)*base*1.8+x,-t*3.8,Math.sin(a)*base*1.8+z);
+    const mask=Math.sin(t*Math.PI),r=base+erosion*.22*mask;
+    p.push(Math.cos(a)*r,-2.1*t+.07*Math.sin(a*3)*mask+erosion*.08*mask,Math.sin(a)*r*.82);uv.push(i/n,t);
     if(j<rr&&i<n){const q=j*(n+1)+i;ix.push(q,q+1,q+n+1,q+1,q+n+2,q+n+1);}
   }
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(p,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geo.setIndex(ix);geo.computeVertexNormals();
-  const rock=new THREE.Mesh(geo,m.rock);rock.castShadow=rock.receiveShadow=true;group.add(rock);
+  const normals=geo.attributes.normal;
+  for(let j=0;j<=rr;j++){const first=j*(n+1),last=first+n;const normal=new THREE.Vector3().fromBufferAttribute(normals,first).add(new THREE.Vector3().fromBufferAttribute(normals,last)).normalize();normals.setXYZ(first,normal.x,normal.y,normal.z);normals.setXYZ(last,normal.x,normal.y,normal.z);}
+  const rock=new THREE.Mesh(geo,m.rock);rock.name='satellite-fractal-rock';rock.castShadow=rock.receiveShadow=true;group.add(rock);
   const grass=new THREE.Mesh(new THREE.SphereGeometry(1.4,32,16,0,Math.PI*2,0,Math.PI/2),m.grass);grass.scale.set(1,.15,.82);group.add(grass);
   const temple=buildPavilion(THREE,m);temple.scale.setScalar(.64);temple.position.y=.17;group.add(temple);
   const tree=buildTree(THREE,m,{height:.85,kind:'cypress',seed:43});tree.position.set(-.7,.1,-.25);group.add(tree);
@@ -84,9 +90,30 @@ traveler(-.85,2.8,1);traveler(-.56,2.87,.72);
 // It remains in world space, so orbiting reveals its relationship to the island.
 const ledge=new THREE.Group();ledge.position.set(-8,-3.7,10.5);
 for(const [upper,material,vertical] of [[true,m.leaf,.65],[false,m.rock,2.1]]){
- const geo=new THREE.SphereGeometry(1,56,28,0,Math.PI*2,upper?0:Math.PI/2,Math.PI/2);
- const p=geo.attributes.position;for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i);const warp=1+.05*Math.sin(Math.atan2(z,x)*5)+.025*Math.cos(x*9+z*4);p.setXYZ(i,x*9.5*warp,y*vertical,z*2.5*warp);}geo.computeVertexNormals();
- const mesh=new THREE.Mesh(geo,material);mesh.castShadow=mesh.receiveShadow=true;ledge.add(mesh);
+ const geo=new THREE.SphereGeometry(1,upper?56:112,upper?28:48,0,Math.PI*2,upper?0:Math.PI/2,Math.PI/2);
+ const p=geo.attributes.position;
+ for(let i=0;i<p.count;i++){
+  const x=p.getX(i),y=p.getY(i),z=p.getZ(i),warp=1+.05*Math.sin(Math.atan2(z,x)*5)+.025*Math.cos(x*9+z*4);
+  const px=x*9.5*warp,pz=z*2.5*warp;
+  const erosion=upper?0:fractalRock(px*.7,y*vertical*.9,pz*.8+12)*Math.sin(Math.min(1,Math.abs(y))*Math.PI);
+  p.setXYZ(i,px+erosion*x*.24,y*vertical+erosion*.12,pz+erosion*z*.24);
+ }
+ if(!upper){
+  // Subdivide the exact existing meadow boundary. Resampling its curved outline
+  // at a higher resolution would otherwise leave a hairline gap between meshes.
+  const rim=ledge.children[0].geometry.attributes.position,offset=rim.count-57;
+  for(let i=0;i<=112;i++){
+   const edge=i/2,left=Math.floor(edge),right=Math.min(56,left+1),blend=edge-left;
+   p.setXYZ(i,THREE.MathUtils.lerp(rim.getX(offset+left),rim.getX(offset+right),blend),THREE.MathUtils.lerp(rim.getY(offset+left),rim.getY(offset+right),blend),THREE.MathUtils.lerp(rim.getZ(offset+left),rim.getZ(offset+right),blend));
+  }
+ }
+ geo.computeVertexNormals();
+ const normals=geo.attributes.normal,columns=upper?56:112,rows=upper?28:48;
+ for(let row=0;row<=rows;row++){
+  const first=row*(columns+1),last=first+columns,n=new THREE.Vector3().fromBufferAttribute(normals,first).add(new THREE.Vector3().fromBufferAttribute(normals,last)).normalize();
+  normals.setXYZ(first,n.x,n.y,n.z);normals.setXYZ(last,n.x,n.y,n.z);
+ }
+ const mesh=new THREE.Mesh(geo,material);mesh.name=upper?'lookout-meadow':'lookout-fractal-rock';mesh.castShadow=mesh.receiveShadow=true;ledge.add(mesh);
 }scene.add(ledge);
 const foreground = buildForegroundDetails(THREE,m,ledge); scene.add(foreground.group);
 for(const [i,x,z,height] of [[0,-11.0,10.7,1.25],[1,-10.2,11.1,.9],[2,-9.6,10.5,1.4],[3,-8.7,11.3,1.05]]){const tree=buildTree(THREE,m,{height,kind:'broadleaf',seed:79+i});tree.position.set(x,foreground.groundHeight(x,z)-.025,z);scene.add(tree);}
@@ -152,14 +179,14 @@ const postMaterial=new THREE.ShaderMaterial({depthTest:false,depthWrite:false,un
  }`});
 const postScene=new THREE.Scene(),postCamera=new THREE.Camera();postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),postMaterial));
 
-const descriptions={original:'Golden stone, olive gardens, matte pigment and warm sunlight.',fantasy:'Lush green terrain, soft toon shading, colored shadows and luminous water.',ink:'Cream and olive surfaces, crisp light bands and fine depth outlines.',cozy:'Gentle pastel colors, nearly flat illumination and soft contour lines.'};
+const descriptions={original:'Golden stone, olive gardens, matte pigment and warm sunlight.',fantasy:'Lush green terrain, soft toon shading, colored shadows and luminous water.',ink:'Cream and olive surfaces, crisp light bands and fine depth outlines.',cozy:'Gentle pastel colors, nearly flat illumination and soft contour lines.',ghibli:'Warm painted sunlight, natural greens, soft cool shadows and cream clouds.'};
 window.castleStyles=Object.keys(STYLES);window.castleState={style:DEFAULT_STYLE,mode:'3d',geometry:true};
 window.setStyle=(id,{persist=true}={})=>{
  if(!Object.hasOwn(STYLES,id))throw new Error('Unknown castle style: '+id);
  const preset=palette.setStyle(id);scene.fog.color.setHex(preset.fog);ambient.intensity=preset.ambient;sunlight.intensity=preset.sunlight;
  skyUniforms.high.value.setHex(preset.sky);skyUniforms.low.value.setHex(preset.fog);skyUniforms.cloud.value.setHex(preset.cloud);
  if(id==='fantasy'){skyUniforms.high.value.setHex(0x2589d7);skyUniforms.low.value.setHex(0x8cd2e9);}
- postUniforms.ink.value=preset.outlineOpacity;postUniforms.inkColor.value.setHex(preset.outline);postUniforms.paper.value=id==='ink'?.035:id==='cozy'?.012:0;
+ postUniforms.ink.value=preset.outlineOpacity;postUniforms.inkColor.value.setHex(preset.outline);postUniforms.paper.value=id==='ink'?.035:id==='cozy'?.012:id==='ghibli'?.012:0;
  document.querySelectorAll('[data-style]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.style===id)));
  document.getElementById('description').textContent=descriptions[id];document.getElementById('illustration-link').href='./animation.html?style='+id;
  if(persist&&!capture){const url=new URL(location.href);url.searchParams.set('style',id);history.replaceState(null,'',url);try{localStorage.setItem('castle-3d-style',id);}catch{}}

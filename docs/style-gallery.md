@@ -1,6 +1,6 @@
-# Four views of the same island
+# Five views of the same island
 
-Each illustrated image uses the same camera phase and composition. Click a preview to open its interactive theme. The separate [3D gallery](style-gallery-3d.md) shows the same four art directions applied to shared detailed geometry, camera controls, and interactions.
+Each illustrated image uses the same camera phase and composition. Click a preview to open its interactive theme. The separate [3D gallery](style-gallery-3d.md) shows the same five art directions applied to shared detailed geometry, camera controls, and interactions.
 
 ## 1. Golden ruins
 
@@ -17,3 +17,9 @@ Each illustrated image uses the same camera phase and composition. Click a previ
 ## 4. Cozy storybook
 
 [![Cozy storybook](../assets/style-previews/cozy.png)](https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=cozy)
+
+## 5. Ghibli-inspired
+
+The existing painted layers receive a warm, natural color grade with cream clouds and soft shadows. No new artwork is introduced for this theme.
+
+[![Ghibli-inspired](../assets/style-previews/ghibli.png)](https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=ghibli)

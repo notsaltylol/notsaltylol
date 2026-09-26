@@ -1,5 +1,5 @@
 /**
- * Four art directions for a real, freely orbitable Three.js scene.
+ * Five art directions for a real, freely orbitable Three.js scene.
  *
  * Opaque surfaces retain Three.js' normal, light and shadow calculations. The
  * shader then compresses the diffuse illumination into art-directed bands and
@@ -39,6 +39,15 @@ const PALETTES = {
     sky:0x8cb7c4, fog:0xc0cdbf, outline:0x374d49,
     ambient:1.35, sunlight:2.45, contrast:0.65, bands:3, softness:0.012,
     pigment:0.18, grain:0.025, outlineOpacity:0.85, outlineWidth:0.020,
+  },
+  ghibli: {
+    grass:0x82ab62, rock:0x998570, stone:0xe6d8b4, stoneLight:0xffedca,
+    roof:0x527f84, gold:0xd8ae67, dark:0x425b51, wood:0x9c774f,
+    leaf:0x54845b, trunk:0x7f6c50, flower:0xdfa991, cloud:0xfff4d9,
+    water:0x63afb7, foam:0xe4f3db, shadow:0x76949c,
+    sky:0x82bcd1, fog:0xc1ddd9, outline:0x668273,
+    ambient:1.5, sunlight:2.3, contrast:0.70, bands:0, softness:0.35,
+    pigment:0.82, grain:0.045, outlineOpacity:0.06, outlineWidth:0.004,
   },
   cozy: {
     grass:0x9dbf7e, rock:0xa5af90, stone:0xe8d9b3, stoneLight:0xfaeacb,
@@ -88,20 +97,57 @@ const PIGMENT_GLSL = /* glsl */`
     float boundary = smoothstep(0.5 - uPaintSoftness, 0.5 + uPaintSoftness, fract(s));
     return (low + boundary) / steps;
   }
-  // Broken beds, mineral grains, and shallow chips at three spatial scales.
-  // Derivative filtering suppresses subpixel grains while the camera orbits.
-  vec4 rockTexture(vec3 p) {
-    float warp = paintNoise(p * vec3(1.5, 0.7, 1.5));
-    float bed = sin(p.y * 10.0 + warp * 2.8 + p.x * 0.25);
-    float broken = smoothstep(0.26, 0.69, paintNoise(p * vec3(3.7, 1.0, 3.7)));
-    float seam = (1.0 - smoothstep(0.015, 0.14, abs(bed))) * broken;
-    float flakes = paintNoise(p * vec3(4.0, 8.0, 4.0));
+  // Four octave pigment fields, filtered before their frequencies become
+  // subpixel. Rotation between octaves prevents an obvious Cartesian grid.
+  float rockFbm(vec3 p, float footprint) {
+    const mat3 rotateOctave = mat3(0.00, 0.80, 0.60,
+                                -0.80, 0.36, -0.48,
+                                -0.60, -0.48, 0.64);
+    float value = 0.0;
+    float amplitude = 0.5333333;
+    float frequency = 1.0;
+    for (int octave = 0; octave < 4; octave++) {
+      float visible = 1.0 - smoothstep(0.18, 0.48, footprint * frequency);
+      value += (paintNoise(p) - 0.5) * amplitude * visible;
+      p = rotateOctave * p * 2.03 + vec3(11.3, 7.1, 3.7);
+      frequency *= 2.03;
+      amplitude *= 0.5;
+    }
+    return 0.5 + value;
+  }
+  vec3 rockDomainWarp(vec3 p) {
+    vec3 drift = vec3(paintNoise(p * 0.38 + vec3(3.7, 9.1, 1.2)),
+                      paintNoise(p * 0.34 + vec3(8.4, 1.3, 6.8)),
+                      paintNoise(p * 0.41 + vec3(1.6, 4.9, 12.7)));
+    return p + (drift - 0.5) * 0.70;
+  }
+  float rockRelief(vec3 p) {
+    // Broad flakes only. Cracks, pores and the highest fractal octaves must
+    // never perturb normals: that would turn toon shadows into dotted noise.
     float footprint = max(length(dFdx(p)), length(dFdy(p)));
+    float broad = paintNoise(p * vec3(1.3, 2.1, 1.3)) * 0.70
+                + paintNoise(p * vec3(2.6, 3.1, 2.6) + vec3(11.7)) * 0.30;
+    float visible = 1.0 - smoothstep(0.05, 0.20, footprint);
+    return (broad - 0.5) * 0.0038 * visible;
+  }
+  // Broken, gently warped beds stay subordinate to the actual fractal crags.
+  // Fine pores retain their existing close-up-only filter and remain color-only.
+  vec4 rockTexture(vec3 p) {
+    float footprint = max(length(dFdx(p)), length(dFdy(p)));
+    vec3 q = rockDomainWarp(p);
+    float bedWarp = rockFbm(q * vec3(0.62, 0.27, 0.62), footprint * 0.86);
+    float bedPhase = q.y * 9.1 + bedWarp * 4.3 + q.x * 0.17;
+    float bed = sin(bedPhase);
+    float bedWidth = fwidth(bedPhase);
+    float broken = smoothstep(0.41, 0.66, rockFbm(q * vec3(2.7, 0.85, 2.7), footprint * 3.8));
+    float seam = (1.0 - smoothstep(0.018, 0.13 + bedWidth, abs(bed))) * broken;
+    seam *= 1.0 - smoothstep(0.30, 1.0, bedWidth);
+    float flakes = rockFbm(q * vec3(3.2, 5.8, 3.2), footprint * 8.1);
     float fine = 1.0 - smoothstep(0.008, 0.035, footprint);
     float pores = smoothstep(0.59, 0.83, paintNoise(p * 46.0)) * fine;
-    float relief = (flakes - 0.5) * 0.005 * mix(0.22, 1.0, fine);
-    return vec4(seam, flakes, pores, relief);
+    return vec4(seam, flakes, pores, rockRelief(p));
   }
+
 `;
 
 /** Return live materials and their small style/animation controller. */
@@ -137,22 +183,21 @@ export function createMaterials(THREE) {
           float brushPigment = paintNoise(pigmentPosition * vec3(4.7, 1.8, 4.7));
           float pigment = (broadPigment - 0.5) * 0.34 + (brushPigment - 0.5) * uPaintGrain;
           if (uPaintSurface > 0.5 && uPaintSurface < 1.5) {
-            // Long mineral blocks and broken strata give the cliff a geological
-            // scale. Detail lives in object space and does not swim as we orbit.
-            float crag = paintNoise(pigmentPosition * vec3(1.2, 0.28, 1.2));
-            float ridge = abs(crag * 2.0 - 1.0);
-            float fracture = (1.0 - smoothstep(0.018, 0.070, ridge)) * smoothstep(0.55, 0.78, brushPigment);
-            float strata = sin(pigmentPosition.y * 2.8 + broadPigment * 3.0 + crag);
-            pigment += (crag - 0.5) * 0.35 - fracture * 0.055;
-            pigment -= smoothstep(0.91, 0.995, strata) * 0.022;
+            // The geometry supplies the silhouette. Nested pigment fields add
+            // mineral families and lichen colonies without increasing contrast.
+            float footprint = max(length(dFdx(pigmentPosition)), length(dFdy(pigmentPosition)));
+            vec3 geology = rockDomainWarp(pigmentPosition);
+            float crag = rockFbm(geology * vec3(1.04, 0.33, 1.04), footprint * 1.46);
+            float ridged = 1.0 - abs(rockFbm(geology * 0.68 + vec3(4.6, 17.2, 8.1), footprint * 0.95) * 2.0 - 1.0);
+            pigment += (crag - 0.5) * 0.35 + (ridged - 0.78) * 0.045;
             vec3 mineralColor = mix(vec3(0.89, 0.95, 1.02), vec3(1.10, 1.03, 0.88), smoothstep(0.26, 0.74, crag));
             diffuseColor.rgb *= mix(vec3(1.0), mineralColor, uPaintPigment);
             vec4 textureDetail = rockTexture(pigmentPosition);
-            // Short broken seams stay subordinate to the broad cliff buttresses.
             pigment += (textureDetail.y - 0.5) * 0.10 - textureDetail.x * 0.085 - textureDetail.z * 0.075;
             float mineralFleck = smoothstep(0.64, 0.86, textureDetail.y);
             diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.10, 1.08, 1.01), mineralFleck * uPaintPigment);
-            float moss = smoothstep(-0.6, 1.6, pigmentPosition.y) * smoothstep(0.46, 0.66, broadPigment);
+            float colony = rockFbm(geology * vec3(2.6, 1.8, 2.6) + vec3(8.4, 1.7, 3.9), footprint * 3.64);
+            float moss = smoothstep(-0.6, 1.6, pigmentPosition.y) * smoothstep(0.49, 0.67, crag * 0.55 + colony * 0.45);
             moss *= mix(0.70, 1.0, textureDetail.y);
             diffuseColor.rgb = mix(diffuseColor.rgb, uPaintMoss, moss * 0.28 * uPaintPigment);
           }
@@ -178,7 +223,7 @@ export function createMaterials(THREE) {
         .replace('#include <normal_fragment_maps>', /* glsl */`
           #include <normal_fragment_maps>
           if (uPaintSurface > 0.5 && uPaintSurface < 1.5) {
-            float relief = rockTexture(vPaintPosition).w * uPaintPigment;
+            float relief = rockRelief(vPaintPosition) * uPaintPigment;
             vec3 dx = dFdx(-vViewPosition), dy = dFdy(-vViewPosition);
             vec3 r1 = cross(dy, normal), r2 = cross(normal, dx);
             float determinant = dot(dx, r1);
@@ -215,7 +260,7 @@ export function createMaterials(THREE) {
           if (uPaintSurface > 2.5 && uPaintSurface < 3.5) outgoingLight = mix(diffuseColor.rgb, outgoingLight, 0.40);
         `);
     };
-    material.customProgramCacheKey = () => `sky-castle-painted-v3-${surface}`;
+    material.customProgramCacheKey = () => `sky-castle-painted-v4-${surface}`;
     materials[key] = material;
   }
 

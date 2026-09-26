@@ -57,3 +57,15 @@ The first rock bump render was too grainy at profile size. Its relief was reduce
 The first grass pass looked wiry at close range. Tall blades were shortened and widened, and short clumps were moved to the lighter grass material. Plant counts stayed constant. Default and zoomed views are reviewed separately: fine leaves and veins should reward zooming without turning the profile-size scene into a field of dark scratches.
 
 All four styles passed the final default/1.8×-zoom render checks, exact phase-0/phase-1 image comparisons, and quarter-orbit motion checks, with no browser or WebGL errors. The added botanical module uses six draw calls and 27,232 triangles; individual tree leaves remain batched by material. Four orbit views were inspected after the grass revision.
+
+## Fractal formations and fifth style
+
+The main cliff now uses coherent 3D gradient noise, domain warping, fBm, and ridged noise for real secondary crags and broken shelves. Sampling increased to 320 segments and 72 rings. The meadow rim and bottom boundary retain their original positions, the waterfall corridor has zero displacement, and a quieter front face preserves the inscription. Seam positions and normals match exactly. Existing surrounding terrain and planted objects remain fixed.
+
+Smaller islands and the foreground rock use lighter versions of the same fractal field. Increasing foreground rock resolution initially exposed a hairline gap at its meadow join; the final mesh subdivides that exact existing boundary instead of independently resampling it. Surface shading uses restrained filtered fractal pigment and lichen, with shallow broad relief. Texture strength was kept below the point where it overwhelmed the new geometry.
+
+Ghibli-inspired is now the fifth preset in both viewers. Its 3D treatment uses natural greens, warm cream stone and clouds, cool slate-teal roofs, and smooth painted light. The illustrated version reuses the detailed painted layers with a warmer, softer color grade. It is an inspired interpretation, not an official studio shader or new set of illustrated assets.
+
+Four orbit angles and close-up views were inspected: the waterfall remains connected, the inscription stays readable, and the new rock silhouettes remain coherent. All five materials rendered without WebGL errors. Theme selection, persisted URLs, paused redraw, both viewer links, reduced motion, and mobile layout passed checks; illustrated theme changes now redraw immediately when motion is paused.
+
+Final five-style loop checks also passed: phase 0 and 1 produce identical images, while quarter-orbit frames differ.
