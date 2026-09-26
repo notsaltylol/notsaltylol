@@ -1,40 +1,88 @@
 <!doctype html>
 <html lang="en">
 <meta charset="utf-8">
-<title>notsaltylol · orbital loop</title>
-<style>html,body{margin:0;background:#101820}canvas{display:block}</style>
+<title>notsaltylol · castle in the sky</title>
+<style>html,body{margin:0;background:#3d6072}canvas{display:block}</style>
 <script type="module">
 import * as THREE from './three.module.js';
-const scene = new THREE.Scene();
-scene.background = new THREE.Color('#101820');
-const camera = new THREE.PerspectiveCamera(36, 800 / 280, .1, 100);
-camera.position.set(0, 0, 8);
-const renderer = new THREE.WebGLRenderer({antialias:true, preserveDrawingBuffer:true});
-renderer.setSize(800, 280);
-renderer.setPixelRatio(1);
+const W=800,H=500;
+const scene=new THREE.Scene();
+scene.background=new THREE.Color('#3d6072');
+scene.fog=new THREE.Fog('#81958e',26,65);
+const camera=new THREE.PerspectiveCamera(34,W/H,.1,100);
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+renderer.setSize(W,H); renderer.setPixelRatio(1);
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.15;
 document.body.appendChild(renderer.domElement);
-const group = new THREE.Group();
-scene.add(group);
-const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(.83,.23,120,12), new THREE.MeshBasicMaterial({color:0x7de2c3,wireframe:true,transparent:true,opacity:.65}));
-group.add(knot);
-for (let i=0;i<3;i++) {
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(1.65+i*.14,.009,6,128),new THREE.MeshBasicMaterial({color:i===1?0x7de2c3:0x426779}));
-  ring.rotation.set(.5+i*.6,i*.7,.3);
-  group.add(ring);
+let seed=27;
+const rand=()=>{seed=seed*16807%2147483647;return seed/2147483647;};
+const mat=(color)=>new THREE.MeshStandardMaterial({color,roughness:1,flatShading:true});
+const stone=[0xb7a36c,0xc6b77e,0x9e956b,0xd4c28a,0xaaa176].map(mat);
+const rock=[0x797f65,0x989578,0xb4a87c,0x666f5d].map(mat);
+const moss=mat(0x737d46),dark=mat(0x303f3b),gold=mat(0xcbb16b);
+// Fine procedural stone grain, shared by every masonry block.
+const texCanvas=document.createElement('canvas');texCanvas.width=texCanvas.height=128;
+const ctx=texCanvas.getContext('2d');
+ctx.fillStyle='#ddd4b7';ctx.fillRect(0,0,128,128);
+for(let i=0;i<7000;i++){const v=120+Math.floor(rand()*110);ctx.fillStyle=`rgba(${v},${v},${v},.24)`;ctx.fillRect(rand()*128,rand()*128,1+rand()*2,1);}
+const texture=new THREE.CanvasTexture(texCanvas);texture.colorSpace=THREE.SRGBColorSpace;
+stone.forEach(m=>m.map=texture);
+scene.add(new THREE.HemisphereLight(0xd6e6df,0x555136,2));
+const sun=new THREE.DirectionalLight(0xffe5a3,3.4);sun.position.set(-9,15,8);sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-10,right:10,top:12,bottom:-10});sun.shadow.bias=-.0005;scene.add(sun);
+const island=new THREE.Group(),castle=new THREE.Group(),clouds=new THREE.Group();
+scene.add(clouds,island,castle);
+function mesh(geo,material,parent,x,y,z){const m=new THREE.Mesh(geo,material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
+function box(parent,x,y,z,w,h,d,material=stone[Math.floor(rand()*stone.length)]){return mesh(new THREE.BoxGeometry(w,h,d),material,parent,x,y,z);}
+function boulder(parent,x,y,z,s,material){const m=mesh(new THREE.IcosahedronGeometry(s,1),material,parent,x,y,z);m.scale.set(1+rand()*.5,.65+rand(),.7+rand()*.5);m.rotation.set(rand(),rand()*3,rand());return m;}
+// Layer 1: a suspended, tapered island with a broken cliff and foreground path.
+mesh(new THREE.CylinderGeometry(4.5,.7,3.5,11,3),rock[0],island,0,-1.9,0);
+mesh(new THREE.CylinderGeometry(4.6,4.35,.35,11),moss,island,0,-.12,0);
+for(let i=0;i<85;i++){const a=rand()*Math.PI*2,r=3.4+rand()*.85;boulder(island,Math.cos(a)*r,-.3-rand()*2.5,Math.sin(a)*r,.35+rand()*.65,rock[Math.floor(rand()*4)]);}
+for(let i=0;i<14;i++){const a=rand()*6.28,r=rand()*3;boulder(island,Math.cos(a)*r,-3-rand()*1.8,Math.sin(a)*r,.3+rand()*.5,rock[0]);}
+for(let i=0;i<15;i++){const z=3.6-i*.23,x=.65+Math.sin(i*.23)*.35;box(island,x,.1+i*.014,z,1.15,.12,.27,stone[2]);}
+for(let i=0;i<35;i++){const a=rand()*6.28,r=2.3+rand()*2;boulder(island,Math.cos(a)*r,.1,Math.sin(a)*r,.15+rand()*.35,rock[2]);}
+// Layer 2: hand-laid blocks, real open arch, ruined parapets and an oxidized dome.
+function tower(cx,cz,w,h){
+ for(let row=0;row<Math.floor(h/.34);row++){
+  const y=.28+row*.34;
+  for(let side=0;side<4;side++)for(let col=0;col<5;col++){
+   const t=-w/2+(col+.5)*w/5;
+   if(side===0 && Math.abs(t)<.48 && y<2.05)continue;
+   if(side===0 && col===2 && y>2.65 && y<3.65)continue;
+   const block=side%2===0?box(castle,cx+t,y,cz+(side===0?w/2:-w/2),w/5-.018,.318,.3):box(castle,cx+(side===1?w/2:-w/2),y,cz+t,.3,.318,w/5-.018);
+   block.rotation.y=(rand()-.5)*.018;
+  }
+ }
+ box(castle,cx,h+.12,cz,w+.38,.22,w+.38);
+ for(let i=0;i<5;i++)for(const s of [-1,1]){if(rand()>.12)box(castle,cx-w/2+i*w/4,h+.43,cz+s*w/2,.3,.42,.32);}
 }
-// Fixed seed keeps the starfield identical across renders.
-let seed=17;
-const random=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
-const positions=[];
-for(let i=0;i<100;i++)positions.push((random()-.5)*17,(random()-.5)*6,-2-random()*3);
-const geometry=new THREE.BufferGeometry();
-geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
-scene.add(new THREE.Points(geometry,new THREE.PointsMaterial({color:0x608e93,size:.018})));
-window.renderFrame = phase => {
-  group.rotation.y=phase*Math.PI*2;
-  knot.rotation.z=.2*Math.sin(phase*Math.PI*2);
-  renderer.render(scene,camera);
-};
+tower(.6,0,2.35,4.45);
+// Voussoirs trace the entry arch rather than painting it on a solid wall.
+for(let i=0;i<11;i++){const a=i*Math.PI/10;const m=box(castle,.6+Math.cos(a)*.61,1.5+Math.sin(a)*.61,1.21,.25,.34,.4,stone[3]);m.rotation.z=a-Math.PI/2;}
+box(castle,.6,.11,1.17,1.4,.16,.65);
+box(castle,.6,1,-.9,1.1,1.9,.1,dark);
+const domeMat=new THREE.MeshStandardMaterial({color:0x587c76,roughness:.6,metalness:.3});
+mesh(new THREE.CylinderGeometry(.97,1.05,.24,24),gold,castle,.6,4.9,0);
+mesh(new THREE.SphereGeometry(.98,24,16,0,Math.PI*2,0,Math.PI/2),domeMat,castle,.6,5.02,0);
+for(let i=0;i<8;i++){const curve=[];for(let j=0;j<=24;j++){const a=j/24*Math.PI/2;curve.push(new THREE.Vector3(.6+Math.sin(a)*.99*Math.cos(i*Math.PI/4),5.02+Math.cos(a)*.99,Math.sin(a)*.99*Math.sin(i*Math.PI/4)));}mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(curve),24,.014,4,false),gold,castle,0,0,0);}
+mesh(new THREE.ConeGeometry(.1,.55,8),gold,castle,.6,6.2,0);
+// Lower ruined hall and a small watchtower establish the castle silhouette.
+for(let row=0;row<6;row++)for(let col=0;col<7;col++){if(row>3&&col<2)continue;box(castle,-2.8+col*.42,.28+row*.33,.6,.4,.31,.45);}
+for(let i=0;i<6;i++)box(castle,-2.75+i*.45,2.32,.6,.24,.45,.45);
+mesh(new THREE.CylinderGeometry(.52,.64,2.9,12),stone[1],castle,-2.35,1.35,-.55);
+mesh(new THREE.ConeGeometry(.75,1.35,12),moss,castle,-2.35,3.45,-.55);
+for(let i=0;i<22;i++){const x=-.65+rand()*.28,y=rand()*4;boulder(castle,x,y,1.38,.09+rand()*.08,moss);}
+function tree(x,z,h){mesh(new THREE.CylinderGeometry(.045,.08,h*.7,5),dark,island,x,h*.25,z);for(let i=0;i<3;i++)mesh(new THREE.ConeGeometry(h*(.22-i*.035),h*.55,7),moss,island,x,h*(.4+i*.22),z);}
+[[-3,1.8,1.6],[3,-1.2,1.9],[-3.3,-1.4,1.5],[2.8,1.8,1.2]].forEach(v=>tree(...v));
+// Layer 3: clustered sunlit cumulus, well behind the architecture.
+const cloudMats=[0xf2dc95,0xe9d394,0xffe9a4,0xd4c18b].map(mat);
+function cloudCluster(cx,cy,cz,s){for(let i=0;i<18;i++){const m=mesh(new THREE.IcosahedronGeometry((.55+rand()*.75)*s,2),cloudMats[Math.floor(rand()*4)],clouds,cx+(rand()-.5)*s*3,cy+(rand()-.5)*s*2,cz+(rand()-.5)*s);m.castShadow=false;}}
+cloudCluster(-5,3.5,-6,2.1);cloudCluster(-4,6,-7,1.7);cloudCluster(5,2,-6,2);cloudCluster(6,4.3,-8,1.5);cloudCluster(0,-4,-5,2.2);
+// One closed camera path gives parallax without exposing the diorama's back.
+window.renderFrame=phase=>{const t=phase*Math.PI*2;camera.position.set(11.7+Math.sin(t)*1.1,8.1+Math.cos(t)*.28,20.5+Math.cos(t)*.5);camera.lookAt(0,.7,0);clouds.position.x=Math.sin(t)*.15;renderer.render(scene,camera);};
 window.renderFrame(0);
 </script>
 </html>

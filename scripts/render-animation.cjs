@@ -10,7 +10,7 @@ const path = require('node:path');
   fs.mkdirSync(output, {recursive:true});
   const browser = await chromium.launch({channel:'chrome',headless:true,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});
   try {
-    const page = await browser.newPage({viewport:{width:800,height:280},deviceScaleFactor:1});
+    const page = await browser.newPage({viewport:{width:800,height:500},deviceScaleFactor:1});
     await page.goto(url);
     await page.waitForFunction(() => typeof window.renderFrame === 'function');
     for (let frame=0;frame<90;frame++) {
