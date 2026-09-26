@@ -17,3 +17,16 @@ Edit URL parameters in README.md to customize the cards, or use the [card wizard
 ## Profile setup
 
 The repository already has the special name notsaltylol/notsaltylol. Its default-branch README appears on the profile. Keep the banner at assets/header.svg when publishing.
+
+## Three.js animation
+
+`assets/orbital-loop.gif` is a six-second seamless loop rendered from a real Three.js scene at 800 × 280, 15 fps. GitHub displays the GIF; it does not execute JavaScript. The source is `assets/animation.html`, with deterministic frame capture in `scripts/render-animation.cjs`.
+
+To regenerate, install Playwright and Chrome, and have ffmpeg available. Download `three.module.js` and `three.core.js` from `https://cdn.jsdelivr.net/npm/three@0.180.0/build/` into a temporary directory alongside a copy of `assets/animation.html`. Serve that directory locally, then run:
+
+```sh
+node scripts/render-animation.cjs http://127.0.0.1:8767/animation.html /tmp/profile-animation/frames
+ffmpeg -y -framerate 15 -i /tmp/profile-animation/frames/%03d.png -filter_complex '[0:v]split[a][b];[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=bayer:bayer_scale=3' -loop 0 assets/orbital-loop.gif
+```
+
+If Playwright is installed outside this repository, set `NODE_PATH` to its parent `node_modules` directory. The third-party runtime and intermediate PNG frames are not committed.

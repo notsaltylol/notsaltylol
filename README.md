@@ -12,6 +12,10 @@
 
 Welcome to my corner of GitHub. A little Python, a little Swift, some C++, and plenty of JavaScript in between.
 
+<p align="center">
+  <img src="./assets/orbital-loop.gif" width="800" alt="A mint wireframe knot rotating through three orbital rings against a dark starfield, rendered with Three.js" />
+</p>
+
 ### A few things to explore
 
 | Project | In the repo |
