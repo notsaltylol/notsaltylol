@@ -42,6 +42,8 @@ The scene uses Three.js with custom material shading, real directional shadows, 
 
 All five styles share the detailed castle masonry, staggered roof tiles, arched wooden doors, balcony railings, terrace paving, and sparse climbing ivy. The same shared landscape includes a real arched bridge, shoreline stones, gardens, trailing ivy, and a foreground viewing ledge with a path, flowers, and shrubs. These are geometry additions, so improvements carry through every style.
 
+A small hilltop precinct surrounds the keep with coursed enclosure walls, an arched gate, watchtowers, pavilions, clipped paving, broken terraces, and planted corners. Its buildings remain small relative to the expanded island. Vegetation placement reserves this footprint so trees and meadow plants do not grow through its masonry. Travelers have boots, arms, staffs, hair, and folded capes with slight looping movement.
+
 Trees have finer branching and individual folded leaves: broadleaf crowns use overlapping leaf sprigs, while cypress trees use upward sprays. Their shared `leafDetail` material adds subtle midribs, branching veins, and tip color variation using each leaf's UV coordinates. The foreground also includes ferns, fallen leaves, and leaves on the shrubs. Fine details are easiest to see when zoomed in.
 
 Instanced meadow plants add **23,000 grass tufts containing 109,000 blades, 1,200 ferns, 6,000 clovers, and 111 reeds**. These plants share geometry and live style materials. Grass and reeds sway in slow wind while their roots stay fixed; the wind uses the same normalized loop phase as the scene and returns exactly to its starting pose.
@@ -52,17 +54,22 @@ The [shared geology helper](../assets/sky-castle-geology.js) deforms the rock ge
 
 Unequal geological faces, interrupted shelves, drifting faults, and hanging wedges establish the main cliff silhouette. Procedural rock shading adds broken strata, mineral color flecks, and fine pits. Screen-space derivatives filter the smallest marks as they recede, limiting distant visual noise. Broad, shallow bump shading supplies surface relief; the thin cracks affect color only, keeping them from turning into sharp ridges.
 
+Locally stored [painted meadow and rock textures](painted-materials.md) add brushwork to these surfaces. Slope-aware world projections keep marks at physical scale and avoid stretching down steep banks; palette grading preserves the five styles. The secondary islands use unequal shoulders, interrupted shelves, clefts, and hanging buttresses. Buildings and trees sample their actual triangulated ground. The lookout also has an uneven outline and rolling knolls, with plants grounded against its mesh.
+
 The lake follows an irregular shoreline with coves and a shallow bank. Water meshes carry actual depth values for the material's shore-to-deep color transition. The connected river and waterfall keep the same continuous flow.
 
 The sky uses a locally stored painted panorama on a surrounding dome, with style-specific color grading and subtle looping drift. Its structured cloud painting replaces the old soft noise field. The land and architecture remain real 3D; the sky is an environment backdrop, not a volumetric weather simulation. [Sky asset and generation prompt](sky-environment.md).
 
-The interactive canvas renders at up to twice its CSS resolution on high-density screens. Frame exports remain 960 × 600. Higher-resolution shadows refocus around close-up views with an adjusted bias, and the initial loading message stays visible until the sky and first frame are ready.
+The interactive canvas renders at up to twice its CSS resolution on high-density screens. Frame exports remain 960 × 600. Higher-resolution shadows refocus around close-up views with an adjusted bias, and the initial loading message stays visible until the sky, surface textures, and first frame are ready.
 
 The source is split into shared modules:
 
 - [Scene and interaction](../assets/sky-castle-scene.js): camera, lighting, sky, controls, style switching, and screen effects.
 - [Atmosphere](../assets/sky-castle-atmosphere.js): painted sky mapping, color grading, and periodic drift, plus an optional procedural cloud construction mode.
 - [Terrain](../assets/sky-castle-terrain.js): island geometry, terrain height, lake, waterfall, paths, and small vegetation.
+- [Secondary islands](../assets/sky-castle-satellites.js): asymmetric landforms, fractured cliffs, and mesh-accurate ground sampling.
+- [Castle precinct](../assets/sky-castle-acropolis.js): grounded walls, gate, towers, pavilions, paving, and planting.
+- [Travelers](../assets/sky-castle-travelers.js): small human silhouettes, folded cloth, and periodic cape movement.
 - [Groves](../assets/sky-castle-groves.js): clustered woodland, shared tree variants, spatial culling, and budgeted close-up leaves.
 - [Geology](../assets/sky-castle-geology.js): shared fractal rock deformation, from large crags and secondary ridges to finer weathering.
 - [Materials](../assets/sky-castle-materials.js): five palettes, surface/water shaders, rock detail, and UV-based leaf veins.

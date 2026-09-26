@@ -26,35 +26,48 @@ Objective: achieve AAA quality in the five requested styles. This is a visual pr
 
 The 10× expansion and physical detail distribution work, and browser interaction/loop checks pass. The image does not meet the objective yet. Main visible defects are the block-shaped five-lobed cliff mass, flat cloud field, uniform bright stone/flower scattering, repetitive water highlights, blotchy turf, and low-detail smooth crowns remaining visible in close views. The render still reads as a procedural scale model rather than a finished illustrated environment.
 
-## Current production pass
+## Published baseline at 0fb90ab
 
-- Rebuild cliff macro forms and coherent scatter habitats.
-- Compare procedural cloud banks with a painted panorama and choose the stronger visual result. The painted panorama is selected; the islands remain fully three-dimensional.
-- Improve meadow, foliage, rock, and water shading as distinct surfaces.
-- Improve close-view woodland detail and mix species across habitat boundaries.
-- Align cloud and scene lighting, retain the loading state until the first frame, and render appropriately for high-density displays.
+The painted panorama replaced the procedural cloud field, and the main cliff gained unequal faces and hanging masses. Scatter follows habitats, close tree crowns retain folded leaves, and short water marks replace continuous contours. Local bank refinement increased the meadow from 71,680 to 227,681 triangles and reduced sampled bank interpolation error by about 91%. Responsive rendering retains high-density desktop sharpness without allocating a desktop-sized buffer on phones.
 
-Changes in this pass must be assessed from fresh renders against the reference. Technical checks remain necessary, but cannot establish AAA visual quality by themselves.
+That pass was published and verified on both the source repository's Pages site and the canonical root site. It established technical progress, not completion of the visual objective.
 
-## Review of this pass
+## Current production pass: painted land and inhabited scale
 
-The painted panorama provides more cloud structure than the tested procedural cloud banks. The cliff has clearer unequal faces and hanging masses, scatter is clustered into habitats, close tree crowns retain folded leaves, and short water marks replace the old continuous contours. Local tessellation smooths the lake and outlet banks while preserving the existing shoreline and cliff boundary. Responsive rendering retains high-density desktop sharpness without allocating a desktop-sized canvas on phones.
+- Two locally stored color textures add painted meadow brushwork and mineral variation to rock. Slope-aware world mapping avoids stretched banks; distance filtering and overlapping projections limit noise and visible image joins. Both assets and their exact generation prompts are published in [painted-materials.md](painted-materials.md).
+- Lower sunlight and clearer air reveal the ochre cliff faces. The five styles keep their own palette and surface treatment.
+- A small castle precinct adds a gate, coursed walls, two watchtowers, pavilions, clipped courtyard paving, interrupted terraces, and restrained planting. The original keep remains its tallest building. Scatter generators reserve the footprint so vegetation does not grow through the new masonry.
+- Secondary islands have unequal shoulders, clefts, interrupted shelves, and three uneven hanging buttresses. Their meadow and rock share the exact rim, and tree/building placement uses triangle-accurate ground heights.
+- The lookout has a less regular outline and rolling knolls. Its surface sampler grounds the vegetation against the actual mesh.
+- Travelers now have boots, articulated arms, staffs, hair, and folded capes. Small cape motion loops exactly; static shadow proxies preserve the cached shadow-map strategy.
 
-The 10× width, 100× area, small buildings, physical-size vegetation, five styles, and orbit remain intact. The meadow increased from 71,680 to 227,681 triangles through local bank refinement; the cliff and other geometry did not change in that refinement. Sampled bank interpolation error fell by about 91%, with finite attributes and a continuous outer rim.
+The 10× width, 100× area, small buildings and trees, physical-size surface detail, five styles, and orbit remain intact. Architecture, landforms, travelers, and materials share the same composition across all five modes.
 
-**The overall AAA objective remains open.** The meadow still reads as clean procedural color rather than richly painted ground. The castle's focal presence is weak in the overview at the user's requested scale, although its close-up masonry and arches are readable. The main island, satellite silhouettes, and foreground ledge need more deliberate art direction to match the reference's sense of a vast inhabited landscape. Subsequent work should address these visible issues before adding more incidental detail.
+## Visual critique and next priorities
 
-## Verification
+**The overall AAA objective remains open.** Actual overview, close-view, and quarter-orbit screenshots show better ground brushwork, clearer rock planes, and more readable inhabitation. They still read as a procedural miniature environment, below the painterly reference's finish.
+
+1. The main island's rear cliff remains a broad, relatively uniform tapered mass. Its silhouette needs more deliberate structural breaks and larger geological variation; finer texture alone will not resolve it.
+2. The castle precinct is readable but too clean and formal: pale enclosure walls and regular paving dominate the tiny keep. Improve the architecture's massing, material wear, and landscape integration while retaining the requested small scale.
+3. The water remains an even colored sheet at overview scale, and the long waterfall has too little structure. Shoreline shape, reflected light, broken flow, and spray should be developed together.
+4. The close lookout reveals dense rounded shrub patches and repetitive stepping stones. Habitat transitions and grounded planting need a more intentional arrangement.
+5. The five directions remain distinguishable, especially Ink and Cozy, but distinct palette/shading alone does not establish a finished illustration style. The panorama also competes with the land at some orbit angles.
+
+Address these visible issues before adding unrelated tiny props. Passing rendering tests is necessary but does not prove visual completion.
+
+## Verification for this pass
 
 - All five styles and the four camera presets rendered without JavaScript or WebGL errors. Phase 0 and phase 1 produced identical PNGs after intervening orbit movement.
-- Preset selection, orbit, keyboard/drag panning, zoom, reset, style persistence, reduced motion, and a 390px-wide layout passed browser checks. Resizing also updates the render buffer.
-- Hardware Chrome on an Apple M2 Pro loaded the scene in about 3.6 seconds. Synchronized samples used a GPU readback after each frame; they are measurements on this device, not an FPS guarantee.
+- Preset selection, orbit, keyboard/drag panning, zoom, reset, style persistence, reduced motion, and a 390px-wide layout passed browser checks. Resizing updates the render buffer.
+- Independent code review found no actionable correctness or scale regressions in the changed modules.
+- Secondary island checks covered finite attributes, deterministic seeds, matched top/cliff rims, watertight welded boundaries, and triangle-accurate ground queries. Traveler geometry and loop endpoint positions/normals were also checked.
+- Hardware Chrome on an Apple M2 Pro loaded the scene in about 3.8 seconds. Synchronized samples used a GPU readback after each frame; these are measurements on this device, not an FPS guarantee.
 
 | View | 960 × 600 median | 1920 × 1200 median |
 | --- | ---: | ---: |
-| Islands | 11.1ms | 15.2ms |
-| Castle | 15.6ms | 19.4ms |
-| Lake | 9.5ms | 13.8ms |
-| Lookout | 9.9ms | 14.4ms |
+| Islands | 14.8ms | 17.8ms |
+| Castle | 10.1ms | 12.6ms |
+| Lake | 13.6ms | 19.0ms |
+| Lookout | 10.6ms | 13.8ms |
 
-The largest measured frame was 53.8ms in the Retina castle view. Intermittent stalls remain a performance refinement target, especially as detailed vegetation changes during navigation.
+The largest measured frame was 53.0ms in the normal-resolution overview; the largest Retina sample was 42.8ms in the lake view. Intermittent stalls remain a refinement target. The two surface textures add about 5MB of transferred PNG assets and an estimated 17MB of GPU texture storage including mipmaps.
