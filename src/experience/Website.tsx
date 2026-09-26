@@ -1,23 +1,54 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { projects, site, type Project } from "../content/site";
 import Daisy from "../themes/Daisy";
 import Hyper from "../themes/Hyper";
 import Tailwind from "../themes/Tailwind";
 import Starwind from "../themes/Starwind";
+import ColorModeSwitch from "./ColorModeSwitch";
 import type { Page, ThemeId } from "./types";
+type ColorMode = "light" | "dark";
+const themes: { id: ThemeId; label: string }[] = [
+  { id: "glass", label: "Glass" },
+  { id: "gothic", label: "Gothic" },
+  { id: "minimal", label: "Minimal" },
+  { id: "daisy", label: "daisyUI" },
+  { id: "hyper", label: "HyperUI" },
+  { id: "starwind", label: "Starwind" },
+];
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const href = (page: Page) =>
   `${base}/${page === "projects" ? "projects/" : ""}`;
 export default function Website({ initialPage }: { initialPage: Page }) {
-  const [theme, setTheme] = useState<ThemeId>("tailwind");
-  const [style, setStyle] = useState("glass");
+  const [mode, setMode] = useState<ColorMode | null>(null);
+  const [theme, setTheme] = useState<ThemeId>("glass");
   const [page, setPage] = useState<Page>(initialPage);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const [selected, setSelected] = useState<Project | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
-    const styles = ["glass", "gothic", "brutalist", "minimal"];
+    let saved: string | null = null;
+    try {
+      saved = localStorage.getItem("portfolio-mode");
+    } catch {
+      /* Use light mode when storage is unavailable. */
+    }
+    setMode(saved === "dark" ? "dark" : "light");
+  }, []);
+  useEffect(() => {
+    if (!mode) return;
+    document.documentElement.dataset.mode = mode;
+  }, [mode]);
+  function changeMode(next: ColorMode) {
+    setMode(next);
+    try {
+      localStorage.setItem("portfolio-mode", next);
+    } catch {
+      /* The current visit still works without persistent storage. */
+    }
+  }
+  useEffect(() => {
+    const styles = themes.map(({ id }) => id);
     let previousStyle = "glass";
     try {
       previousStyle = localStorage.getItem("portfolio-style") ?? "glass";
@@ -26,7 +57,7 @@ export default function Website({ initialPage }: { initialPage: Page }) {
     }
     const choices = styles.filter((candidate) => candidate !== previousStyle);
     const nextStyle = choices[Math.floor(Math.random() * choices.length)];
-    setStyle(nextStyle);
+    setTheme(nextStyle);
     try {
       localStorage.setItem("portfolio-style", nextStyle);
     } catch {
@@ -59,6 +90,11 @@ export default function Website({ initialPage }: { initialPage: Page }) {
   }
   function changeTheme(next: ThemeId) {
     setTheme(next);
+    try {
+      localStorage.setItem("portfolio-style", next);
+    } catch {
+      /* Randomization still works for this visit without storage. */
+    }
   }
   const visible = projects.filter(
     (p) =>
@@ -75,7 +111,7 @@ export default function Website({ initialPage }: { initialPage: Page }) {
           : Tailwind;
   return (
     <div
-      className={`website theme-${theme} style-${style}`}
+      className={`website theme-${theme}`}
       data-theme={theme === "daisy" ? "workshop" : "light"}
     >
       <a href="#main" className="skip-link">
@@ -113,48 +149,22 @@ export default function Website({ initialPage }: { initialPage: Page }) {
           ))}
         </nav>
         <div className="theme-picker">
-          <span id="theme-label">Try a different look</span>
-          <div role="group" aria-labelledby="theme-label">
-            {(["tailwind", "daisy", "hyper", "starwind"] as ThemeId[]).map(
-              (id) => (
-                <button
-                  key={id}
-                  aria-pressed={theme === id}
-                  onClick={() => changeTheme(id)}
-                >
-                  {id === "daisy"
-                    ? "daisyUI"
-                    : id === "hyper"
-                      ? "HyperUI"
-                      : id === "starwind"
-                        ? "Starwind"
-                        : "Tailwind"}
-                </button>
-              ),
-            )}
-          </div>
-          {theme === "tailwind" && (
-            <label className="style-picker">
-              Style{" "}
-              <select
-                aria-label="Tailwind style"
-                value={style}
-                onChange={(e) => {
-                  setStyle(e.target.value);
-                  try {
-                    localStorage.setItem("portfolio-style", e.target.value);
-                  } catch {
-                    /* Storage may be unavailable in private browsing. */
-                  }
-                }}
+          <div className="style-buttons" role="group" aria-label="Visual style">
+            {themes.map(({ id, label }) => (
+              <button
+                key={id}
+                aria-pressed={theme === id}
+                onClick={() => changeTheme(id)}
               >
-                <option value="glass">Glass</option>
-                <option value="gothic">Gothic</option>
-                <option value="brutalist">Brutalist</option>
-                <option value="minimal">Minimal</option>
-              </select>
-            </label>
-          )}
+                {label}
+              </button>
+            ))}
+          </div>
+          <ColorModeSwitch
+            theme={theme}
+            dark={mode === "dark"}
+            onChange={(dark) => changeMode(dark ? "dark" : "light")}
+          />
         </div>
       </header>
       <main id="main">
@@ -193,8 +203,8 @@ export default function Website({ initialPage }: { initialPage: Page }) {
           {selected && (
             <>
               <span
-                className="detail-symbol"
-                style={{ background: selected.color }}
+                className="detail-symbol bg-project-art"
+                style={{ "--project-color": selected.color } as CSSProperties}
                 aria-hidden="true"
               >
                 {selected.symbol}

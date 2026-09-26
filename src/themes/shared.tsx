@@ -1,9 +1,10 @@
+import type { CSSProperties } from "react";
 import type { Project } from "../content/site";
 export function Artwork({ project }: { project: Project }) {
   return (
     <div
-      className="artwork"
-      style={{ background: project.color }}
+      className="artwork bg-project-art"
+      style={{ "--project-color": project.color } as CSSProperties}
       aria-hidden="true"
     >
       <span className="art-orbit" />

@@ -1,0 +1,131 @@
+/* Mode changes values only; presentation structure and typography stay intact. */
+:root {
+  --ui-color-scheme: light;
+}
+:root[data-mode="dark"] {
+  --ui-color-scheme: dark;
+  background: #141a26;
+}
+.website {
+  color-scheme: var(--ui-color-scheme);
+}
+:root[data-mode="dark"] .website {
+  --ui-canvas: #141a26;
+  --ui-surface: #202a3b;
+  --ui-surface-solid: #202a3b;
+  --ui-surface-hover: #2a374c;
+  --ui-content: #e8edf5;
+  --ui-heading: #f4f7fc;
+  --ui-content-muted: #b3c0d4;
+  --ui-line: #64748b;
+  --ui-line-hover: #a6c3ff;
+  --ui-action: #a6c3ff;
+  --ui-on-action: #142444;
+  --ui-focus: #b9d0ff;
+  --ui-decoration: #344664;
+  --ui-secondary: #a4d1b1;
+  --ui-on-secondary: #142c1d;
+  --ui-shadow-panel: 0 16px 35px #00000040;
+  --ui-shadow-dialog: 0 20px 60px #00000066;
+  --ui-backdrop: #030712bb;
+}
+:root[data-mode="dark"] .theme-glass {
+  --ui-canvas: #111c30;
+  --ui-canvas-art:
+    radial-gradient(ellipse at 10% 5%, #244763, transparent 50%),
+    radial-gradient(ellipse at 95% 40%, #40315c, transparent 55%);
+  --ui-surface: #24354d99;
+  --ui-surface-hover: #34465dbb;
+  --ui-line: #9bb2d080;
+  --ui-line-hover: #c0d6f5;
+  --ui-art-ink: #dfebff;
+  --ui-art-line: #c0d6f540;
+  --ui-shadow-panel: inset 0 1px 0 #d4e5ff33, 0 14px 45px #00000033;
+  --ui-shadow-action: 0 6px 20px #00000033;
+}
+/* Pale carved stone and plum retain Gothic's arches and serif typography. */
+:root[data-mode="light"] .theme-gothic {
+  --ui-canvas: #f1eaf0;
+  --ui-canvas-art: radial-gradient(ellipse at 50% 0%, #e0d2e5, transparent 55%);
+  --ui-surface: #fcf7f0;
+  --ui-surface-solid: #fcf7f0;
+  --ui-surface-hover: #eee3ec;
+  --ui-content: #35263b;
+  --ui-heading: #35263b;
+  --ui-content-muted: #67536c;
+  --ui-line: #9b8156;
+  --ui-line-hover: #684d28;
+  --ui-action: #50315d;
+  --ui-on-action: #fff8ed;
+  --ui-focus: #68417a;
+  --ui-decoration: #8c692f;
+  --ui-art-background: radial-gradient(ellipse at center, #ece0d3, #ddd0e0);
+  --ui-art-ink: #63491f;
+  --ui-art-line: #80633755;
+  --ui-shadow-panel: 0 12px 30px #45304c18;
+}
+:root[data-mode="dark"] .theme-gothic {
+  --ui-canvas: #17131d;
+  --ui-surface: #211c2a;
+  --ui-surface-solid: #211c2a;
+  --ui-surface-hover: #2d2335;
+  --ui-content: #eee5d4;
+  --ui-heading: #eee5d4;
+  --ui-content-muted: #d0c3d3;
+  --ui-line: #786647;
+  --ui-line-hover: #e0c992;
+  --ui-action: #d6b879;
+  --ui-on-action: #1a1420;
+  --ui-focus: #f0d399;
+  --ui-decoration: #d6b879;
+  --ui-shadow-panel: 0 12px 30px #09070d55;
+}
+:root[data-mode="dark"] .theme-hyper {
+  --ui-canvas: #1b1b19;
+  --ui-surface: #292925;
+  --ui-surface-solid: #292925;
+  --ui-surface-hover: #35352f;
+  --ui-content: #f3f1df;
+  --ui-heading: #f3f1df;
+  --ui-content-muted: #c4c3b6;
+  --ui-line: #e5e3cf;
+  --ui-line-hover: #ffe24b;
+  --ui-action: #ffe24b;
+  --ui-on-action: #171717;
+  --ui-focus: #ffe24b;
+  --ui-shadow-panel: 6px 6px #000;
+  --ui-shadow-action: 4px 4px #000;
+  --ui-shadow-selection: 2px 2px #000;
+  --ui-shadow-dialog: 6px 6px #000;
+}
+:root[data-mode="dark"] .theme-minimal {
+  --ui-canvas: #181818;
+  --ui-surface: #222;
+  --ui-surface-solid: #222;
+  --ui-surface-hover: #2e2e2e;
+  --ui-content: #e4e4e4;
+  --ui-heading: #f2f2f2;
+  --ui-content-muted: #b7b7b7;
+  --ui-line: #646464;
+  --ui-line-hover: #d2d2d2;
+  --ui-action: #e4e4e4;
+  --ui-on-action: #222;
+  --ui-focus: #e4e4e4;
+  --ui-shadow-panel: none;
+  --ui-shadow-dialog: none;
+}
+:root[data-mode="dark"] .theme-starwind {
+  --ui-canvas: #12221e;
+  --ui-surface: #1c322b;
+  --ui-surface-solid: #1c322b;
+  --ui-surface-hover: #29463b;
+  --ui-content: #e1efe8;
+  --ui-heading: #e1efe8;
+  --ui-content-muted: #afc8bb;
+  --ui-line: #6d9482;
+  --ui-line-hover: #a0d9bd;
+  --ui-action: #a0d9bd;
+  --ui-on-action: #143426;
+  --ui-focus: #b1e5cd;
+  --ui-decoration: #29463b;
+}

@@ -1,0 +1,225 @@
+/* Public styling API. `inline` resolves each token on the active theme scope. */
+@theme inline {
+  --color-canvas: var(--ui-canvas);
+  --color-surface: var(--ui-surface);
+  --color-surface-hover: var(--ui-surface-hover);
+  --color-surface-solid: var(--ui-surface-solid);
+  --color-content: var(--ui-content);
+  --color-content-muted: var(--ui-content-muted);
+  --color-heading: var(--ui-heading);
+  --color-line: var(--ui-line);
+  --color-line-hover: var(--ui-line-hover);
+  --color-action: var(--ui-action);
+  --color-on-action: var(--ui-on-action);
+  --color-focus: var(--ui-focus);
+  --color-decoration: var(--ui-decoration);
+  --color-art-ink: var(--ui-art-ink);
+  --color-art-line: var(--ui-art-line);
+  --color-backdrop: var(--ui-backdrop);
+  --font-body: var(--ui-font-body);
+  --font-display: var(--ui-font-display);
+  --font-controls: var(--ui-font-controls);
+  --font-artwork: Georgia, serif;
+  --font-weight-heading: var(--ui-weight-display);
+  --font-weight-title: var(--ui-weight-title);
+  --radius-panel: var(--ui-radius-panel);
+  --radius-control: var(--ui-radius-control);
+  --radius-dialog: var(--ui-radius-dialog);
+  --radius-brand: var(--ui-radius-brand);
+  --radius-picker: var(--ui-radius-picker);
+  --radius-detail: var(--ui-radius-detail);
+  --shadow-panel: var(--ui-shadow-panel);
+  --shadow-action: var(--ui-shadow-action);
+  --shadow-dialog: var(--ui-shadow-dialog);
+  --shadow-selection: var(--ui-shadow-selection);
+  --blur-surface: var(--ui-blur);
+  --text-hero: clamp(3rem, 6.8vw, 5.375rem);
+  --text-hero--line-height: 1.04;
+  --tracking-display: -0.055em;
+}
+/* Properties outside Tailwind's namespaces still get named utilities. */
+@utility border-frame {
+  border-width: var(--ui-border-width);
+}
+@utility bg-canvas-art {
+  background-image: var(--ui-canvas-art);
+}
+@utility bg-project-art {
+  background: var(--ui-art-background, var(--project-color));
+}
+@custom-variant gothic (&:where(.theme-gothic, .theme-gothic *));
+
+:root {
+  --ui-canvas: #eff3fa;
+  --ui-canvas-art: none;
+  --ui-surface: #fff;
+  --ui-surface-solid: #fff;
+  --ui-surface-hover: #f5f7fa;
+  --ui-content: #24344c;
+  --ui-content-muted: #526079;
+  --ui-heading: #24344c;
+  --ui-line: #b8c4d7;
+  --ui-line-hover: #426ed2;
+  --ui-action: #2859c5;
+  --ui-on-action: #fff;
+  --ui-focus: #426ed2;
+  --ui-decoration: #c7d5ef;
+  --ui-art-ink: #24344c;
+  --ui-art-line: #24344c24;
+  --ui-backdrop: #15213588;
+  --ui-font-body: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+  --ui-font-display: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+  --ui-font-controls: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+  --ui-weight-display: 750;
+  --ui-weight-title: 700;
+  --ui-radius-panel: 1.4rem;
+  --ui-radius-control: 0.7rem;
+  --ui-radius-dialog: 1.25rem;
+  --ui-radius-brand: 0.75rem;
+  --ui-radius-picker: 9px;
+  --ui-radius-detail: 16px;
+  --ui-shadow-selection: none;
+  --ui-border-width: 1px;
+  --ui-shadow-panel: 0 16px 35px #263c6912;
+  --ui-shadow-action: none;
+  --ui-shadow-dialog: 0 16px 35px #263c6912;
+  --ui-blur: 0px;
+  --ui-secondary: #466b52;
+  --ui-on-secondary: #fff;
+}
+/* Each presentation owns values, never component selectors. */
+.theme-daisy {
+  --color-base-100: var(--ui-surface-solid);
+  --color-base-200: var(--ui-canvas);
+  --color-base-300: var(--ui-line);
+  --color-base-content: var(--ui-content);
+  --color-primary: var(--ui-action);
+  --color-primary-content: var(--ui-on-action);
+  --color-secondary: var(--ui-secondary);
+  --color-secondary-content: var(--ui-on-secondary);
+}
+.theme-hyper {
+  --ui-canvas: #fbf9f3;
+  --ui-content: #171717;
+  --ui-heading: #171717;
+  --ui-line: #171717;
+  --ui-action: #ffe24b;
+  --ui-on-action: #171717;
+  --ui-font-body: "Trebuchet MS", Arial, sans-serif;
+  --ui-font-display: "Trebuchet MS", Arial, sans-serif;
+  --ui-radius-panel: 0;
+  --ui-radius-control: 0;
+  --ui-radius-dialog: 0;
+  --ui-radius-brand: 0;
+  --ui-border-width: 2px;
+  --ui-shadow-action: 4px 4px #171717;
+  --ui-shadow-selection: 2px 2px #171717;
+  --ui-shadow-dialog: 8px 8px #171717;
+}
+.theme-starwind {
+  --ui-canvas: #f8faf9;
+  --ui-content: #182c27;
+  --ui-heading: #182c27;
+  --ui-action: #246352;
+  --ui-decoration: #e1ece6;
+  --ui-line: #d8e1dc;
+  /* Adapter to the generated Starwind component token API. */
+  --background: var(--ui-surface-solid);
+  --foreground: var(--ui-content);
+  --card: var(--ui-surface-solid);
+  --card-foreground: var(--ui-content);
+  --primary: var(--ui-action);
+  --primary-foreground: var(--ui-on-action);
+  --border: var(--ui-line);
+  --input: var(--ui-line);
+  --outline: var(--ui-focus);
+  --popover: var(--ui-surface-solid);
+  --popover-foreground: var(--ui-content);
+  --primary-accent: var(--ui-action);
+  --secondary: var(--ui-decoration);
+  --secondary-foreground: var(--ui-content);
+  --secondary-accent: var(--ui-content);
+  --muted: var(--ui-surface-hover);
+  --muted-foreground: var(--ui-content-muted);
+  --accent: var(--ui-surface-hover);
+  --accent-foreground: var(--ui-content);
+}
+.theme-glass {
+  --ui-canvas: #e9f2f6;
+  --ui-canvas-art:
+    radial-gradient(ellipse at 10% 5%, #c1dff4, transparent 50%),
+    radial-gradient(ellipse at 95% 40%, #dccff7, transparent 55%);
+  --ui-surface: #ffffff80;
+  --ui-surface-hover: #ffffffa6;
+  --ui-line: #ffffffcc;
+  --ui-line-hover: #fff;
+  --ui-radius-panel: 1.5rem;
+  --ui-radius-control: 1.5rem;
+  --ui-shadow-panel: inset 0 1px 0 #ffffffdd, 0 14px 45px #4d61951a;
+  --ui-shadow-action: 0 6px 20px #4d619515;
+  --ui-blur: 18px;
+  --ui-art-background: transparent;
+}
+.theme-gothic {
+  --ui-canvas: #17131d;
+  --ui-canvas-art: radial-gradient(ellipse at 50% 0%, #39283f, transparent 55%);
+  --ui-surface: #211c2a;
+  --ui-surface-solid: #211c2a;
+  --ui-surface-hover: #2d2335;
+  --ui-content: #eee5d4;
+  --ui-content-muted: #d0c3d3;
+  --ui-heading: #eee5d4;
+  --ui-line: #786647;
+  --ui-line-hover: #e0c992;
+  --ui-action: #d6b879;
+  --ui-on-action: #1a1420;
+  --ui-focus: #f0d399;
+  --ui-decoration: #d6b879;
+  --ui-art-background: radial-gradient(ellipse at center, #433147, #251d2e);
+  --ui-art-ink: #d6b879;
+  --ui-art-line: #b3945955;
+  --ui-font-body: Georgia, "Times New Roman", serif;
+  --ui-font-display: Georgia, "Times New Roman", serif;
+  --ui-weight-display: 400;
+  --ui-weight-title: 400;
+  --ui-radius-panel: 46% 46% 3px 3px / 27% 27% 3px 3px;
+  --ui-radius-control: 3px;
+  --ui-radius-dialog: 3px;
+  --ui-radius-brand: 50% 50% 2px 2px;
+  --ui-shadow-panel: 0 12px 30px #09070d55;
+}
+.theme-minimal {
+  --ui-canvas: #fff;
+  --ui-content: #343434;
+  --ui-heading: #343434;
+  --ui-line: #e4e4e4;
+  --ui-action: #343434;
+  --ui-radius-panel: 3px;
+  --ui-radius-control: 3px;
+  --ui-radius-dialog: 3px;
+  --ui-shadow-panel: none;
+  --ui-shadow-dialog: none;
+  --ui-font-body: Georgia, serif;
+  --ui-font-display: Georgia, serif;
+  --ui-weight-display: 400;
+}
+
+@plugin "daisyui" {
+  themes: light;
+}
+@plugin "daisyui/theme" {
+  name: "workshop";
+  default: true;
+  color-scheme: light;
+  --color-base-100: #ffffff;
+  --color-base-200: #eff3fa;
+  --color-base-300: #dce3ef;
+  --color-base-content: #24344c;
+  --color-primary: #2859c5;
+  --color-primary-content: #ffffff;
+  --color-secondary: #466b52;
+  --color-secondary-content: #ffffff;
+  --radius-selector: 1rem;
+  --radius-field: 0.7rem;
+  --radius-box: 1.4rem;
+}

@@ -3,7 +3,7 @@
 Two routes (`/` and `/projects/`) share content and a React controller. The theme
 selector changes the presentation without reloading the page.
 
-- **Tailwind:** custom Glass, Gothic, Brutalist, and Minimal styles.
+- **Glass, Gothic, and Minimal:** first-class custom Tailwind styles.
 - **daisyUI:** actual daisyUI cards, buttons, badges, and input styling.
 - **HyperUI:** adapted Tailwind markup from HyperUI's marketing card patterns.
 - **Starwind:** generated Starwind React Button, Card, Badge, and Input components.
@@ -19,26 +19,52 @@ mise exec -- pnpm install
 mise exec -- pnpm dev
 ```
 
-Use the presentation buttons in the header. The Tailwind group has a second
-selector for its custom styles. Each full page load starts in Tailwind with a randomly chosen style different
+Use the style buttons in the header to choose among all six presentations.
+Each full page load starts with a randomly chosen style different
 from the previous saved style. Manual choices last for the current visit;
 navigation between Home and Projects keeps the current presentation. Gallery
 search, category, and selected project are owned by the shared controller and
 survive presentation changes. Search/filter state is in-memory, not saved on reload.
+
+The Light / Dark switch is independent of the visual style and persists across
+reloads. Every presentation has both palettes. daisyUI uses its native toggle,
+Starwind uses its Switch primitive, and the custom presentations use native
+checkbox switches styled with semantic tokens.
+The saved mode is applied before hydration to avoid a light-mode flash.
 
 ## Where things live
 
 - `src/experience/Website.tsx`: shared routing, state, preferences, and dialog.
 - `src/experience/types.ts`: presentation contract.
 - `src/themes/`: independent presentation components.
-- `src/styles/global.css`: shared CSS, daisyUI configuration, and Tailwind styles.
+- `src/styles/global.css`: shared component layout rules.
+- `src/styles/tokens.css`: semantic Tailwind API, theme palettes, and library mappings.
+- `src/styles/modes.css`: light/dark semantic palette overrides.
 - `src/styles/starwind.css`: scoped Starwind tokens.
 - `src/components/starwind-react/`: generated Starwind source.
 - `src/pages/`: static, directly addressable Astro pages.
 
-Add custom Tailwind styles under `.theme-tailwind.style-NAME`, then add the option
-and persistence validation in `Website.tsx`. Add a new full presentation by
-implementing `PresentationProps` and registering it in the controller.
+Add custom Tailwind styles by overriding `--ui-*` values under
+`.theme-NAME` in `src/styles/tokens.css` and provide its mode palette in
+`src/styles/modes.css`, then register its ID in `types.ts` and the `themes` list
+in `Website.tsx`. Components consume the `@theme inline` API:
+
+```tsx
+<button className="rounded-panel border-frame border-line bg-surface text-content shadow-panel backdrop-blur-surface hover:bg-surface-hover">
+  Shared content
+</button>
+```
+
+Tokens cover canvas/surface/content/action/focus colors, font families and weights,
+corner shapes, shadows, and blur. `@utility` handles border width and background
+artwork. Structural differences use named variants such as `gothic:`; theme
+selectors define values instead of overriding individual component styles.
+Project illustration colors are content data, supplied as `--project-color`,
+with a themed artwork override where needed. daisyUI and Starwind retain their
+native semantic component tokens; shared chrome uses the same `--ui-*` API.
+
+Add a full presentation by implementing `PresentationProps` and registering it
+in the controller.
 
 For this small demo, all presentations ship together for immediate switching.
 The controller uses React; daisyUI, HyperUI, and custom Tailwind CSS do not

@@ -5,9 +5,22 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-mode="light">
   <head>
     <meta charset="utf-8" />
+    <script is:inline>
+      // Apply the saved preference before the first paint and React hydration.
+      (() => {
+        let mode;
+        try {
+          mode = localStorage.getItem("portfolio-mode");
+        } catch {
+          /* Fall back to light mode. */
+        }
+        document.documentElement.dataset.mode =
+          mode === "dark" ? "dark" : "light";
+      })();
+    </script>
     <meta name="viewport" content="width=device-width" />
     <meta
       name="description"

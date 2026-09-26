@@ -70,10 +70,10 @@ export default function Hyper(p: PresentationProps) {
               onClick={() => p.openProject(project)}
             >
               <span
-                className="absolute inset-0 border-2 border-black"
+                className="absolute inset-0 border-2 border-line"
                 aria-hidden="true"
               />
-              <div className="hyper-card-inner relative h-full border-2 border-black bg-white transition-transform group-hover:-translate-x-1 group-hover:-translate-y-1">
+              <div className="hyper-card-inner relative h-full border-2 border-line bg-surface-solid transition-transform group-hover:-translate-x-1 group-hover:-translate-y-1">
                 <Artwork project={project} />
                 <div className="hyper-card-copy">
                   <div className="card-meta">

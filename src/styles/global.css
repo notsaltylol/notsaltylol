@@ -1,29 +1,11 @@
 @import "tailwindcss";
 @import "./starwind.css";
-@import "./gothic.css";
-@plugin "daisyui" {
-  themes: light;
-}
-@plugin "daisyui/theme" {
-  name: "workshop";
-  default: true;
-  color-scheme: light;
-  --color-base-100: #ffffff;
-  --color-base-200: #eff3fa;
-  --color-base-300: #dce3ef;
-  --color-base-content: #24344c;
-  --color-primary: #2859c5;
-  --color-primary-content: #ffffff;
-  --color-secondary: #466b52;
-  --color-secondary-content: #ffffff;
-  --radius-selector: 1rem;
-  --radius-field: 0.7rem;
-  --radius-box: 1.4rem;
-}
+@import "./tokens.css";
+@import "./modes.css";
 :root {
-  font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
-  color: #24344c;
-  background: #eff3fa;
+  font-family: var(--ui-font-body);
+  color: var(--ui-content);
+  background: var(--ui-canvas);
 }
 * {
   box-sizing: border-box;
@@ -45,9 +27,12 @@ input {
   outline-offset: 5px;
 }
 :focus-visible {
-  outline: 3px solid #426ed2;
+  @apply outline-focus;
+  outline-style: solid;
+  outline-width: 3px;
 }
 .website {
+  @apply bg-canvas bg-canvas-art font-body text-content;
   min-height: 100vh;
 }
 .site-header {
@@ -56,7 +41,8 @@ input {
   padding: 28px 40px;
   display: flex;
   align-items: center;
-  gap: 48px;
+  gap: 24px;
+  flex-wrap: wrap;
 }
 .brand {
   display: flex;
@@ -71,12 +57,13 @@ input {
   place-items: center;
   width: 38px;
   height: 38px;
-  border-radius: 12px;
-  background: #2859c5;
-  color: white;
+  border-radius: var(--ui-radius-brand);
+  background: var(--ui-action);
+  color: var(--ui-on-action);
   font-size: 19px;
 }
 nav {
+  font-family: var(--ui-font-controls);
   display: flex;
   gap: 28px;
 }
@@ -92,28 +79,30 @@ nav a[aria-current] {
 .theme-picker {
   margin-left: auto;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
   font-size: 12px;
+  font-family: var(--ui-font-controls);
 }
-.theme-picker > div {
+.style-buttons {
   display: flex;
   padding: 4px;
-  border: 1px solid #b8c4d7;
-  border-radius: 9px;
-  background: white;
-  color: #24344c;
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-radius-picker);
+  background: var(--ui-surface-solid);
+  color: var(--ui-content);
 }
-.theme-picker button {
+.style-buttons button {
   padding: 6px 14px;
-  border-radius: 5px;
+  border-radius: var(--ui-radius-control);
   font-size: 13px;
   font-weight: 700;
 }
-.theme-picker button[aria-pressed="true"] {
-  background: #24344c;
-  color: white;
+.style-buttons button[aria-pressed="true"] {
+  background: var(--ui-action);
+  color: var(--ui-on-action);
 }
 main {
   max-width: 1280px;
@@ -150,15 +139,15 @@ main {
 .stack-back {
   position: absolute;
   inset: 0;
-  background: #c7d5ef;
-  border-radius: 24px;
+  background: var(--ui-decoration);
+  border-radius: var(--ui-radius-panel);
   transform: rotate(6deg);
 }
 .featured-card {
   width: 100%;
   text-align: left;
   overflow: hidden;
-  box-shadow: 0 16px 35px #263c6912;
+  box-shadow: var(--ui-shadow-panel);
   transform: rotate(-3deg);
 }
 .featured-card .artwork {
@@ -169,12 +158,12 @@ main {
   overflow: hidden;
   height: 190px;
   width: 100%;
-  color: #24344c;
+  color: var(--ui-art-ink);
   display: grid;
   place-items: center;
 }
 .art-symbol {
-  font-family: Georgia, serif;
+  @apply font-artwork;
   font-size: 115px;
   line-height: 1;
   z-index: 1;
@@ -183,7 +172,7 @@ main {
   position: absolute;
   width: 240px;
   height: 240px;
-  border: 1px solid #24344c24;
+  border: 1px solid var(--ui-art-line);
   border-radius: 50%;
   transform: translate(50px, 35px);
 }
@@ -221,7 +210,7 @@ main {
 .project-card {
   text-align: left;
   overflow: hidden;
-  border: 1px solid #dce3ef;
+  border: 1px solid var(--ui-line);
 }
 .card-body {
   gap: 12px;
@@ -259,7 +248,7 @@ main {
 }
 .search-field {
   width: 310px;
-  background: white;
+  background: var(--ui-surface-solid);
 }
 .filter-group {
   display: flex;
@@ -273,7 +262,7 @@ main {
 footer {
   max-width: 1200px;
   margin: auto;
-  border-top: 1px solid #bac5d5;
+  border-top: 1px solid var(--ui-line);
   padding: 25px 0 35px;
   display: flex;
   justify-content: space-between;
@@ -284,18 +273,12 @@ footer {
 footer span:first-child {
   max-width: 480px;
 }
-.theme-hyper {
-  background: #fbf9f3;
-  color: #171717;
-  font-family: "Trebuchet MS", "Arial", sans-serif;
-}
 .theme-hyper .site-header {
-  border-bottom: 2px solid #171717;
+  border-bottom: 2px solid var(--ui-content);
 }
 .theme-hyper .brand-mark {
-  border-radius: 0;
-  background: #171717;
-  color: #ffe24b;
+  background: var(--ui-content);
+  color: var(--ui-canvas);
 }
 .hyper-heading {
   display: grid;
@@ -321,7 +304,7 @@ footer span:first-child {
   display: block;
   font-size: 90px;
   line-height: 1;
-  color: #171717;
+  color: var(--ui-content);
   margin-bottom: 24px;
 }
 .hyper-side p {
@@ -331,9 +314,10 @@ footer span:first-child {
   margin-bottom: 25px;
 }
 .hyper-button {
-  background: #ffe24b;
-  border: 2px solid #171717;
-  box-shadow: 4px 4px #171717;
+  color: var(--ui-on-action);
+  background: var(--ui-action);
+  border: 2px solid var(--ui-content);
+  box-shadow: var(--ui-shadow-action);
   padding: 12px 20px;
   font-weight: 700;
   display: inline-flex;
@@ -354,7 +338,7 @@ footer span:first-child {
 .hyper-card .artwork {
   height: 100%;
   min-height: 240px;
-  border-right: 2px solid #171717;
+  border-right: 2px solid var(--ui-content);
 }
 .hyper-card-copy {
   padding: 25px;
@@ -374,7 +358,7 @@ footer span:first-child {
   font-size: 14px;
 }
 .hyper-presentation .section-heading {
-  border-top: 2px solid #171717;
+  border-top: 2px solid var(--ui-content);
   padding-top: 22px;
 }
 .hyper-presentation .section-heading > span {
@@ -383,7 +367,7 @@ footer span:first-child {
 .hyper-search {
   display: flex;
   border: 2px solid;
-  background: white;
+  background: var(--ui-surface-solid);
   padding: 10px 14px;
   gap: 12px;
   width: 300px;
@@ -398,24 +382,23 @@ footer span:first-child {
   font-size: 14px;
 }
 .hyper-filter.active {
-  background: #ffe24b;
-  border-color: #171717;
-  box-shadow: 2px 2px #171717;
-}
-.theme-hyper footer {
-  border-color: #171717;
+  color: var(--ui-on-action);
+  background: var(--ui-action);
+  border-color: var(--ui-content);
+  box-shadow: var(--ui-shadow-selection);
 }
 .project-dialog {
   margin: auto;
-  border: 1px solid #b8c4d7;
-  border-radius: 20px;
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-radius-dialog);
   max-width: 540px;
   width: calc(100% - 32px);
-  color: inherit;
-  background: white;
+  color: var(--ui-content);
+  background: var(--ui-surface-solid);
+  box-shadow: var(--ui-shadow-dialog);
 }
 .project-dialog::backdrop {
-  background: #15213588;
+  background: var(--ui-backdrop);
   backdrop-filter: blur(5px);
 }
 .dialog-content {
@@ -435,13 +418,14 @@ footer span:first-child {
   width: 75px;
   height: 75px;
   font-size: 45px;
-  border-radius: 16px;
+  border-radius: var(--ui-radius-detail);
   margin-bottom: 30px;
-  color: #24344c;
+  color: var(--ui-art-ink);
 }
 .dialog-content h2 {
   font-size: 36px;
-  font-weight: 750;
+  font-family: var(--ui-font-display);
+  font-weight: var(--ui-weight-display);
   margin: 10px 0 20px;
 }
 .dialog-content p {
@@ -452,15 +436,13 @@ footer span:first-child {
 }
 .theme-hyper .project-dialog {
   border: 3px solid;
-  border-radius: 0;
-  box-shadow: 8px 8px #171717;
 }
 .skip-link {
   position: fixed;
   top: -100px;
   left: 12px;
-  background: white;
-  color: black;
+  background: var(--ui-surface-solid);
+  color: var(--ui-content);
   padding: 12px;
   z-index: 100;
 }
@@ -581,148 +563,44 @@ footer span:first-child {
     scroll-behavior: auto !important;
   }
 }
-.style-picker {
+/* Native checkbox controls for presentations without a component runtime. */
+.mode-switch {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  white-space: nowrap;
 }
-.style-picker select {
-  padding: 4px 9px;
-  border: 1px solid #9aa8ba;
-  border-radius: 5px;
-  background: white;
-  color: #24344c;
+.color-switch {
+  appearance: none;
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-radius-control);
+  background: var(--ui-surface-solid);
+  cursor: pointer;
 }
-.theme-tailwind {
-  --surface: #ffffff;
-  --ink: #1c3149;
-  --edge: #d4dde6;
-  --round: 14px;
-  --depth: none;
-  --accent: #244fc0;
-  --on-accent: white;
-  --blur: 0px;
-  color: var(--ink);
-  background: #f5f7fa;
+.color-switch::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: inherit;
+  background: var(--ui-content);
 }
-.theme-tailwind.style-glass {
-  --surface: #ffffff80;
-  --edge: #ffffffcc;
-  --round: 24px;
-  --depth: inset 0 1px 0 #ffffffdd, 0 14px 45px #4d61951a;
-  --blur: 18px;
-  background:
-    radial-gradient(ellipse at 10% 5%, #c1dff4 0, transparent 50%),
-    radial-gradient(ellipse at 95% 40%, #dccff7 0, transparent 55%), #e9f2f6;
+.color-switch:checked {
+  background: var(--ui-action);
 }
-.theme-tailwind.style-brutalist {
-  --surface: #ffffff;
-  --ink: #171717;
-  --edge: #171717;
-  --round: 0;
-  --depth: 6px 6px 0 #171717;
-  --accent: #ffe24b;
-  --on-accent: #171717;
-  background: #efefe9;
-  font-family: "Trebuchet MS", sans-serif;
-}
-.theme-tailwind.style-minimal {
-  --surface: #fff;
-  --ink: #343434;
-  --edge: #e4e4e4;
-  --round: 3px;
-  --accent: #343434;
-  background: #fff;
-  font-family: Georgia, serif;
-}
-.custom-hero {
-  max-width: 850px;
-  padding: 70px 0 65px;
-}
-.custom-hero h1 {
-  font-size: clamp(48px, 6.8vw, 86px);
-  font-weight: 750;
-  letter-spacing: -0.055em;
-  line-height: 1.04;
-  margin: 22px 0 26px;
-}
-.custom-hero > p:not(.custom-kicker) {
-  font-size: 19px;
-  line-height: 1.7;
-  max-width: 610px;
-  margin-bottom: 28px;
-}
-.custom-kicker {
-  font-size: 14px;
-}
-.custom-card {
-  background: var(--surface);
-  border: 1px solid var(--edge);
-  border-radius: var(--round);
-  box-shadow: var(--depth);
-  backdrop-filter: blur(var(--blur));
-  overflow: hidden;
-}
-.custom-button {
-  background: var(--accent);
-  color: var(--on-accent);
-  padding: 13px 23px;
-  border: 1px solid var(--edge);
-  border-radius: var(--round);
-  box-shadow: var(--depth);
-  font-weight: 700;
-}
-.custom-search {
-  border: 1px solid var(--edge);
-  border-radius: var(--round);
-  background: var(--surface);
-  padding: 12px 18px;
-  width: 300px;
-}
-.custom-filter {
-  border: 1px solid transparent;
-  padding: 8px 15px;
-  border-radius: var(--round);
-}
-.custom-filter[aria-pressed="true"] {
-  background: var(--accent);
-  color: var(--on-accent);
-  border-color: var(--edge);
-}
-.style-brutalist .custom-card,
-.style-brutalist .custom-button {
-  border-width: 2px;
-}
-.style-brutalist .custom-hero h1 {
-  font-weight: 900;
-}
-.style-minimal .custom-hero h1 {
-  font-weight: 400;
-}
-.theme-tailwind .project-dialog {
-  background: var(--surface);
-  border: 2px solid var(--edge);
-  border-radius: var(--round);
-  box-shadow: var(--depth);
-  backdrop-filter: blur(25px);
+.color-switch:checked::before {
+  transform: translateX(20px);
+  background: var(--ui-on-action);
 }
 @media (max-width: 620px) {
-  .theme-picker {
+  .style-buttons {
     flex-wrap: wrap;
   }
-  .custom-hero {
-    padding: 40px 0;
-  }
-  .custom-search {
-    width: 100%;
-  }
-}
-.theme-starwind {
-  background: #f8faf9;
-  color: #182c27;
-  --primary: #246352;
-  --foreground: #182c27;
-  --card: white;
 }
 .starwind-heading {
   display: grid;
@@ -745,9 +623,9 @@ footer span:first-child {
   margin-bottom: 25px;
 }
 .starwind-heading aside {
-  background: #e1ece6;
+  background: var(--ui-decoration);
   padding: 35px;
-  border-radius: 12px;
+  border-radius: var(--ui-radius-control);
 }
 .starwind-heading aside span {
   font-size: 100px;
@@ -786,21 +664,7 @@ footer span:first-child {
   .starwind-heading aside {
     display: none;
   }
-  .theme-picker button {
+  .style-buttons button {
     padding: 6px 10px;
   }
-}
-
-.theme-tailwind.style-glass .custom-card .artwork {
-  background: transparent !important;
-  border-bottom: 1px solid #ffffff99;
-}
-.theme-tailwind.style-glass .brand-mark {
-  background: #ffffff70;
-  border: 1px solid white;
-  color: #2859c5;
-  box-shadow: 0 6px 20px #4d619515;
-}
-.theme-tailwind.style-glass .custom-card:hover {
-  background: #ffffffa6;
 }
