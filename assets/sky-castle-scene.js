@@ -17,7 +17,7 @@ const W = 960, H = 600, DURATION = 60;
 const LAND_SCALE=10, HEIGHT_SCALE=LAND_SCALE;
 const groveControllers=[];
 const travelerControllers=[];
-const sunOffset=new THREE.Vector3(28*LAND_SCALE,25*LAND_SCALE,8*LAND_SCALE);
+const sunOffset=new THREE.Vector3(-28*LAND_SCALE,25*LAND_SCALE,16*LAND_SCALE);
 const params = new URLSearchParams(location.search), capture = params.has('capture');
 const sceneContainer=document.getElementById('scene');
 let renderScale=capture?1:Math.min(window.devicePixelRatio||1,2)*Math.min(W,sceneContainer.clientWidth||W)/W;
@@ -46,7 +46,7 @@ const ambient = new THREE.HemisphereLight(0xfff3d7,0x739aaa,1.45);
 const sunlight = new THREE.DirectionalLight(0xfff0d3,2.8);
 sunlight.position.copy(sunOffset); sunlight.castShadow = true;
 sunlight.shadow.mapSize.set(4096,4096);
-Object.assign(sunlight.shadow.camera,{left:-16*LAND_SCALE,right:16*LAND_SCALE,top:17*LAND_SCALE,bottom:-14*LAND_SCALE,near:1,far:60*LAND_SCALE});
+Object.assign(sunlight.shadow.camera,{left:-16*LAND_SCALE,right:16*LAND_SCALE,top:17*LAND_SCALE,bottom:-14*LAND_SCALE,near:1,far:sunOffset.length()+30*LAND_SCALE});
 sunlight.shadow.bias = -.00004; sunlight.shadow.normalBias = .035;
 scene.add(ambient,sunlight,sunlight.target);
 const terrain = buildTerrain(THREE,m,{scale:LAND_SCALE,
@@ -295,6 +295,25 @@ window.renderFrame=phase=>{
  renderer.setRenderTarget(null);renderer.render(postScene,postCamera);
  window.castleState.drawCalls=renderer.info.render.calls;window.castleState.triangles=renderer.info.render.triangles;
 };
+// Prepare existing offscreen material variants with the real color target and
+// populated lights before showing the scene. Fine tree geometry stays lazy.
+// Retain the instanced, double-sided shadow program used by distant leaves.
+// This single-triangle proxy is compiled only and never added to the scene.
+const shadowWarmupMaterial=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,side:THREE.DoubleSide});
+const shadowWarmupGeometry=new THREE.BufferGeometry();
+shadowWarmupGeometry.setAttribute('position',new THREE.Float32BufferAttribute([0,0,0,1,0,0,0,1,0],3));
+const shadowWarmupProxy=new THREE.InstancedMesh(shadowWarmupGeometry,shadowWarmupMaterial,1);
+const warmupTarget=renderer.getRenderTarget();
+renderer.setRenderTarget(target);
+try{
+ await renderer.compileAsync(scene,camera);
+ // Shadow depth has no fog; match its context without changing the shown scene.
+ const shadowWarmupFog=scene.fog;scene.fog=null;
+ try{await renderer.compileAsync(shadowWarmupProxy,camera,scene);}finally{scene.fog=shadowWarmupFog;}
+}finally{
+ renderer.setRenderTarget(warmupTarget);
+ shadowWarmupGeometry.dispose();
+}
 window.renderFrame(0);
 document.getElementById('loading')?.remove();renderer.domElement.style.visibility='visible';
 const pause=document.getElementById('pause');function updatePause(){pause.textContent=paused?'Play motion':'Pause motion';pause.setAttribute('aria-pressed',String(paused));}updatePause();

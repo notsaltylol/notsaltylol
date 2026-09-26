@@ -19,3 +19,11 @@ Asset: [rock-paint-v1.png](../assets/rock-paint-v1.png)
 The generated files are preserved as delivered. The [material shaders](../assets/sky-castle-materials.js) calibrate their average color, grade them relative to the active palette, and handle mapping and filtering in the renderer.
 
 The limestone material also borrows restrained, palette-relative brush variation from the existing rock image. World-space mapping joins across neighboring masonry, and fine pore marks fade before becoming subpixel noise. Broad mineral washes and vertical rain traces are color variation only; geometry and scene lighting still supply the forms and shadows.
+
+## Illumination and palette
+
+Surface normals and the sun direction establish light-facing planes, while Three.js supplies cast-shadow visibility. The shader applies each style's contrast and light bands, along with a shared world-space cloud-shadow field. Warm illumination and palette-relative cool shadow tints multiply the painted albedo, preserving the mineral colors and brushwork through shade.
+
+Rock receives a restrained, art-directed sky fill based on the world-space orientation of its fracture planes. Faces oriented toward the chosen sky direction receive more fill; downward-facing planes retain a lower value floor. This directional fill stays attached to the landscape during the camera orbit and retains the underlying rock pigment. Ink quantizes this contribution with its existing clear light bands; Cozy and Ghibli retain smooth transitions.
+
+Cozy uses warm limestone rock (`#aaa38e`) and a cool sage shadow tint (`#819d92`) to distinguish cliffs from green turf. Its contrast setting is `0.52`, with no light bands and restrained pigment and texture strengths. Cream masonry, mint roofs, and the remaining pastel palette are preserved, keeping the treatment soft while making the rock's broad forms easier to read.
