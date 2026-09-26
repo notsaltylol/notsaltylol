@@ -17,23 +17,21 @@ document.getElementById('scene').appendChild(renderer.domElement);
 document.getElementById('loading')?.remove();
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x91d7ea);
 const camera=new THREE.OrthographicCamera(-8,8,5,-5,.1,60);camera.position.z=20;
-const shared={time:{value:0},grade:{value:0},pixels:{value:0}};
+const shared={time:{value:0},grade:{value:0}};
 function layer(texture,width,height,z,flow=false){
  const material=new THREE.ShaderMaterial({
   transparent:true,depthWrite:false,
-  uniforms:{map:{value:texture},time:shared.time,grade:shared.grade,pixels:shared.pixels,flow:{value:flow?1:0},alpha:{value:1},grid:{value:new THREE.Vector2(width*20,height*20)},soften:{value:z===-9?1:0}},
+  uniforms:{map:{value:texture},time:shared.time,grade:shared.grade,flow:{value:flow?1:0},alpha:{value:1},soften:{value:z===-9?1:0}},
   vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
-  fragmentShader:`varying vec2 vUv;uniform sampler2D map;uniform float time,grade,pixels,flow,alpha,soften;uniform vec2 grid;
+  fragmentShader:`varying vec2 vUv;uniform sampler2D map;uniform float time,grade,flow,alpha,soften;
    void main(){
-    vec2 uv=vUv;if(pixels>0.)uv=(floor(uv*grid)+.5)/grid;
-    vec4 c=pixels>0.?texture2D(map,uv,-16.):texture2D(map,uv);if(c.a<.015)discard;
-    if(soften>0.&&pixels==0.){vec2 d=vec2(.0025,.004);c=c*.4+.15*(texture2D(map,uv+vec2(d.x,0.))+texture2D(map,uv-vec2(d.x,0.))+texture2D(map,uv+vec2(0.,d.y))+texture2D(map,uv-vec2(0.,d.y)));}
+    vec2 uv=vUv;
+    vec4 c=texture2D(map,uv);if(c.a<.015)discard;
+    if(soften>0.){vec2 d=vec2(.0025,.004);c=c*.4+.15*(texture2D(map,uv+vec2(d.x,0.))+texture2D(map,uv-vec2(d.x,0.))+texture2D(map,uv+vec2(0.,d.y))+texture2D(map,uv-vec2(0.,d.y)));}
     float water=flow*step(uv.y,.53)*smoothstep(.25,.55,min(c.g,c.b))*step(c.r*.91,c.b)*step(c.r*.91,c.g);
     c.rgb+=water*.035*sin(uv.y*220.+time*12.);
     float lum=dot(c.rgb,vec3(.2126,.7152,.0722));
     if(grade==1.){c.rgb=mix(vec3(lum),c.rgb,.66)*vec3(1.09,1.025,.83);}
-    if(grade==2.){float warm=step(c.b,c.r)*step(c.g,c.r*1.15);c.rgb=mix(c.rgb,lum*vec3(1.3,.78,1.4),warm*.6);c.rgb*=vec3(.95,1.06,1.13);c.rgb=pow(max(c.rgb,0.),vec3(.88));}
-    if(grade==3.){vec3 display=pow(max(c.rgb,0.),vec3(1./2.2));display=floor(display*23.+.5)/23.;c.rgb=pow(display,vec3(2.2));}
     if(grade==4.){c.rgb=mix(vec3(lum),c.rgb,.72)*vec3(1.06,1.,.86);}
     if(grade==5.){c.rgb=mix(c.rgb,vec3(.68,.76,.60),.08);c.rgb=pow(max(c.rgb,0.),vec3(.9));}
     c.a*=alpha;gl_FragColor=c;
@@ -54,13 +52,13 @@ ctx.fillStyle='#4e4133';ctx.fillText('NOTSALTYLOL',514,82);ctx.fillStyle='#dcc3a
 const nameTexture=new THREE.CanvasTexture(inscription);nameTexture.colorSpace=THREE.SRGBColorSpace;
 const name=layer(nameTexture,2.75,.43,.1);name.material.uniforms.flow.value=0;name.material.uniforms.alpha.value=.58;
 const bases=new Map([[sky,[0,0]],[island,[-1.05,.7]],[satellite,[5.65,1.3]],[distant,[-7.65,2.15]],[foreground,[0,0]]]);
-const grades={original:1,pastel:2,pixel:3,fantasy:0,ink:4,cozy:5};
+const grades={original:1,fantasy:0,ink:4,cozy:5};
 window.castleStyles=Object.keys(STYLES);window.castleState={style:DEFAULT_STYLE,layerCount:3};
 window.setStyle=(id,{persist=true}={})=>{
  if(!Object.hasOwn(STYLES,id))throw new Error('Unknown castle style: '+id);
- shared.grade.value=grades[id];shared.pixels.value=id==='pixel'?1:0;
- const illustrated=['cozy','ink','pastel','original'].includes(id);
- island.material.uniforms.map.value=id==='cozy'||id==='pastel'?cozyTexture:id==='ink'||id==='original'?inkTexture:islandTexture;
+ shared.grade.value=grades[id];
+ const illustrated=['cozy','ink','original'].includes(id);
+ island.material.uniforms.map.value=id==='cozy'?cozyTexture:id==='ink'||id==='original'?inkTexture:islandTexture;
  island.material.uniforms.grade={value:id==='cozy'||id==='ink'?0:grades[id]};
  sky.material.uniforms.map.value=illustrated?watercolorSky:skyTexture;
  foreground.material.uniforms.map.value=illustrated?cozyForeground:foregroundTexture;

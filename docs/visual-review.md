@@ -1,4 +1,4 @@
-# Visual review — illustrated castle
+# Visual review — castle evolution
 
 ## Direction
 
@@ -20,20 +20,30 @@ The old terrain looked like a disc on spikes; modular castle blocks and capsule 
 
 ## Review process
 
-Render, inspect, identify the largest visible defects, revise, and render again. Review all six themes at the same phase, then the animation at quarter-cycle intervals. Check the exported GIF too: browser rendering alone does not establish GIF quality.
+Render, inspect, identify the largest visible defects, revise, and render again. Review every active theme at the same phase, then the animation at quarter-cycle intervals. Check the exported GIF too: browser rendering alone does not establish GIF quality.
 
 Functional checks cover theme changes, URL persistence, pause, reduced-motion behavior, responsive layout, render errors, and the animation's loop boundary. These checks are separate from the visual judgment.
 
 ## Remaining artistic limits
 
-The motion is deliberately subtle parallax; it cannot reveal new views of the painted castle. The first and fifth themes share the inked island but differ in color treatment. The pixel version filters an illustration rather than replacing it with hand-drawn pixel sprites. GIF's limited palette loses some of the original paintings' color detail; the live viewer retains it.
+The motion is deliberately subtle parallax; it cannot reveal new views of the painted castle. Golden ruins and Clear-line reverie share the inked island but differ in color treatment. GIF's limited palette loses some of the original paintings' color detail; the live viewer retains it.
 
 ## Real 3D follow-up
 
-The scene now also has a separate real 3D interpretation in all six styles. Its geometry includes a continuous terrain height field, an excavated lake, a river and waterfall, architectural arcades, foliage, and a foreground ledge. Four orbit angles were reviewed through three iterations.
+The initial real 3D follow-up shipped six styles. Its geometry includes a continuous terrain height field, an excavated lake, a river and waterfall, architectural arcades, foliage, and a foreground ledge. Four orbit angles were reviewed through three iterations.
 
 The first integrated render still looked like a smooth brown bowl, with noisy upright grass and an oversized narrow castle. Revisions introduced broad unequal cliff buttresses, a smaller and more spread-out castle, fewer shorter grass tufts, stronger normal-based form shading, colored shadows, and a foreground viewing ledge. The waterfall channel was carved back after a new cliff rib interrupted the stream. Cliff lettering was moved onto a coherent facet after individual letters disappeared into folds.
 
-All six styles pass exact loop-endpoint image comparisons. Interaction checks cover pointer and keyboard orbiting, zoom, reset, style changes while paused, URL persistence, reduced motion, mobile width, and mode links that preserve the selected style. No browser or shader errors were reported.
+All six initial styles passed exact loop-endpoint image comparisons. Interaction checks cover pointer and keyboard orbiting, zoom, reset, style changes while paused, URL persistence, reduced motion, mobile width, and mode links that preserve the selected style. No browser or shader errors were reported.
 
 The illustrated scene is still the closer match to the painted reference. The 3D version offers genuine camera freedom and model-based shading, with an intentionally stylized model appearance and procedural cloud fields. Neither geometry tests nor shader compilation should be described as proof that the two artistic results are identical.
+
+## Four-style detail pass
+
+Pixel garden and Pastel dream were retired from both viewers, profile links, and current galleries. Golden ruins, Luminous fantasy, Clear-line reverie, and Cozy storybook remain, numbered 1–4. Old links using a retired style fall back to Fantasy.
+
+This pass adds shared model detail: fine masonry joints, overlapping roof courses, arched wooden doors, balcony railings, terrace paving, an open masonry bridge, lily leaves, separated shoreline rocks, garden beds, and ivy that follows the cliff surface. The foreground lookout has grounded flowers, shrubs, a stepping-stone trail, and corrected tree/traveler contact with the ground. Styles reuse all this geometry, changing palettes, surface shading, lighting, contours, and grain.
+
+Four front views and four orbit angles were inspected. The first pass made the foreground stones overlap into a cream ribbon and the lake stones too evenly spaced; the revisions separate the steps and leave longer open shore stretches. A short bridge approach connects it toward the castle path. No floating architecture, blocked water channel, or major framing issue was found. Fine castle details are easiest to read while zoomed in; Cozy deliberately reduces their contrast.
+
+The four remaining 3D styles pass exact loop-endpoint comparisons without browser or WebGL errors. Orbit/zoom/reset controls, paused theme changes, URL persistence, reduced motion, mobile width, and both viewer links pass. The illustrated viewer also passes its four-theme rendering and loop checks. The profile GIF retains the illustrated scene; the new details are in the interactive 3D viewer.

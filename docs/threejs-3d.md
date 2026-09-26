@@ -1,4 +1,4 @@
-# Castle in the sky: six styles in real 3D
+# Castle in the sky: four styles in real 3D
 
 [Open the 3D scene](https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html) · [Open the illustrated scene](https://notsaltylol.github.io/notsaltylol/assets/animation.html)
 
@@ -14,35 +14,37 @@ The illustrated version remains available separately, with its painted layers an
 - **Reset view** restores the starting angle and zoom.
 - The initial automatic motion is paused when the browser prefers reduced motion.
 
-Each automatic orbit lasts 60 seconds. The six style buttons update the existing geometry in place; they do not load six separate scenes. A selected style is reflected in the URL and remembered locally.
+Each automatic orbit lasts 60 seconds. The four style buttons reuse the same geometry, camera, and interactions. They update palette, material shading, lighting, outlines, and grain in place. A selected style is reflected in the URL and remembered locally; switching styles keeps the current view.
 
-## Six art directions
+## Four art directions
 
-| Style | URL value | Rendering treatment |
-| --- | --- | --- |
-| Golden ruins | `original` | Golden limestone, olive foliage, warm light, matte pigment variation. |
-| Pastel dream | `pastel` | Pink stone, mint greens, lavender shadows, soft lighting. |
-| Pixel garden | `pixel` | Coarse screen pixels, stronger outlines, and stepped toon lighting on the same 3D models. |
-| Luminous fantasy | `fantasy` | Lush greens, soft toon shading, blue shadows, and luminous water. |
-| Clear-line reverie | `ink` | Cream and olive colors, crisp light bands, paper grain, and fine depth outlines. |
-| Cozy storybook | `cozy` | Gentle pastels, nearly flat illumination, and soft contours. |
+| # | Style | URL value | Rendering treatment |
+| --- | --- | --- | --- |
+| 1 | Golden ruins | `original` | Golden limestone, olive foliage, warm light, matte pigment variation. |
+| 2 | Luminous fantasy | `fantasy` | Lush greens, soft toon shading, blue shadows, and luminous water. |
+| 3 | Clear-line reverie | `ink` | Cream and olive colors, crisp light bands, paper grain, and fine depth outlines. |
+| 4 | Cozy storybook | `cozy` | Gentle colors, nearly flat illumination, and soft contours. |
 
 For example, [the clear-line version](https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=ink) opens directly with `?style=ink`.
 
-[Compare all six 3D previews](style-gallery-3d.md)
+[Compare all four 3D previews](style-gallery-3d.md)
 
 ## How it is built
 
-The scene uses Three.js with custom material shading, real directional shadows, and atmospheric fog. Surface shaders control diffuse light bands, colored shadows, pigment noise, and the contrast between light and shade. Separate water shaders animate ripples, falling streams, and foam. A final screen pass applies the selected contour, pixel, and paper treatments.
+The scene uses Three.js with custom material shading, real directional shadows, and atmospheric fog. Surface shaders control diffuse light bands, colored shadows, pigment noise, and the contrast between light and shade. Separate water shaders animate ripples, falling streams, and foam. A final screen pass applies the selected outlines and paper grain.
+
+All four styles share the detailed castle masonry, staggered roof tiles, arched wooden doors, balcony railings, terrace paving, and sparse climbing ivy. The same shared landscape includes a real arched bridge, shoreline stones, gardens, trailing ivy, and a foreground viewing ledge with a path, flowers, and shrubs. These are geometry additions, so improvements carry through every style.
 
 The sky is a procedural shader on a surrounding dome, with soft cloud fields. It is an illustrated atmosphere, not a volumetric weather simulation. The overall rendering aims for stylized illustration rather than photorealism.
 
-The source is split into four modules:
+The source is split into shared modules:
 
 - [Scene and interaction](../assets/sky-castle-scene.js): camera, lighting, sky, controls, style switching, and screen effects.
 - [Terrain](../assets/sky-castle-terrain.js): island geometry, terrain height, lake, waterfall, paths, and small vegetation.
-- [Materials](../assets/sky-castle-materials.js): six palettes and the surface/water shader implementations.
-- [Models](../assets/sky-castle-models.js): castle, pavilion, and tree geometry, batched by material.
+- [Materials](../assets/sky-castle-materials.js): four palettes and the surface/water shader implementations.
+- [Models](../assets/sky-castle-models.js): castle, pavilion, and tree geometry, including the architectural detail, batched by material.
+- [Landscape details](../assets/sky-castle-details.js): bridge, shoreline, gardens, and cliff ivy.
+- [Foreground](../assets/sky-castle-foreground.js): grounded viewing-ledge path, flowers, and shrubs.
 
 The [viewer HTML](../assets/animation-3d.html) loads the locally vendored Three.js runtime. No public backend, API key, remote textures, or externally hosted runtime assets are needed.
 

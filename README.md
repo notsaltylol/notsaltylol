@@ -3,8 +3,8 @@
 </p>
 
 <p align="center">
-  <a href="https://notsaltylol.github.io/notsaltylol/"><b>Explore the 3D island in six styles ↗</b></a><br />
-  <sub><a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=original">1 · Golden ruins</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=pastel">2 · Pastel</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=pixel">3 · Pixel</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=fantasy">4 · Fantasy</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=ink">5 · Clear line</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=cozy">6 · Cozy</a></sub>
+  <a href="https://notsaltylol.github.io/notsaltylol/"><b>Explore the 3D island in four styles ↗</b></a><br />
+  <sub><a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=original">1 · Golden ruins</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=fantasy">2 · Fantasy</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=ink">3 · Clear line</a> · <a href="https://notsaltylol.github.io/notsaltylol/assets/animation-3d.html?style=cozy">4 · Cozy</a></sub>
 </p>
 
 <p align="center">

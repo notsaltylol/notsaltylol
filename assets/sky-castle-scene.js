@@ -2,6 +2,8 @@ import * as THREE from './vendor/three/three.module.js';
 import { createMaterials } from './sky-castle-materials.js';
 import { buildTerrain } from './sky-castle-terrain.js';
 import { buildCastle, buildTree, buildPavilion } from './sky-castle-models.js';
+import { buildLandscapeDetails } from './sky-castle-details.js';
+import { buildForegroundDetails } from './sky-castle-foreground.js';
 import { STYLES, DEFAULT_STYLE } from './castle-styles.js';
 
 const W = 960, H = 600, DURATION = 60;
@@ -31,6 +33,7 @@ Object.assign(sunlight.shadow.camera,{left:-16,right:16,top:17,bottom:-14,near:1
 sunlight.shadow.bias = -.00015; sunlight.shadow.normalBias = .035;
 scene.add(ambient,sunlight);
 const terrain = buildTerrain(THREE,m); scene.add(terrain.group);
+const landscapeDetails = buildLandscapeDetails(THREE,m,terrain); scene.add(landscapeDetails.group);
 const castle = buildCastle(THREE,m); castle.scale.setScalar(.64);
 castle.position.copy(terrain.castleAnchor); castle.position.y-=.09;castle.rotation.y = .17;
 scene.add(castle);
@@ -83,8 +86,9 @@ for(const [upper,material,vertical] of [[true,m.leaf,.65],[false,m.rock,2.1]]){
  const p=geo.attributes.position;for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i);const warp=1+.05*Math.sin(Math.atan2(z,x)*5)+.025*Math.cos(x*9+z*4);p.setXYZ(i,x*9.5*warp,y*vertical,z*2.5*warp);}geo.computeVertexNormals();
  const mesh=new THREE.Mesh(geo,material);mesh.castShadow=mesh.receiveShadow=true;ledge.add(mesh);
 }scene.add(ledge);
-for(const [i,x,z,height] of [[0,-11.0,10.7,1.25],[1,-10.2,11.1,.9],[2,-9.6,10.5,1.4],[3,-8.7,11.3,1.05]]){const tree=buildTree(THREE,m,{height,kind:'broadleaf',seed:79+i});tree.position.set(x,-3.22,z);scene.add(tree);}
-traveler(-6.9,10.45,1.5,-3.08);traveler(-6.45,10.46,1.0,-3.08);
+const foreground = buildForegroundDetails(THREE,m,ledge); scene.add(foreground.group);
+for(const [i,x,z,height] of [[0,-11.0,10.7,1.25],[1,-10.2,11.1,.9],[2,-9.6,10.5,1.4],[3,-8.7,11.3,1.05]]){const tree=buildTree(THREE,m,{height,kind:'broadleaf',seed:79+i});tree.position.set(x,foreground.groundHeight(x,z)-.025,z);scene.add(tree);}
+traveler(-6.9,10.45,1.5,foreground.groundHeight(-6.9,10.45));traveler(-6.45,10.46,1.0,foreground.groundHeight(-6.45,10.46));
 
 // A quiet name is assembled from actual slender stone strokes and raycast
 // onto the cliff. There is no rectangular sign or image masquerading as text.
@@ -132,28 +136,28 @@ const mistTexture=document.createElement('canvas');mistTexture.width=mistTexture
 const mistMaterial=new THREE.SpriteMaterial({map:new THREE.CanvasTexture(mistTexture),color:0xe5f7ed,transparent:true,opacity:.32,depthWrite:false});
 const mists=[];for(let i=0;i<12;i++){const mist=new THREE.Sprite(mistMaterial);mist.scale.set(1.3,1.0,1);scene.add(mist);mists.push(mist);}
 
-// Depth silhouettes, optional fine paper grain, and a true low-resolution mode
-// are applied once after the physically three-dimensional scene is rendered.
+// Depth silhouettes and fine paper grain are applied once after the shared
+// three-dimensional scene is rendered.
 const target=new THREE.WebGLRenderTarget(W,H,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter});
 target.depthTexture=new THREE.DepthTexture(W,H);target.depthTexture.type=THREE.UnsignedIntType;
 target.samples = 4;
-const postUniforms={colorMap:{value:target.texture},depthMap:{value:target.depthTexture},resolution:{value:new THREE.Vector2(W,H)},ink:{value:0},inkColor:{value:new THREE.Color()},pixel:{value:0},paper:{value:0}};
+const postUniforms={colorMap:{value:target.texture},depthMap:{value:target.depthTexture},resolution:{value:new THREE.Vector2(W,H)},ink:{value:0},inkColor:{value:new THREE.Color()},paper:{value:0}};
 const postMaterial=new THREE.ShaderMaterial({depthTest:false,depthWrite:false,uniforms:postUniforms,
  vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}',
- fragmentShader:`varying vec2 vUv;uniform sampler2D colorMap,depthMap;uniform vec2 resolution;uniform vec3 inkColor;uniform float ink,pixel,paper;
- void main(){vec2 uv=vUv;if(pixel>0.)uv=(floor(uv*vec2(320.,200.))+.5)/vec2(320.,200.);vec2 px=1./resolution;vec3 c=texture2D(colorMap,uv).rgb;float d=texture2D(depthMap,uv).r;float edge=0.;edge=max(edge,abs(d-texture2D(depthMap,uv+vec2(px.x,0.)).r));edge=max(edge,abs(d-texture2D(depthMap,uv-vec2(px.x,0.)).r));edge=max(edge,abs(d-texture2D(depthMap,uv+vec2(0.,px.y)).r));edge=max(edge,abs(d-texture2D(depthMap,uv-vec2(0.,px.y)).r));c=mix(c,inkColor,smoothstep(.0005,.008,edge)*ink);float grain=fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453)-.5;c*=1.+grain*paper;if(pixel>0.){vec3 s=pow(max(c,0.),vec3(1./2.2));c=pow(floor(s*23.+.5)/23.,vec3(2.2));}gl_FragColor=vec4(c,1.);
+ fragmentShader:`varying vec2 vUv;uniform sampler2D colorMap,depthMap;uniform vec2 resolution;uniform vec3 inkColor;uniform float ink,paper;
+ void main(){vec2 uv=vUv;vec2 px=1./resolution;vec3 c=texture2D(colorMap,uv).rgb;float d=texture2D(depthMap,uv).r;float edge=0.;edge=max(edge,abs(d-texture2D(depthMap,uv+vec2(px.x,0.)).r));edge=max(edge,abs(d-texture2D(depthMap,uv-vec2(px.x,0.)).r));edge=max(edge,abs(d-texture2D(depthMap,uv+vec2(0.,px.y)).r));edge=max(edge,abs(d-texture2D(depthMap,uv-vec2(0.,px.y)).r));c=mix(c,inkColor,smoothstep(.0005,.008,edge)*ink);float grain=fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453)-.5;c*=1.+grain*paper;gl_FragColor=vec4(c,1.);
  #include <colorspace_fragment>
  }`});
 const postScene=new THREE.Scene(),postCamera=new THREE.Camera();postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),postMaterial));
 
-const descriptions={original:'Golden stone, olive gardens, matte pigment and warm sunlight.',pastel:'Pink limestone, mint foliage and soft diffuse shadows.',pixel:'The same 3D geometry, rendered in coarse pixels with toon lighting.',fantasy:'Lush green terrain, soft toon shading, colored shadows and luminous water.',ink:'Cream and olive surfaces, crisp light bands and fine depth outlines.',cozy:'Gentle pastel colors, nearly flat illumination and soft contour lines.'};
+const descriptions={original:'Golden stone, olive gardens, matte pigment and warm sunlight.',fantasy:'Lush green terrain, soft toon shading, colored shadows and luminous water.',ink:'Cream and olive surfaces, crisp light bands and fine depth outlines.',cozy:'Gentle pastel colors, nearly flat illumination and soft contour lines.'};
 window.castleStyles=Object.keys(STYLES);window.castleState={style:DEFAULT_STYLE,mode:'3d',geometry:true};
 window.setStyle=(id,{persist=true}={})=>{
  if(!Object.hasOwn(STYLES,id))throw new Error('Unknown castle style: '+id);
  const preset=palette.setStyle(id);scene.fog.color.setHex(preset.fog);ambient.intensity=preset.ambient;sunlight.intensity=preset.sunlight;
  skyUniforms.high.value.setHex(preset.sky);skyUniforms.low.value.setHex(preset.fog);skyUniforms.cloud.value.setHex(preset.cloud);
  if(id==='fantasy'){skyUniforms.high.value.setHex(0x2589d7);skyUniforms.low.value.setHex(0x8cd2e9);}
- postUniforms.ink.value=preset.outlineOpacity;postUniforms.inkColor.value.setHex(preset.outline);postUniforms.pixel.value=id==='pixel'?1:0;postUniforms.paper.value=id==='ink'?.035:id==='cozy'?.012:0;
+ postUniforms.ink.value=preset.outlineOpacity;postUniforms.inkColor.value.setHex(preset.outline);postUniforms.paper.value=id==='ink'?.035:id==='cozy'?.012:0;
  document.querySelectorAll('[data-style]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.style===id)));
  document.getElementById('description').textContent=descriptions[id];document.getElementById('illustration-link').href='./animation.html?style='+id;
  if(persist&&!capture){const url=new URL(location.href);url.searchParams.set('style',id);history.replaceState(null,'',url);try{localStorage.setItem('castle-3d-style',id);}catch{}}
@@ -169,7 +173,7 @@ window.renderFrame=phase=>{
  const cycle=phase-Math.floor(phase),t=cycle*Math.PI*2;
  // Flow stays lively during the slow camera orbit; eight water cycles still
  // meet the camera at exactly the same seamless loop boundary.
- palette.animate(cycle*8);skyUniforms.time.value=t;
+ palette.animate(cycle*8);landscapeDetails.animate(cycle);skyUniforms.time.value=t;
  window.castleState.phase=cycle;
  const angle=t+azimuthOffset;camera.position.set(Math.sin(angle)*32,Math.sin(elevation)*32+1,Math.cos(angle)*32);camera.zoom=zoom;camera.updateProjectionMatrix();camera.lookAt(0,0,0);
  mists.forEach((mist,i)=>{const a=i*2.4+t;mist.position.set(terrain.lip.x+Math.sin(a)*.35,-5.8+Math.sin(t+i)*.18,terrain.lip.z+.5+Math.cos(a)*.20);});

@@ -1,5 +1,5 @@
 /**
- * Six art directions for a real, freely orbitable Three.js scene.
+ * Four art directions for a real, freely orbitable Three.js scene.
  *
  * Opaque surfaces retain Three.js' normal, light and shadow calculations. The
  * shader then compresses the diffuse illumination into art-directed bands and
@@ -21,24 +21,6 @@ const PALETTES = {
     sky:0x76aec4, fog:0x9fbdbb, outline:0x384d4b,
     ambient:1.35, sunlight:2.5, contrast:0.78, bands:3, softness:0.16,
     pigment:0.80, grain:0.12, outlineOpacity:0.25, outlineWidth:0.014,
-  },
-  pastel: {
-    grass:0x86d4a6, rock:0xb0a8d3, stone:0xf0b9c7, stoneLight:0xffdfcc,
-    roof:0x6bc5c3, gold:0xf0cf78, dark:0x676889, wood:0xa58b8e,
-    leaf:0x67b899, trunk:0x9b868f, flower:0xef8cac, cloud:0xffe5e6,
-    water:0x58bcc9, foam:0xf1ffed, shadow:0xa5afd1,
-    sky:0xa6dce6, fog:0xc3e2e6, outline:0x627a83,
-    ambient:1.7, sunlight:2.0, contrast:0.46, bands:0, softness:0.28,
-    pigment:0.50, grain:0.06, outlineOpacity:0.11, outlineWidth:0.009,
-  },
-  pixel: {
-    grass:0x75b849, rock:0x8b7660, stone:0xd5bf84, stoneLight:0xf1dca7,
-    roof:0x318a8b, gold:0xe5af40, dark:0x305349, wood:0x8c603f,
-    leaf:0x398750, trunk:0x73583b, flower:0xea8b83, cloud:0xf4edd4,
-    water:0x288fa7, foam:0xbcebdd, shadow:0x598d87,
-    sky:0x70bed6, fog:0x9fcbd0, outline:0x324e49,
-    ambient:1.25, sunlight:2.7, contrast:0.86, bands:4, softness:0.005,
-    pigment:0.55, grain:0.0, outlineOpacity:0.42, outlineWidth:0.018,
   },
   fantasy: {
     grass:0x71a84c, rock:0xa68162, stone:0xe8ddbe, stoneLight:0xffedcb,
@@ -196,7 +178,7 @@ export function createMaterials(THREE) {
 
   const waterUniforms = {
     uPhase:{ value:0 }, uWater:{ value:new THREE.Color() },
-    uFoam:{ value:new THREE.Color() }, uCozy:{ value:0 }, uPixel:{ value:0 },
+    uFoam:{ value:new THREE.Color() }, uCozy:{ value:0 },
   };
   const waterVertex = /* glsl */`
     varying vec2 vWaterUv;
@@ -225,11 +207,9 @@ export function createMaterials(THREE) {
     uniform vec3 uFoam;
     uniform float uFall;
     uniform float uCozy;
-    uniform float uPixel;
     #include <fog_pars_fragment>
     void main() {
       vec2 uv = vWaterUv;
-      if (uPixel > 0.5) uv = floor(uv * vec2(64.0, 96.0)) / vec2(64.0, 96.0);
       float t = uPhase * 6.28318530718;
       vec3 color;
       float alpha;
@@ -285,7 +265,6 @@ export function createMaterials(THREE) {
     waterUniforms.uWater.value.setHex(preset.water);
     waterUniforms.uFoam.value.setHex(preset.foam);
     waterUniforms.uCozy.value = id === 'cozy' ? 1 : 0;
-    waterUniforms.uPixel.value = id === 'pixel' ? 1 : 0;
     return styleInfo[id] || styleInfo.fantasy;
   }
 

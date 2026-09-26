@@ -1,27 +1,19 @@
-# Six views of the same island
+# Four views of the same island
 
-Each image uses the same camera phase and composition. Click a preview to open its interactive theme.
+Each illustrated image uses the same camera phase and composition. Click a preview to open its interactive theme. The separate [3D gallery](style-gallery-3d.md) shows the same four art directions applied to shared detailed geometry, camera controls, and interactions.
 
 ## 1. Golden ruins
 
 [![Golden ruins](../assets/style-previews/original.png)](https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=original)
 
-## 2. Pastel dream
-
-[![Pastel dream](../assets/style-previews/pastel.png)](https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=pastel)
-
-## 3. Pixel garden
-
-[![Pixel garden](../assets/style-previews/pixel.png)](https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=pixel)
-
-## 4. Luminous fantasy
+## 2. Luminous fantasy
 
 [![Luminous fantasy](../assets/style-previews/fantasy.png)](https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=fantasy)
 
-## 5. Clear-line reverie
+## 3. Clear-line reverie
 
 [![Clear-line reverie](../assets/style-previews/ink.png)](https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=ink)
 
-## 6. Cozy storybook
+## 4. Cozy storybook
 
 [![Cozy storybook](../assets/style-previews/cozy.png)](https://notsaltylol.github.io/notsaltylol/assets/animation.html?style=cozy)

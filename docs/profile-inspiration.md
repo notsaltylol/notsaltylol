@@ -20,6 +20,8 @@ The repository already has the special name notsaltylol/notsaltylol. Its default
 
 ## Three.js animations
 
-The castle is a 24-second, 960 × 600 loop at 12 fps. Its fantasy default uses deep earthy cliffs, green gardens, a hilltop castle, and a painted blue sky; five alternate styles remain available in the live viewer. Three illustrated depth layers move in slow parallax, with animated water and a small cliff inscription. The profile GIF uses this illustrated version. A separate [real 3D version](threejs-3d.md) provides a 60-second full orbit, interactive camera controls, and all six shader styles.
+The castle is a 24-second, 960 × 600 loop at 12 fps. Its fantasy default uses deep earthy cliffs, green gardens, a hilltop castle, and a painted blue sky. The four available art directions are **1. Golden ruins**, **2. Luminous fantasy**, **3. Clear-line reverie**, and **4. Cozy storybook**. Three illustrated depth layers move in slow parallax, with animated water and a small cliff inscription. The profile GIF uses this illustrated version.
 
-All six castle styles, the original orbital scene, the frame renderer, and the pinned Three.js runtime are published. See [the complete running and rendering guide](threejs.md). GitHub displays the rendered GIF; open the source through a local web server to see live WebGL playback.
+A separate [real 3D version](threejs-3d.md) provides a 60-second full orbit and interactive camera controls. All four styles reuse the same geometry, cameras, and interactions; style switching updates the palette, material shaders, lighting, outlines, and grain. Castle masonry, roof tiles, doors, balconies, bridge, shoreline gardens, ivy, and the foreground viewing path are shared detail additions, so every style receives them.
+
+All four castle styles, the original orbital scene, the frame renderer, and the pinned Three.js runtime are published. See [the complete running and rendering guide](threejs.md). GitHub displays the rendered GIF; open the source through a local web server to see live WebGL playback.

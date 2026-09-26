@@ -1,23 +1,21 @@
-# Castle in the sky — six illustrated themes
+# Castle in the sky — four illustrated themes
 
-**Also available:** [Real 3D version in all six styles](threejs-3d.md), with terrain, architectural geometry, custom materials, and a full orbit.
+**Also available:** [Real 3D version in all four styles](threejs-3d.md), with terrain, architectural geometry, custom materials, and a full orbit. Its styles reuse the same geometry, cameras, and interactions, switching palette, material shading, lighting, outlines, and grain. Shared details include castle stonework and roof tiles, doors, balcony railings, a bridge, shoreline gardens, ivy, and the foreground path.
 
 A painted landscape with a hilltop castle, broad floating island, central lake, waterfalls, small pavilion islands, and two travelers. The profile uses a 24-second parallax loop rendered in Three.js. The sky, island group, and foreground move at different speeds; a small shader animation adds movement to the water.
 
-This version prioritizes illustration quality. It is **2.5D**, made from transparent illustrated planes, rather than a full 360° model. The same layout and motion are shared by all six themes.
+This version prioritizes illustration quality. It is **2.5D**, made from transparent illustrated planes, rather than a full 360° model. The same layout and motion are shared by all four themes.
 
-[Open the illustrated style picker](https://notsaltylol.github.io/notsaltylol/assets/animation.html) · [Compare the six previews](style-gallery.md)
+[Open the illustrated style picker](https://notsaltylol.github.io/notsaltylol/assets/animation.html) · [Compare the four previews](style-gallery.md)
 
 | # | Style ID | Direction | How it changes |
 | --- | --- | --- | --- |
 | 1 | `original` | Golden ruins | Inked island, warm ochre/olive grading, watercolor sky |
-| 2 | `pastel` | Pastel dream | Storybook illustrations, pink/lilac masonry, fresh green gardens |
-| 3 | `pixel` | Pixel garden | Detailed illustrations sampled into coarse pixels, reduced color levels |
-| 4 | `fantasy` | Luminous fantasy | Detailed painted layers, saturated greens and blues, softly focused sky |
-| 5 | `ink` | Clear-line reverie | Inked island, outlined foreground and pavilions, warm paper colors |
-| 6 | `cozy` | Cozy storybook | Simplified watercolor illustrations throughout, rounded foliage and soft contours |
+| 2 | `fantasy` | Luminous fantasy | Detailed painted layers, saturated greens and blues, softly focused sky |
+| 3 | `ink` | Clear-line reverie | Inked island, outlined foreground and pavilions, warm paper colors |
+| 4 | `cozy` | Cozy storybook | Simplified watercolor illustrations throughout, rounded foliage and soft contours |
 
-These are interpretations of the requested directions, not proprietary game shaders. Some themes share drawings and change their color treatment; others also swap the illustrated layers. Pixel mode is a rendering treatment, not hand-authored pixel art.
+These are interpretations of the requested directions, not proprietary game shaders. Some illustrated themes share drawings and change their color treatment; others also swap the illustrated layers. The separate 3D viewer keeps one shared set of models across every style.
 
 ## Published source and artwork
 
@@ -40,7 +38,7 @@ From the repository root:
 python3 -m http.server 8768 --bind 127.0.0.1
 ```
 
-Open `http://127.0.0.1:8768/assets/animation.html`. Choose a theme with the six buttons. The choice is saved in the URL and local storage. The pause button stops the animation; a reduced-motion browser preference starts it paused.
+Open `http://127.0.0.1:8768/assets/animation.html`. Choose a theme with the four buttons. The choice is saved in the URL and local storage. The pause button stops the animation; a reduced-motion browser preference starts it paused.
 
 Open a theme directly with `?style=cozy`, or call `window.setStyle('cozy')` from the browser console. An unknown URL style falls back to `fantasy`; the JavaScript API rejects an invalid ID.
 
@@ -64,10 +62,10 @@ The output directory contains `animation.gif` and the PNG frames. The scene expo
 
 The exporter adds `?capture=1` to hide the controls. `--preview` produces four equally spaced review frames; use a separate directory for preview and full exports.
 
-To render all six:
+To render all four:
 
 ```sh
-for style in original pastel pixel fantasy ink cozy; do
+for style in original fantasy ink cozy; do
   NODE_PATH=/tmp/notsaltylol-render-tools/node_modules node scripts/render-animation.cjs \
     http://127.0.0.1:8768/assets/animation.html "/tmp/castle-$style" --style="$style" --gif
 done

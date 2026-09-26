@@ -142,11 +142,61 @@ export function buildCastle(THREE, materials) {
     add(new THREE.ConeGeometry(0.041, height * 0.42, 12), 'gold', [x, y + height * 0.83, z]);
   }
 
+  function masonryCourses(x, z, radius, height, base, windows) {
+    const radiusAt = (y) => {
+      const middle = height * 0.48;
+      const t = y < middle ? (y - 0.19) / (middle - 0.19) : (y - middle) / (height - 0.15 - middle);
+      return radius * (y < middle ? 1 - t * 0.03 : 0.97 - t * 0.03) + 0.0017;
+    };
+    const clearOfWindows = (angle, y) => {
+      for (let level = 0; level < 2; level++) {
+        const bottom = height * (level ? 0.68 : 0.24) - 0.06;
+        const top = bottom + Math.min(0.54, height * 0.22) + 0.12;
+        if (y < bottom || y > top) continue;
+        const pitch = Math.PI * 2 / windows;
+        const relative = angle - (level ? Math.PI / windows : 0);
+        const nearest = Math.round(relative / pitch) * pitch;
+        if (Math.abs(relative - nearest) < (radius * 0.185 + 0.052) / radius) return false;
+      }
+      return true;
+    };
+    const point = (angle, y) => [x + Math.sin(angle) * radiusAt(y), base + y, z + Math.cos(angle) * radiusAt(y)];
+    const joints = [];
+    const band = (a0, a1, y0, y1) => {
+      const a = point(a0, y0), b = point(a1, y0), c = point(a1, y1), d = point(a0, y1);
+      joints.push(...a, ...b, ...d, ...b, ...c, ...d);
+    };
+    const courseHeight = 0.185;
+    const columns = Math.max(9, Math.round(radius * Math.PI * 2 / 0.22));
+    // Hairline mortar is actual recessed-looking geometry. Window openings
+    // interrupt the joints, and alternate rows use a half-brick bond.
+    for (let row = 0, y = 0.22; y < height - 0.21; row++, y += courseHeight) {
+      for (let segment = 0; segment < 80; segment++) {
+        const a0 = segment / 80 * Math.PI * 2, a1 = (segment + 1) / 80 * Math.PI * 2;
+        if (clearOfWindows(a0, y) && clearOfWindows(a1, y)) band(a0, a1, y - 0.0015, y + 0.0015);
+      }
+      const yTop = Math.min(y + courseHeight, height - 0.20);
+      for (let column = 0; column < columns; column++) {
+        const angle = (column + (row % 2) * 0.5) / columns * Math.PI * 2;
+        if (![y, (y + yTop) / 2, yTop].every(level => clearOfWindows(angle, level))) continue;
+        const halfWidth = 0.0015 / radius;
+        band(angle - halfWidth, angle + halfWidth, y, yTop);
+      }
+    }
+    // Flat shallow joint strips need two triangles each, rather than a full
+    // tube. This keeps fine coursing affordable even on a small display.
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(joints, 3));
+    geometry.computeVertexNormals();
+    add(geometry, 'dark');
+  }
+
   function tower({ x, z, radius, height, base = 0.43, roof = 'dome', roofHeight = 0.70, windows = 6 }) {
     const top = base + height;
     // Entasis and several ledges make these feel like built masonry towers,
     // instead of uniform cylinders stacked under primitive cones.
     lathe('stone', x, base, z, [[0, 0], [radius * 1.10, 0], [radius * 1.10, 0.13], [radius, 0.19], [radius * 0.97, height * 0.48], [radius * 0.94, height - 0.15], [radius, height - 0.12], [radius, height], [0, height]]);
+    masonryCourses(x, z, radius, height, base, windows);
     for (const level of [0.17, height * 0.47, height - 0.17, height + 0.015]) {
       cylinder('stoneLight', x, base + level, z, radius * 1.07, radius * 1.09, 0.05);
     }
@@ -171,6 +221,15 @@ export function buildCastle(THREE, materials) {
     } else {
       lathe('roof', x, roofBase, z, [[0, 0], [r * 1.08, 0], [r * 1.11, 0.055], [r * 0.90, roofHeight * 0.13], [r * 0.73, roofHeight * 0.31], [r * 0.49, roofHeight * 0.56], [r * 0.24, roofHeight * 0.79], [r * 0.045, roofHeight], [0, roofHeight]]);
       cylinder('gold', x, roofBase + 0.03, z, r * 1.10, r * 1.10, 0.018);
+      const profile = [[0.13, 0.90], [0.31, 0.73], [0.56, 0.49], [0.79, 0.24], [1, 0.045]];
+      for (let row = 0; row < 7; row++) {
+        const t = 0.19 + row * 0.105;
+        const upper = profile.findIndex(([level]) => level >= t);
+        const [y0, r0] = profile[upper - 1], [y1, r1] = profile[upper];
+        const ringRadius = r * (r0 + (r1 - r0) * (t - y0) / (y1 - y0));
+        // Thin tile lips follow the actual curved roof profile.
+        add(new THREE.TorusGeometry(ringRadius + 0.003, 0.009, 4, 40), 'roof', [x, roofBase + roofHeight * t, z], [Math.PI / 2, 0, 0]);
+      }
     }
     finial(x, roofBase + roofHeight, z, radius < 0.3 ? 0.25 : 0.34);
     // Slender buttresses run into the lower stonework. Their sloped cap is a
@@ -209,6 +268,15 @@ export function buildCastle(THREE, materials) {
         const t = i / 5;
         tube('roof', [[x - roofWidth / 2, y + height + rise * (1 - t) + 0.01, z + side * roofDepth / 2 * t], [x + roofWidth / 2, y + height + rise * (1 - t) + 0.01, z + side * roofDepth / 2 * t]], 0.016, 4);
       }
+      for (let row = 0; row < 5; row++) {
+        const start = row / 5, end = (row + 1) / 5;
+        const columns = Math.ceil(roofWidth / 0.16);
+        for (let tile = 1; tile < columns; tile++) {
+          const tx = x - roofWidth / 2 + (tile + (row % 2) * 0.5) * roofWidth / columns;
+          if (tx > x + roofWidth / 2 - 0.03) continue;
+          tube('roof', [[tx, y + height + rise * (1 - start) + 0.006, z + side * roofDepth / 2 * start], [tx, y + height + rise * (1 - end) + 0.006, z + side * roofDepth / 2 * end]], 0.006, 1);
+        }
+      }
     }
     const count = Math.max(2, Math.floor(width / 0.37));
     for (let i = 0; i < count; i++) {
@@ -237,6 +305,58 @@ export function buildCastle(THREE, materials) {
     add(arcadeGeometry(THREE, 1.13, 0.89, 0.13, 3, 0.70), 'stone', [side * 1.02, 0.37, -0.07], [0, side * Math.PI / 2, 0], [1, 1, 1], true);
     box('stoneLight', side * 1.02, 1.30, -0.07, 0.21, 0.095, 1.26);
     box('stone', side * 0.92, 1.40, -0.07, 0.38, 0.13, 1.19);
+  }
+
+  function archedDoor(x, y, z, yaw, width, height) {
+    const shape = archPath(THREE, 0, 0, width, height, THREE.Shape);
+    const matrix = new THREE.Matrix4().makeRotationY(yaw);
+    const at = (u, v, outward) => new THREE.Vector3(u, v, outward).applyMatrix4(matrix).add(new THREE.Vector3(x, y, z));
+    add(new THREE.ExtrudeGeometry(shape, { depth: 0.015, bevelEnabled: false, curveSegments: 16 }), 'wood', [x, y, z], [0, yaw, 0]);
+    const rim = at(0, -0.024, 0.012);
+    add(extrudedArch(THREE, width + 0.10, height + 0.08, 0.05, 0.032), 'stoneLight', rim.toArray(), [0, yaw, 0]);
+    for (let plank = 1; plank < 6; plank++) {
+      const u = -width / 2 + plank * width / 6;
+      const archTop = height - width / 2 + Math.sqrt((width / 2) ** 2 - u ** 2);
+      const a = at(u, 0.018, 0.017), b = at(u, archTop - 0.025, 0.017);
+      tube('dark', [a.toArray(), b.toArray()], 0.0022, 1);
+    }
+    for (const level of [height * 0.21, height * 0.62]) {
+      const center = at(0, level, 0.021);
+      box('gold', center.x, center.y, center.z, width * 0.86, 0.014, 0.016, [0, yaw, 0]);
+    }
+    for (const side of [-1, 1]) {
+      const handle = at(side * width * 0.10, height * 0.40, 0.031);
+      add(new THREE.TorusGeometry(0.015, 0.0035, 5, 14), 'gold', handle.toArray(), [0, yaw, 0]);
+    }
+    const threshold = at(0, -0.024, 0.022);
+    box('stoneLight', threshold.x, threshold.y, threshold.z, width + 0.12, 0.044, 0.14, [0, yaw, 0]);
+  }
+  archedDoor(0.12, 0.45, 0.866, 0, 0.22, 0.48);
+  archedDoor(-1.30, 0.94, -0.68, -Math.PI / 2, 0.24, 0.43);
+
+  // A pair of usable roof terraces, with slender balusters and coping.
+  for (const [left, right] of [[-1.08, -0.18], [0.41, 1.06]]) {
+    const y = 1.72, z = 0.88;
+    tube('stoneLight', [[left, y, z], [right, y, z]], 0.025, 2);
+    box('stoneLight', (left + right) / 2, 1.535, z, right - left + 0.04, 0.044, 0.10);
+    const count = Math.ceil((right - left) / 0.13);
+    for (let i = 0; i <= count; i++) {
+      const x = left + (right - left) * i / count;
+      lathe('stoneLight', x, 1.55, z, [[0, 0], [0.024, 0], [0.024, 0.023], [0.014, 0.08], [0.019, 0.12], [0.014, 0.16], [0.023, 0.17], [0, 0.17]], false);
+    }
+  }
+
+  // Terrace paving follows the existing ellipse; fine joints add a human
+  // scale at close range without introducing one mesh per paving stone.
+  for (let i = 0; i < 31; i++) {
+    const a = i / 31 * Math.PI * 2;
+    const inner = [Math.cos(a) * 1.53, 0.153, Math.sin(a) * 1.13];
+    const outer = [Math.cos(a) * 1.685, 0.153, Math.sin(a) * 1.247];
+    tube('dark', [inner, outer], 0.0018, 1);
+  }
+  for (let i = 0; i < 7; i++) {
+    const y = 0.052 + i * 0.035, z = 1.235 - i * 0.082;
+    box('stone', 0.12, y, z, 0.56, 0.007, 0.017);
   }
 
   // Small roofed bridges bind the independent towers into one castle.
@@ -268,11 +388,17 @@ export function buildCastle(THREE, materials) {
     tube('stoneLight', points, 0.035, 24);
   }
 
-  // A few climbing leaves soften the join between terrace and architecture.
-  for (let i = 0; i < 15; i++) {
-    const y = 0.49 + i * 0.066;
-    const x = -1.10 + Math.sin(i * 0.9) * 0.06;
-    add(new THREE.SphereGeometry(0.055, 10, 8), 'leaf', [x, y, 0.47 + Math.cos(i * 0.8) * 0.025], [0, i, 0], [1.3, 0.55, 0.85]);
+  // Sparse vines follow two sheltered corners, leaving the entry and the
+  // majority of the stonework clear. Small paired leaves sit along each stem.
+  for (const [anchorX, anchorZ, height] of [[-1.10, 0.47, 0.99], [1.025, -0.49, 0.76]]) {
+    const stem = [];
+    for (let i = 0; i <= 12; i++) stem.push([anchorX + Math.sin(i * 0.61) * 0.026, 0.46 + i / 12 * height, anchorZ + Math.sin(i * 0.40) * 0.015]);
+    tube('trunk', stem, 0.006, 12);
+    for (let i = 0; i < 9; i++) {
+      const y = 0.52 + i / 9 * height;
+      const x = anchorX + Math.sin(i * 0.72) * 0.025 + (i % 2 ? -0.030 : 0.030);
+      add(new THREE.SphereGeometry(0.038, 10, 8), 'leaf', [x, y, anchorZ + 0.02], [0.1, 0, (i % 2 ? -1 : 1) * 0.6], [0.85, 1.25, 0.28]);
+    }
   }
 
   const castle = work.finish();
