@@ -46,17 +46,22 @@ Trees have finer branching and individual folded leaves: broadleaf crowns use ov
 
 Instanced meadow plants add **23,000 grass tufts containing 109,000 blades, 1,200 ferns, 6,000 clovers, and 111 reeds**. These plants share geometry and live style materials. Grass and reeds sway in slow wind while their roots stay fixed; the wind uses the same normalized loop phase as the scene and returns exactly to its starting pose.
 
-The expanded landscape has **900 grove trees on the main island, 100 on each of three satellite islands, and 400 on the lookout**, alongside the original landmark trees. Spatial chunks let the renderer omit offscreen vegetation. The overview uses lightweight tree crowns and grass silhouettes; close views restore folded leaves, veins, curved grass, and small garden geometry within a fixed rendering budget. The main terrain also retains 4,600 stones and 38,000 flowers, which appear as their size becomes visible on screen. Rock texture and water ribbons use physical-scale frequencies rather than stretching with the land.
+The expanded landscape has **900 grove trees on the main island, 100 on each of three satellite islands, and 400 on the lookout**, alongside the original landmark trees. Species mix within woodland stands. Spatial chunks let the renderer omit offscreen vegetation. The overview uses lightweight tree crowns and grass silhouettes; close views restore folded leaves, veins, curved grass, and small garden geometry within a fixed rendering budget. The main terrain also retains 4,600 stones and 38,000 flowers, grouped into habitat patches and revealed as their size becomes visible on screen. Rock texture and water ribbons use physical-scale frequencies rather than stretching with the land.
 
 The [shared geology helper](../assets/sky-castle-geology.js) deforms the rock geometry at several scales: large crags establish the silhouette, secondary ridges break up the faces, and finer weathering adds smaller variations. Fractal Brownian motion (fBm) combines noise at increasing frequencies and decreasing strengths, so the formation has structure beyond a smooth base mesh.
 
-Procedural rock shading adds broken strata, mineral color flecks, and fine pits. Screen-space derivatives filter the smallest marks as they recede, limiting distant visual noise. Broad, shallow bump shading supplies surface relief; the thin cracks affect color only, keeping them from turning into sharp ridges.
+Unequal geological faces, interrupted shelves, drifting faults, and hanging wedges establish the main cliff silhouette. Procedural rock shading adds broken strata, mineral color flecks, and fine pits. Screen-space derivatives filter the smallest marks as they recede, limiting distant visual noise. Broad, shallow bump shading supplies surface relief; the thin cracks affect color only, keeping them from turning into sharp ridges.
 
-The sky is a procedural shader on a surrounding dome, with soft cloud fields. It is an illustrated atmosphere, not a volumetric weather simulation. The overall rendering aims for stylized illustration rather than photorealism.
+The lake follows an irregular shoreline with coves and a shallow bank. Water meshes carry actual depth values for the material's shore-to-deep color transition. The connected river and waterfall keep the same continuous flow.
+
+The sky uses a locally stored painted panorama on a surrounding dome, with style-specific color grading and subtle looping drift. Its structured cloud painting replaces the old soft noise field. The land and architecture remain real 3D; the sky is an environment backdrop, not a volumetric weather simulation. [Sky asset and generation prompt](sky-environment.md).
+
+The interactive canvas renders at up to twice its CSS resolution on high-density screens. Frame exports remain 960 × 600. Higher-resolution shadows refocus around close-up views with an adjusted bias, and the initial loading message stays visible until the sky and first frame are ready.
 
 The source is split into shared modules:
 
 - [Scene and interaction](../assets/sky-castle-scene.js): camera, lighting, sky, controls, style switching, and screen effects.
+- [Atmosphere](../assets/sky-castle-atmosphere.js): painted sky mapping, color grading, and periodic drift, plus an optional procedural cloud construction mode.
 - [Terrain](../assets/sky-castle-terrain.js): island geometry, terrain height, lake, waterfall, paths, and small vegetation.
 - [Groves](../assets/sky-castle-groves.js): clustered woodland, shared tree variants, spatial culling, and budgeted close-up leaves.
 - [Geology](../assets/sky-castle-geology.js): shared fractal rock deformation, from large crags and secondary ridges to finer weathering.
