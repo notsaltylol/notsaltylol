@@ -77,7 +77,7 @@ Change the Worker name there if needed before your first deployment.
 Set `SITE_URL` to your real public Cloudflare or custom-domain URL when building
 or deploying so `@astrojs/sitemap` can generate absolute URLs. For example,
 prefix the commands below with `SITE_URL=https://your-domain.com`.
-Without a site URL, sitemap generation is skipped with a warning.
+Production builds require a site URL for RSS generation.
 GitHub Pages supplies its URL automatically and sets `DEPLOY_TARGET=github-pages`
 to build without the Cloudflare adapter.
 
@@ -106,3 +106,30 @@ The old `@astrojs/tailwind` integration is deprecated.
 
 See the [Astro Cloudflare deployment guide](https://docs.astro.build/en/guides/deploy/cloudflare/).
 
+## Code quality
+
+`pnpm install` enables Husky through the `prepare` script. Each commit runs
+lint-staged: ESLint auto-fixes staged JavaScript, TypeScript, React, and Astro
+files, then Prettier formats them. Other supported text files are formatted too.
+Unfixable lint errors block the commit. The hook uses mise when available.
+
+```sh
+mise exec -- pnpm lint
+mise exec -- pnpm lint:fix
+mise exec -- pnpm format
+mise exec -- pnpm format:check
+mise exec -- pnpm check
+```
+
+Prettier includes Astro syntax and Tailwind class sorting. Build output,
+dependency directories, browser artifacts, and the generated lockfile are excluded.
+
+## RSS
+
+`/rss.xml` contains one item per project from `src/content/site.ts`, linking to
+the corresponding gallery card. It includes descriptions and categories; no
+publication dates are invented for the sample projects. Every page includes an
+RSS discovery link. GitHub Pages base paths are included in feed URLs.
+
+Cloudflare builds require `SITE_URL=https://your-domain.com`. GitHub Pages
+supplies its configured URL through the workflow. Development uses the local URL.

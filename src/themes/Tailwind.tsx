@@ -56,6 +56,7 @@ export default function Tailwind(p: PresentationProps) {
             <button
               className="custom-card text-left"
               key={project.id}
+              id={project.id}
               onClick={() => p.openProject(project)}
             >
               <Artwork project={project} />

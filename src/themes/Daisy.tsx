@@ -23,12 +23,12 @@ export default function Daisy(p: PresentationProps) {
           <div className="featured-stack">
             <div className="stack-back" />
             <button
-              className="card bg-base-100 featured-card"
+              className="featured-card card bg-base-100"
               onClick={() => p.openProject(p.projects[0])}
             >
               <Artwork project={p.projects[0]} />
               <div className="card-body">
-                <span className="badge badge-secondary badge-soft">
+                <span className="badge badge-soft badge-secondary">
                   Latest exploration
                 </span>
                 <h2 className="card-title">{p.projects[0].name}</h2>
@@ -39,7 +39,7 @@ export default function Daisy(p: PresentationProps) {
         </section>
       ) : (
         <header className="gallery-heading">
-          <span className="badge badge-primary badge-soft">The collection</span>
+          <span className="badge badge-soft badge-primary">The collection</span>
           <h1>Project gallery</h1>
           <p>
             A few things made out of curiosity. Find something that catches
@@ -60,7 +60,7 @@ export default function Daisy(p: PresentationProps) {
           </div>
         ) : (
           <div className="gallery-controls">
-            <label className="input input-bordered search-field">
+            <label className="input-bordered search-field input">
               <span aria-hidden="true">⌕</span>
               <input
                 aria-label="Search projects"
@@ -87,7 +87,8 @@ export default function Daisy(p: PresentationProps) {
           {(home ? p.projects.slice(1, 4) : p.projects).map((project) => (
             <button
               key={project.id}
-              className="card bg-base-100 project-card"
+              id={project.id}
+              className="project-card card bg-base-100"
               onClick={() => p.openProject(project)}
             >
               <Artwork project={project} />

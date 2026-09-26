@@ -5,10 +5,16 @@ import type * as React from "react";
 import type { VariantProps } from "tailwind-variants";
 import { input } from "./variants";
 
-export type InputProps = Omit<React.ComponentPropsWithoutRef<"input">, "children" | "defaultValue" | "size" | "value"> &
+export type InputProps = Omit<
+  React.ComponentPropsWithoutRef<"input">,
+  "children" | "defaultValue" | "size" | "value"
+> &
   VariantProps<typeof input> & {
     defaultValue?: import("@starwind-ui/react/input").InputValue;
-    onValueChange?: (value: string, details: import("@starwind-ui/react/input").InputValueChangeDetails) => void;
+    onValueChange?: (
+      value: string,
+      details: import("@starwind-ui/react/input").InputValueChangeDetails,
+    ) => void;
     ref?: React.Ref<HTMLInputElement>;
     "data-slot"?: string;
     value?: import("@starwind-ui/react/input").InputValue;

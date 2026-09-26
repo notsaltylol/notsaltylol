@@ -29,7 +29,9 @@ export default function Website({ initialPage }: { initialPage: Page }) {
       const savedStyle = localStorage.getItem("portfolio-style");
       if (savedStyle && ["glass", "brutalist", "minimal"].includes(savedStyle))
         setStyle(savedStyle);
-    } catch {}
+    } catch {
+      /* Storage may be unavailable in private browsing. */
+    }
     const back = () => {
       setPage(
         location.pathname.replace(/\/$/, "") === `${base}/projects`
@@ -59,7 +61,9 @@ export default function Website({ initialPage }: { initialPage: Page }) {
     setTheme(next);
     try {
       localStorage.setItem("portfolio-theme", next);
-    } catch {}
+    } catch {
+      /* Storage may be unavailable in private browsing. */
+    }
   }
   const visible = projects.filter(
     (p) =>
@@ -144,7 +148,9 @@ export default function Website({ initialPage }: { initialPage: Page }) {
                   setStyle(e.target.value);
                   try {
                     localStorage.setItem("portfolio-style", e.target.value);
-                  } catch {}
+                  } catch {
+                    /* Storage may be unavailable in private browsing. */
+                  }
                 }}
               >
                 <option value="glass">Glass</option>

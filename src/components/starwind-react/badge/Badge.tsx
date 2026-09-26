@@ -9,18 +9,40 @@ export type BadgeProps = React.ComponentPropsWithoutRef<"div"> &
   };
 
 function Badge(props: BadgeProps) {
-  const { variant, tone, appearance, eyebrow, size, ref, className, children, ...rest } = props;
+  const {
+    variant,
+    tone,
+    appearance,
+    eyebrow,
+    size,
+    ref,
+    className,
+    children,
+    ...rest
+  } = props;
 
   const usesComposedBadgeStyle = tone !== undefined || appearance !== undefined;
-  const resolvedVariant = (usesComposedBadgeStyle ? null : variant) as typeof variant;
+  const resolvedVariant = (
+    usesComposedBadgeStyle ? null : variant
+  ) as typeof variant;
   const resolvedTone = usesComposedBadgeStyle ? (tone ?? "neutral") : undefined;
-  const resolvedAppearance = usesComposedBadgeStyle ? (appearance ?? "soft") : undefined;
+  const resolvedAppearance = usesComposedBadgeStyle
+    ? (appearance ?? "soft")
+    : undefined;
   const Tag = rest.href ? "a" : "div";
 
   return (
     <Tag
       data-sw-badge
-      className={badge({ variant: resolvedVariant, tone: resolvedTone, appearance: resolvedAppearance, eyebrow, size, isLink: Boolean(rest.href), class: className })}
+      className={badge({
+        variant: resolvedVariant,
+        tone: resolvedTone,
+        appearance: resolvedAppearance,
+        eyebrow,
+        size,
+        isLink: Boolean(rest.href),
+        class: className,
+      })}
       {...rest}
       ref={ref as React.Ref<HTMLDivElement> & React.Ref<HTMLAnchorElement>}
       data-slot="badge"

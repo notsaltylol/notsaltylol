@@ -70,7 +70,8 @@ export default function Starwind(p: PresentationProps) {
           {(home ? p.projects.slice(0, 3) : p.projects).map((project) => (
             <Card
               key={project.id}
-              className="overflow-hidden border border-border p-0 gap-0"
+              id={project.id}
+              className="gap-0 overflow-hidden border border-border p-0"
             >
               <Artwork project={project} />
               <div className="p-6">

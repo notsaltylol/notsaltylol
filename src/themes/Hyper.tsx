@@ -65,14 +65,15 @@ export default function Hyper(p: PresentationProps) {
           {(home ? p.projects.slice(0, 3) : p.projects).map((project) => (
             <button
               key={project.id}
-              className="group relative block text-left hyper-card"
+              id={project.id}
+              className="group hyper-card relative block text-left"
               onClick={() => p.openProject(project)}
             >
               <span
                 className="absolute inset-0 border-2 border-black"
                 aria-hidden="true"
               />
-              <div className="relative h-full border-2 border-black bg-white transition-transform group-hover:-translate-x-1 group-hover:-translate-y-1 hyper-card-inner">
+              <div className="hyper-card-inner relative h-full border-2 border-black bg-white transition-transform group-hover:-translate-x-1 group-hover:-translate-y-1">
                 <Artwork project={project} />
                 <div className="hyper-card-copy">
                   <div className="card-meta">
