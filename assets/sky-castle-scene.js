@@ -224,6 +224,7 @@ const postScene=new THREE.Scene(),postCamera=new THREE.Camera();postScene.add(ne
 
 const descriptions={original:'Golden stone, olive gardens, matte pigment and warm sunlight.',fantasy:'Lush green terrain, soft toon shading, colored shadows and luminous water.',ink:'Cream and olive surfaces, crisp light bands and fine depth outlines.',cozy:'Gentle pastel colors, nearly flat illumination and soft contour lines.',ghibli:'Warm painted sunlight, natural greens, soft cool shadows and cream clouds.'};
 window.castleStyles=Object.keys(STYLES);window.castleState={style:DEFAULT_STYLE,mode:'3d',geometry:true,landScale:LAND_SCALE,landAreaScale:LAND_SCALE*LAND_SCALE,view:'overview'};
+let sceneReady=false;
 window.setStyle=(id,{persist=true}={})=>{
  if(!Object.hasOwn(STYLES,id))throw new Error('Unknown castle style: '+id);
  const preset=palette.setStyle(id);foregroundGrass.color.copy(m.grass.color).multiplyScalar(.78);scene.fog.color.setHex(preset.fog);ambient.intensity=preset.ambient;sunlight.intensity=preset.sunlight;
@@ -238,7 +239,7 @@ window.setStyle=(id,{persist=true}={})=>{
  document.getElementById('description').textContent=descriptions[id];document.getElementById('illustration-link').href='./animation.html?style='+id;
  if(persist&&!capture){const url=new URL(location.href);url.searchParams.set('style',id);history.replaceState(null,'',url);try{localStorage.setItem('castle-3d-style',id);}catch{}}
  window.castleState.style=id;renderer.shadowMap.needsUpdate=true;
- if(window.renderFrame)window.renderFrame(window.castleState.phase||0);
+ if(sceneReady)window.renderFrame(window.castleState.phase||0);
 };
 for(const [id,preset] of Object.entries(STYLES)){const button=document.createElement('button');button.type='button';button.dataset.style=id;button.textContent=preset.label;button.addEventListener('click',()=>window.setStyle(id));document.getElementById('style-picker').append(button);}
 let preferred=params.get('style');if(!preferred&&!capture){try{preferred=localStorage.getItem('castle-3d-style');}catch{}}
@@ -309,12 +310,14 @@ try{
  await renderer.compileAsync(scene,camera);
  // Shadow depth has no fog; match its context without changing the shown scene.
  const shadowWarmupFog=scene.fog;scene.fog=null;
- try{await renderer.compileAsync(shadowWarmupProxy,camera,scene);}finally{scene.fog=shadowWarmupFog;}
+ let shadowWarmupPending;
+ try{shadowWarmupPending=renderer.compileAsync(shadowWarmupProxy,camera,scene);}finally{scene.fog=shadowWarmupFog;}
+ await shadowWarmupPending;
 }finally{
  renderer.setRenderTarget(warmupTarget);
  shadowWarmupGeometry.dispose();
 }
-window.renderFrame(0);
+window.renderFrame(0);sceneReady=true;
 document.getElementById('loading')?.remove();renderer.domElement.style.visibility='visible';
 const pause=document.getElementById('pause');function updatePause(){pause.textContent=paused?'Play motion':'Pause motion';pause.setAttribute('aria-pressed',String(paused));}updatePause();
 pause.addEventListener('click',()=>{paused=!paused;updatePause();});

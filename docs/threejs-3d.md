@@ -18,7 +18,7 @@ The illustrated version remains available separately, with its painted layers an
 - **Reset view** restores the starting angle and zoom.
 - The initial automatic motion is paused when the browser prefers reduced motion.
 
-The perspective camera gives near and distant islands different apparent sizes. Lookout uses a wider lens near the travelers; other presets use the standard landscape lens. Zoom moves the camera toward the current focus while keeping that field of view fixed, so the sky painting stays clear in close views. Each automatic orbit lasts 60 seconds. The five style buttons reuse the same geometry, camera, and interactions. They update palette, material shading, lighting, outlines, and grain in place. A selected style is reflected in the URL and remembered locally; switching styles keeps the current view.
+The perspective camera gives near and distant islands different apparent sizes. Lookout uses a wider lens near the travelers; other presets use the standard landscape lens. Zoom moves the camera toward the current focus while keeping that field of view fixed, so the sky painting stays clear in close views. Each automatic orbit lasts 60 seconds. The five style buttons reuse the same geometry, camera, and interactions. They update palette, material shading, lighting, outlines, and grain in place. A selected style is reflected in the URL and remembered locally; switching styles keeps the current view. You can choose a style while loading, and it takes effect on the first displayed frame.
 
 ## Five art directions
 

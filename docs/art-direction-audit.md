@@ -42,30 +42,34 @@ Remaining priorities:
 2. The summit retains broad smooth surfaces, especially behind the castle. Its silhouette, shoulders and vegetation transitions need more authored variation at the retained small building scale.
 3. The foreground lawn and castle court remain visually uniform. They need more deliberate value grouping without filling the travelers' open clearing or hiding the small architecture.
 4. Close waterfall foam remains graphic; lake reflections use art-directed sky color rather than scene-object reflections.
-5. The sky and land differ in edge treatment and finish. Ink needs better shape grouping; Cozy remains intentionally soft but needs review as a complete image. The sky is still a painted environment dome.
+5. The sky and land differ in edge treatment and finish. Ink needs better shape grouping and retains a thin ground-shadow streak below and left of the castle gate; Cozy remains intentionally soft but needs review as a complete image. The sky is still a painted environment dome.
 6. Fine vegetation, LOD transitions and high-resolution rendering cost need further work. Startup preparation alone does not establish sustained smoothness.
 
 ### Verification
 
 The final material and sunlight combination passes all five styles in Overview, Castle and Lookout at 960×600, all four camera presets, and quarter-orbit captures. Starting and ending PNGs match exactly after an intermediate phase, with no page or WebGL errors. The final source also passes all five styles in Castle, Lake and Lookout at 1920×1200 with exact loop endpoints. Camera presets, keyboard and pointer panning, zoom, view-preserving style switching, reset, reduced motion and the 390-pixel phone layout pass without browser errors.
 
+Native-resolution visual review of the highest-risk Ink, Cozy and Fantasy views found no new clipping, broken water coverage or lost masonry/plant detail that blocks this lighting revision. The remaining minor Ink ground-shadow artifact is recorded above.
+
 ### Startup preparation evidence
 
 An isolated frozen-baseline experiment compared the existing scene with the color-material warmup alone. Eleven image pairs were byte-identical. Four program additions observed across sixty first-orbit samples were absent in the candidate; the same initial geometry count was retained. Its timing comparison overlapped another browser run, so it supports program and image evidence, not a startup speedup claim.
 
-A denser 720-frame trace of the combined light-and-material source identified one additional instanced, double-sided depth program at phase `0.5875`, used by the lookout's coarse leaf batch. A public `MeshDepthMaterial` proxy now prepares the exact program before display. Its compile context temporarily omits fog, matching the depth pass; scene fog and the render target are restored before rendering. The proxy geometry is disposed after compilation, while its material keeps the program cached.
+A denser 720-frame trace of the combined light-and-material source identified one additional instanced, double-sided depth program at phase `0.5875`, used by the lookout's coarse leaf batch. A public `MeshDepthMaterial` proxy now prepares the exact program before display. Its synchronous compile setup temporarily omits fog, matching the depth pass, and restores fog before awaiting shader completion. The render target is restored before rendering. The proxy geometry is disposed after compilation, while its material keeps the program cached.
 
 With this correction, no new programs appear across all 720 first-orbit samples. Twelve saved-baseline/candidate image pairs are byte-identical, including initial view, loop end, and all five Overview/Lookout combinations. The registered geometry count and initial drawn triangle count are unchanged. No browser or WebGL errors were observed. This establishes the sampled shader-preparation behavior; it does not prove every possible zoom or camera path is free of compilation, nor establish a startup-time improvement.
 
+Style selection remains available while loading. A readiness guard defers drawing until preparation completes, and fog is never absent between event-loop tasks. A targeted browser check held each compile promise and clicked the visible style buttons: the former code rendered prematurely during the first wait and threw during the second. The correction preserves both selections, retains the color target during preparation, and displays the final selected style without errors.
+
 ### Final source timing sample
 
-One hardware Chrome session on Apple M2 Pro with other test browsers closed; three warmup and twelve moving frames per view. Warmup and measured frames both finish with the same synchronized one-pixel readback. Startup measured 4.23 seconds at normal resolution and 4.19 seconds on the later Retina load.
+One hardware Chrome session on Apple M2 Pro with other test browsers closed; three warmup and twelve moving frames per view. Warmup and measured frames both finish with the same synchronized one-pixel readback. Startup measured 4.125 seconds at normal resolution and 4.018 seconds on the later Retina load.
 
 | View | 960×600 median / maximum | 1920×1200 median / maximum |
 | --- | ---: | ---: |
-| Overview | 13.6 / 17.2 ms | 18.3 / 21.4 ms |
-| Castle | 11.4 / 13.8 ms | 15.0 / 19.0 ms |
-| Lake | 18.2 / 19.2 ms | 25.9 / 27.8 ms |
-| Lookout | 9.9 / 12.2 ms | 13.0 / 14.6 ms |
+| Overview | 14.7 / 18.3 ms | 19.9 / 28.5 ms |
+| Castle | 10.7 / 13.0 ms | 15.2 / 17.5 ms |
+| Lake | 17.2 / 18.3 ms | 26.0 / 28.3 ms |
+| Lookout | 10.2 / 12.6 ms | 12.8 / 14.9 ms |
 
 These short device-specific samples are not isolated GPU timestamps or a sustained frame-rate guarantee. The higher-resolution Overview and Lake samples still exceed a 16.7 ms frame budget. This pass makes no controlled performance-improvement claim.
