@@ -22,46 +22,47 @@ Objective: achieve AAA quality in the five requested styles. This is a visual pr
 7. **Presentation and motion:** inspect at full display resolution, a phone viewport, and detailed camera views. No shader errors, obvious clipping, stale shadows, flashing LOD, abrupt loop seams, or unusable startup/interaction. Capture actual frame timings on the test device; do not infer performance from triangle counts.
 8. **Delivered state:** published source and previews must match the tested scene. Verify the public deployment and record the exact revision.
 
-## Current pass: ground pigment follows woodland habitats
+## Current pass: a shallow fold in the foreground clearing
 
-Comparison baseline: source `dc88f4f8e02455468d33cc665f37404de5926ae0`, canonical output `1d55a4548fb7fb7645652ad90bb3ec5ab2a1c1eb`. Previous lighting, shader-preparation and geometry audits remain in Git history.
+Comparison baseline: source `3aa6ba9f51e61723376c6dd19f68b8b606e8854e`, canonical output `b182e54fe3080e8cb43e63cc4ef58d309c93ea0b`. Previous habitat-pigment, lighting and geometry audits remain in Git history.
 
-The main island and lookout now bake woodland, woodland-edge and flower-drift weights from the same habitat map that places their plants. Ground beneath groves receives cooler, deeper green pigment; meadow edges and flower drifts receive a restrained warmer wash. Open ground stays lighter. Existing wash noise softens transitions, and each style has an independent habitat strength. The main summit's rock exposure still overlays this ground pigment. Plant materials, fine texture frequencies, light direction and painted sky are unchanged.
+A localized oblique hollow and one unequal turf shoulder divide the broad Lookout lawn into a quiet traveler perch and a larger right shoulder. They are smooth changes to the existing height field, with no added noise, vertices, incidental objects or shader changes. At the active 10× scale, the maximum sampled vertical change is 0.5064 world units. The immediate traveler ground is protected; both traveler heights and the resulting preset camera position remain exact.
 
-This is ground color, not a new light or shadow. Three normalized bytes per terrain vertex add 662,403 bytes across the two expanded ground meshes. No triangles, drawing passes, texture fetches or fragment noise octaves were added. The weights are baked once in local island coordinates, before lookout translation. No route-wear color was added from the habitat map because its approximate route differs from the actual castle trail.
+The meadow and rock still share their edge positions. The existing rock weathering is evaluated against the adjusted surface; this causes up to 0.0827 world units of horizontal change in the nearby cliff surface. The worn path and plants continue to sample actual ground triangles. Island width, terrain topology, fine physical dimensions, textures and plant populations are retained.
 
 ### Visual judgment
 
-**The AAA quality objective remains open.** Nineteen matched before/after pairs were reviewed: all five styles in Overview, Castle and Lookout; Fantasy Lake; and three Fantasy quarter-orbit views. This is a modest, accepted improvement in woodland-ground grouping. It is clearest beside the lake and in rear/side views, where connected deeper green grove bases separate woodland from the open meadow. The result retains the small trees and fine plants, shoreline, routes and the five distinct palettes. No new pigment seam or distracting patch edge stood out.
+**The AAA quality objective remains open.** The initial deeper, narrower hollow was rejected because it created a sharp notch in the foreground silhouette. The accepted version is wider and shallower. All five matched Lookout pairs and Fantasy quarter-orbit overviews were reviewed, followed by native close views and nearby Lookout orbit angles.
 
-The visible Lookout clearing mostly gains a small brightening; this does not solve its broad uniform lawn. The castle court also remains too uniform. Increasing habitat strength would darken the already readable groves without solving those open areas, so the reviewed values are retained.
+This is a modest improvement to the foreground landform: the lawn now has a gentle saddle between unequal shoulders, while the travelers, path, tiny grass and distant castle island stay readable. Ink produces the strongest shaded strip on one slope; it reads as a coherent toon-shaded plane, and the hollow should not be deepened further. Cozy gains mainly a clearer silhouette. No new visible rim crack, floating surface, high-frequency noise or overview regression was found.
 
 Remaining priorities:
 
-1. Stronger authored variation in the foreground clearing and castle court, while retaining quiet space around the travelers and small buildings.
-2. More natural large cliff masses and summit shoulders. Several lower closures still resemble similar tapered lobes, and the castle sits on a conspicuously round upper mesa. Temporary alternative cliff and summit studies were rejected; none were published.
-3. Close tree crowns still use smooth large shells despite individual fine leaves. A temporary crown study was not integrated into this focused pass.
+1. The foreground still needs richer painterly grouping inside its open areas; the castle court remains broad and uniform. The shallow fold alone does not resolve either completely.
+2. More natural large cliff masses and summit shoulders. Several lower closures resemble similar tapered lobes, and the castle sits on a conspicuously round upper mesa. Previously rejected cliff/summit studies remain unpublished.
+3. Close tree crowns retain smooth large shells despite individual fine leaves.
 4. Waterfall foam remains graphic; lake reflections borrow the painted sky rather than reflecting scene objects.
-5. Sky and land need more consistent edge treatment and finish across all five art directions. The painted sky remains an environment backdrop.
-6. High-resolution Overview and Lake costs remain above a 16.7 ms frame budget in this device sample. Passing rendering tests is not visual completion or a sustained performance guarantee.
+5. Sky and land need more consistent edge treatment and finish across the five art directions.
+6. High-resolution Overview and Lake rendering remain above a 16.7 ms budget in this device sample. Technical success does not establish visual completion or sustained performance.
 
 ### Verification
 
-- At scales 1 and 10, the baseline and candidate have byte-identical existing geometry attributes and indices, identical mesh placements and instanced transforms. The only new ground attribute is normalized habitat pigment. The actual landform, lake/river/fall connection, building support and small physical details are therefore retained.
-- The 960×600 comparison set passes all five styles, all four view presets and quarter-orbit views with no JavaScript or WebGL errors. Initial/end PNGs are exactly equal after an intermediate phase.
-- All five styles pass Castle, Lake and Lookout at native 1920×1200, again with exact loop endpoints. Native Fantasy/Cozy Lake and the phone layout were visually reviewed for retained fine detail and readable transitions.
-- Preset buttons, Shift-arrow and Shift-drag panning, zoom, view-preserving style switching, reset, reduced motion and a 390-pixel Retina phone layout pass.
-- Seven gallery previews were regenerated from the reviewed Three.js source: five 960×600 overviews, one 960×600 Lookout and one native 1920×1200 Castle. These are direct renderer exports; no new external or AI-generated image assets were introduced. The separate illustrated profile GIF is unchanged.
+- At terrain scales 1 and 10: finite ground/cliff attributes, identical indices and UVs, no zero-area triangles, closed angular seams with matching normals, and an exact meadow/cliff rim. The lookout retains 135,168 triangles, two landform draw calls and its original width.
+- At active scale 10, both traveler heights are exactly unchanged. The grounded trail stays 0.011997–0.012003 units above the actual ground triangles. All foreground instance matrices are finite.
+- Foreground detail populations match baseline: 3,000 shrubs, 9,000 flowers, 1,200 rocks, 73,854 fine leaves and 60 nearby grass tufts. No main-island geometry, lake/river/fall, castle, satellite model, camera control or shader source changed.
+- All five styles pass Overview, Castle and Lookout at 960×600; Fantasy also passes Lake and quarter-orbit views. Exact loop-end PNGs match after an intermediate phase, with no JavaScript or WebGL errors.
+- All five styles pass Castle, Lake and Lookout at native 1920×1200 with exact loop endpoints. Presets, Shift-arrow/Shift-drag panning, zoom, view-preserving style switching, reset, reduced motion and a 390-pixel Retina phone layout pass.
+- Seven preview frames were regenerated from the reviewed Three.js source; identical frames are retained without needless changes. The changed Lookout preview is a direct renderer export. No new external or AI-generated assets were introduced, and the separate illustrated profile GIF is unchanged.
 
 ### Hardware Chrome sample
 
-One Chrome session on Apple M2 Pro, with three warmup and twelve moving frames per view. Both warmup and measured frames use the same synchronized one-pixel readback. This short sequential comparison does not isolate GPU time or establish a performance improvement. Draw counts and triangle counts match the baseline in every sampled view. Baseline startup was 4.477/4.020 seconds at normal/Retina resolution; the candidate was 4.158/4.182 seconds.
+One Chrome session on Apple M2 Pro, three warmup and twelve moving frames per view, using the same synchronized one-pixel readback in warmup and measurement. Draw and triangle counts match baseline in all four sampled views. This short sequential sample does not isolate GPU time or establish a performance improvement. Baseline startup was 4.225/4.292 seconds at normal/Retina resolution; candidate startup was 4.099/4.149 seconds.
 
 | View | Baseline 960×600 median | Candidate 960×600 median / maximum | Baseline 1920×1200 median | Candidate 1920×1200 median / maximum |
 | --- | ---: | ---: | ---: | ---: |
-| Overview | 14.6 ms | 14.2 / 16.5 ms | 18.9 ms | 20.7 / 22.9 ms |
-| Castle | 12.5 ms | 11.6 / 13.3 ms | 14.9 ms | 15.3 / 17.6 ms |
-| Lake | 17.6 ms | 18.0 / 21.3 ms | 24.8 ms | 25.7 / 28.2 ms |
-| Lookout | 9.8 ms | 10.5 / 12.9 ms | 13.8 ms | 13.0 / 15.1 ms |
+| Overview | 13.3 ms | 12.5 / 14.7 ms | 19.7 ms | 19.3 / 21.5 ms |
+| Castle | 10.6 ms | 11.9 / 13.4 ms | 14.9 ms | 14.7 / 17.5 ms |
+| Lake | 17.7 ms | 17.3 / 18.8 ms | 26.0 ms | 25.1 / 27.4 ms |
+| Lookout | 9.6 ms | 9.7 / 12.4 ms | 12.7 ms | 12.8 / 15.2 ms |
 
 The current source and canonical deployments must be checked at their exact revision before reporting delivery.
