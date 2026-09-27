@@ -22,49 +22,49 @@ Objective: achieve AAA quality in the five requested styles. This is a visual pr
 7. **Presentation and motion:** inspect at full display resolution, a phone viewport, and detailed camera views. No shader errors, obvious clipping, stale shadows, flashing LOD, abrupt loop seams, or unusable startup/interaction. Capture actual frame timings on the test device; do not infer performance from triangle counts.
 8. **Delivered state:** published source and previews must match the tested scene. Verify the public deployment and record the exact revision.
 
-## Current pass: a distinct lower mass for the largest satellite
+## Current pass: warm and cool pigment in the foreground clearing
 
-Comparison baseline: source `bdf9567f7af33d643a5ec4fcafdc2b33edb85e77`, canonical output `7d80a1b891dee4c8941f99d1ebdea0a7d6e27e31`. Both baseline Pages workflows succeeded and their public output matched the preceding reviewed pass. Previous foreground, habitat-pigment, lighting and geometry audits remain in Git history.
+Comparison baseline: source `bd0f3bdfca879c9a1836e928e5e5c8d57f397710`, canonical output `4e1df197c6f4a42798c26b5e7b2b773241f0468c`. Baseline source Pages run `36288730119` and canonical Pages run `36288771576` succeeded; their public source assets, previews, five styles and loop frames matched the reviewed version. Previous satellite, foreground, habitat, lighting and geometry audits remain in Git history.
 
-The largest secondary island now has a broader, oblique rock foot. Its lower hanging tips join into one unequal mass while the smaller two islands retain their separate pointed buttresses. An explicit `baseProfile` option selects this shape; it is not coupled to a random seed. The blend begins below 56% of the rock shell and changes only vertex height. At scale 10, the maximum local vertical change is 3.5141 units, and the lowest point remains 17.1253 units below the local origin before the satellite's existing 0.92 group scale.
+Two broad pigment masses now follow the foreground's existing oblique fold: cooler, deeper grass in the hollow and a shorter warm wash over the right shoulder. Their shapes use the same local coordinate frame as the terrain relief, with broad feathered edges and weaker pigment near the travelers. They remain anchored to the ground throughout the orbit.
 
-All meadow attributes, horizontal rock coordinates, upper cliff positions, UVs, topology, random sequences and ground sampling remain exact. The tiny pavilion and grove therefore keep their footing and physical scale. There are no added textures, noise octaves, vertices, plant instances, shaders or rendering passes.
+A two-channel normalized byte attribute is baked only on the lookout meadow: 61,602 bytes. A dedicated ground material interpolates the weights and reuses existing painted brushwork. The five styles retain their own habitat-pigment strength. There are no new noise octaves, texture samples, terrain vertices, plant instances or render passes. Every existing position, normal, UV, habitat attribute, triangle index and viewing anchor remains exact.
 
 ### Visual judgment
 
-**The AAA quality objective remains open.** Matched close views of all five styles and Fantasy quarter-orbit details were reviewed independently by two agents, alongside normal-size overviews and the existing close presets.
+**The AAA quality objective remains open.** The first narrow, weaker study had insufficient visible effect. The accepted broader treatment was reviewed in matched 960×600 images across all five styles, native close views, nearby Lookout orbit angles and Fantasy quarter-orbit overviews. Root and an independent reviewer agree it is a small improvement, not a transformation.
 
-The change is a modest improvement in landform variety. The largest satellite no longer repeats the long paired teeth of its neighbors. The underside keeps a short broken edge at the initial angle, unequal corners at quarter and three-quarter turns, and a narrower keel at the half turn. It does not introduce a broad horizontal cut. The improvement is easiest to read in the quarter- and half-orbit overviews; the castle island remains the focal point.
-
-The lower corners are still somewhat bulbous in two close angles, and Ink reduces the lower mass to a broad dark shape. Do not soften this profile further or apply it to every satellite. No new visible cracks, floating surfaces, high-frequency noise or loss of the tiny pavilion/grove was found. This is one bounded shape adjustment, not a completed geological or painterly treatment.
+Fantasy and Ghibli gain the clearest cool hollow/warm shoulder separation. Original gains quieter pigment variation. Ink and Cozy remain restrained; the Ink hollow's existing hard light band is not a newly introduced pigment boundary. Travelers, their footing, small grass and painted strokes remain readable. No distracting stripe, circular footprint ring, new hard pigment boundary, rim crack or floating surface was found. Quarter-orbit overviews stay visually quiet. Do not increase the pigment strength further to compensate for broader art-direction weaknesses.
 
 Remaining priorities:
 
-1. Richer painterly grouping in the open foreground and broad castle court, with more deliberate inhabited-landscape composition.
-2. More natural main-island cliff masses and summit shoulders. The castle still sits on a conspicuously round upper mesa. The secondary islands retain smooth stacked shelves and comparatively uniform meadow. Previously rejected cliff/summit studies remain unpublished.
+1. Stronger inhabited-landscape composition and painterly treatment across the broad castle court. The foreground's large color grouping improves, but its open lawn and overall brushwork still need further art direction.
+2. More natural main-island cliff masses and summit shoulders. The castle still sits on a conspicuously round upper mesa. The secondary islands retain smooth stacked shelves and comparatively uniform meadow; the largest foot remains slightly bulbous at two angles.
 3. Close tree crowns retain smooth large shells despite individual fine leaves.
 4. Waterfall foam remains graphic; lake reflections borrow the painted sky rather than reflecting scene objects.
 5. Sky and land need more consistent edge treatment and finish across the five art directions.
-6. High-resolution Overview and Lake rendering remain above a 16.7 ms budget in this device sample. Technical success does not establish visual completion or sustained performance.
+6. Several views remain above a 16.7 ms budget in this device sample. Technical success does not establish visual completion or sustained performance.
 
 ### Verification
 
-- At scales 1 and 10 and all three satellite seeds: finite attributes, unchanged indices and UVs, no zero-area triangles, exact angular position/normal seams and a zero-error meadow/cliff rim. Each landform retains 25,600 triangles, 13,031 vertices and two landform draw calls.
-- All meadow attributes and every rock x/z coordinate match baseline byte-for-byte. Upper rock positions through ring 35 are exact. A thousand height, radius and containment samples per island/scale match. Center seats remain exact. The two smaller islands' full geometry attributes are unchanged.
-- All five styles pass Overview, Castle and Lookout at 960×600; Fantasy also passes Lake and quarter-orbit views. Castle and Lookout frames remain byte-identical to baseline in every style.
-- All five styles pass native 1920×1200 satellite detail views and Castle, Lake and Lookout. Fantasy satellite detail also passes all quarter-orbit views. Exact loop-end PNGs match after an intermediate phase, with no JavaScript or WebGL errors.
-- Presets, Shift-arrow/Shift-drag panning, zoom, view-preserving style switching, reset, reduced motion and a 390-pixel Retina phone layout pass. Scene controls, culling, close-detail budgets and shadow updates retain their existing implementation.
-- Seven previews were regenerated directly from the reviewed Three.js source; the five Overview images change, while the identical Castle and Lookout previews are retained. No external or AI-generated assets were introduced. The separate illustrated profile GIF is unchanged.
+- At scales 1 and 10: all pre-existing lookout geometry attributes and indices match baseline byte-for-byte. The meadow/cliff rim remains exact, all 135,168 triangles and two landform draw calls remain, and the width is unchanged (180.1049 units at scale 10).
+- The new normalized color channels are finite and bounded, with exact angular seams; their sampled maxima are 1.0 and 0.8. The viewing anchor is exact. No ground sampler, plant placement, physical detail dimensions, castle, main island, satellite, lake, river or waterfall source changed.
+- All five styles pass Overview, Castle and Lookout at 960×600; Fantasy also passes Lake and quarter-orbit views. Initial Overview and Castle frames are byte-identical to baseline in all five styles.
+- All five styles pass Castle, Lake and Lookout at 1920×1200 with exact loop-end PNGs after an intermediate phase. Nearby Lookout orbit angles were inspected at 1824×1140. No JavaScript or WebGL errors were reported.
+- Presets, Shift-arrow/Shift-drag panning, zoom, view-preserving style switching, reset, reduced motion and a 390-pixel Retina phone layout pass. Culling, fine-detail budgets and shadow updates retain their existing implementation.
+- Seven previews were regenerated directly from the reviewed source; only Lookout changes. All new source is published with that renderer-export preview. No external or AI-generated assets were introduced, and the separate illustrated profile GIF is unchanged.
 
 ### Hardware Chrome sample
 
-One Chrome session on Apple M2 Pro, three warmup and twelve moving frames per view, with the same synchronized one-pixel readback in warmup and measurement. Draw and triangle counts match baseline in all four views. The static deformation adds no ongoing shader or geometry cost. This short sequential sample does not isolate GPU time or prove a performance improvement. Baseline startup was 4.431/4.616 seconds at normal/Retina resolution; candidate startup was 4.473/4.434 seconds.
+Apple M2 Pro hardware Chrome. Three warmup and twelve moving frames per view, with the same synchronized one-pixel readback during warmup and measurement. Draw and triangle counts match baseline in all four views. The new shader adds a two-component varying and a few color operations only to the lookout ground. Baseline startup was 4.720/4.660 seconds at normal/Retina resolution; candidate startup was 4.891/5.047 seconds.
 
 | View | Baseline 960×600 median | Candidate 960×600 median / maximum | Baseline 1920×1200 median | Candidate 1920×1200 median / maximum |
 | --- | ---: | ---: | ---: | ---: |
-| Overview | 16.0 ms | 16.4 / 18.7 ms | 20.4 ms | 22.2 / 24.1 ms |
-| Castle | 14.8 ms | 14.2 / 15.3 ms | 18.3 ms | 16.4 / 20.3 ms |
-| Lake | 23.0 ms | 23.8 / 26.8 ms | 31.7 ms | 27.4 / 29.9 ms |
-| Lookout | 12.5 ms | 12.4 / 15.2 ms | 15.7 ms | 13.9 / 16.9 ms |
+| Overview | 20.5 ms | 20.7 / 23.6 ms | 28.5 ms | 25.6 / 30.1 ms |
+| Castle | 15.9 ms | 17.4 / 19.2 ms | 22.4 ms | 22.4 / 25.2 ms |
+| Lake | 25.6 ms | 26.8 / 30.8 ms | 34.2 ms | 34.2 / 47.5 ms |
+| Lookout | 15.4 ms | 19.7 / 22.1 ms | 19.6 ms | 18.6 / 23.7 ms |
+
+The inconsistent Lookout result prompted an additional interleaved baseline/candidate comparison: four alternating rounds, eight warmup and thirty frames each, staying near the visible clearing. At the responsive 912×570 buffer, round medians ranged 13.8–14.6 ms baseline and 14.5–15.7 ms candidate. At 1824×1140 they ranged 17.8–18.3 ms baseline and 16.6–17.8 ms candidate. These short samples show timing variability; they do not isolate GPU cost, establish a performance gain or prove a consistent regression.
 
 The current source and canonical deployments must be checked at their exact revision before reporting delivery.

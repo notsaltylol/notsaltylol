@@ -14,7 +14,7 @@ Select **Castle** in the viewer to inspect the open belfry, lower secondary turr
 
 ## Lookout
 
-Select **Lookout** in the viewer for the foreground composition. The camera stands near the travelers, whose physical size is unchanged, with the distant summit visible and open air beneath the island. A shallow fold in the nearby meadow separates their small perch from an unequal grassy shoulder, breaking the broad lawn without filling the clearing. The same view is available in all five styles.
+Select **Lookout** in the viewer for the foreground composition. The camera stands near the travelers, whose physical size is unchanged, with the distant summit visible and open air beneath the island. A shallow fold in the nearby meadow separates their small perch from an unequal grassy shoulder, breaking the broad lawn without filling the clearing. Cooler green in the hollow and warmer pigment on the shoulder make that fold easier to read while preserving the quiet footing and small plants. The same view is available in all five styles.
 
 ![Travelers looking toward the castle island](../assets/style-previews-3d/lookout.png)
 
