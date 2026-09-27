@@ -22,54 +22,46 @@ Objective: achieve AAA quality in the five requested styles. This is a visual pr
 7. **Presentation and motion:** inspect at full display resolution, a phone viewport, and detailed camera views. No shader errors, obvious clipping, stale shadows, flashing LOD, abrupt loop seams, or unusable startup/interaction. Capture actual frame timings on the test device; do not infer performance from triangle counts.
 8. **Delivered state:** published source and previews must match the tested scene. Verify the public deployment and record the exact revision.
 
-## Current pass: painted rock lighting and shader preparation
+## Current pass: ground pigment follows woodland habitats
 
-Comparison baseline: source `c848806252b8222156d3ce1b3bbc2edbf5a56056`, canonical output `a8c68afb2c0ac6ddb5367174a8ebe0158d007e3c`. Earlier production audits, including the preceding geometry and grounding checks, remain in Git history. Gallery previews are captured from the source accompanying this document.
+Comparison baseline: source `dc88f4f8e02455468d33cc665f37404de5926ae0`, canonical output `1d55a4548fb7fb7645652ad90bb3ec5ab2a1c1eb`. Previous lighting, shader-preparation and geometry audits remain in Git history.
 
-- Warm light and palette-relative cool shade now multiply surface pigment. The previous fixed shadow-color blend muted mineral colors; the revised response retains the painted albedo in shaded areas. Rock sky fill is weaker and more directional, preserving darker recesses between lit planes.
-- The sun direction changes to `(-28, 25, 16)` in landscape coordinates after matched front, close and quarter-orbit comparisons. Its shadow camera depth follows the sun offset. The shared projected cloud field follows the same direction.
-- Cozy separates cream/tan rock from sage turf, with a cooler sage shadow tint and slightly more contrast. It retains smooth, unbanded lighting, cream masonry and mint roofs.
-- Existing material variants are prepared against the actual scene lights and color render target before the first displayed frame. A single instanced triangle prepares the double-sided depth variant used by distant leaves; this proxy is never rendered. Fine tree geometry stays lazy. Startup evidence is recorded below.
-- No land geometry, plant populations, building dimensions, texture frequencies or camera presets change in this pass. The 10× width and 100× area remain intact, including the small physical detail and supported castle approach.
+The main island and lookout now bake woodland, woodland-edge and flower-drift weights from the same habitat map that places their plants. Ground beneath groves receives cooler, deeper green pigment; meadow edges and flower drifts receive a restrained warmer wash. Open ground stays lighter. Existing wash noise softens transitions, and each style has an independent habitat strength. The main summit's rock exposure still overlays this ground pigment. Plant materials, fine texture frequencies, light direction and painted sky are unchanged.
 
-### Visual completion audit
+This is ground color, not a new light or shadow. Three normalized bytes per terrain vertex add 662,403 bytes across the two expanded ground meshes. No triangles, drawing passes, texture fetches or fragment noise octaves were added. The weights are baked once in local island coordinates, before lookout translation. No route-wear color was added from the habitat map because its approximate route differs from the actual castle trail.
 
-**The AAA quality objective remains open.** Review of all five Overview, Castle and Lookout sets and Fantasy's three quarter orbits found improved separation of the existing cliff planes, with readable rear faces and retained mineral color. Cozy's warm rock reads more clearly against green meadow while Ink retains its stepped light bands. Original remains olive/gold, Fantasy vivid and Ghibli-inspired softer and more natural. A separate foreground cloud-bank experiment was rejected because it did not yield a useful visual improvement.
+### Visual judgment
+
+**The AAA quality objective remains open.** Nineteen matched before/after pairs were reviewed: all five styles in Overview, Castle and Lookout; Fantasy Lake; and three Fantasy quarter-orbit views. This is a modest, accepted improvement in woodland-ground grouping. It is clearest beside the lake and in rear/side views, where connected deeper green grove bases separate woodland from the open meadow. The result retains the small trees and fine plants, shoreline, routes and the five distinct palettes. No new pigment seam or distracting patch edge stood out.
+
+The visible Lookout clearing mostly gains a small brightening; this does not solve its broad uniform lawn. The castle court also remains too uniform. Increasing habitat strength would darken the already readable groves without solving those open areas, so the reviewed values are retained.
 
 Remaining priorities:
 
-1. The upper cliff still presents a broad face from Lookout, and several lower closures remain strongly tapered. Larger planes need more natural shape and depth separation.
-2. The summit retains broad smooth surfaces, especially behind the castle. Its silhouette, shoulders and vegetation transitions need more authored variation at the retained small building scale.
-3. The foreground lawn and castle court remain visually uniform. They need more deliberate value grouping without filling the travelers' open clearing or hiding the small architecture.
-4. Close waterfall foam remains graphic; lake reflections use art-directed sky color rather than scene-object reflections.
-5. The sky and land differ in edge treatment and finish. Ink needs better shape grouping and retains a thin ground-shadow streak below and left of the castle gate; Cozy remains intentionally soft but needs review as a complete image. The sky is still a painted environment dome.
-6. Fine vegetation, LOD transitions and high-resolution rendering cost need further work. Startup preparation alone does not establish sustained smoothness.
+1. Stronger authored variation in the foreground clearing and castle court, while retaining quiet space around the travelers and small buildings.
+2. More natural large cliff masses and summit shoulders. Several lower closures still resemble similar tapered lobes, and the castle sits on a conspicuously round upper mesa. Temporary alternative cliff and summit studies were rejected; none were published.
+3. Close tree crowns still use smooth large shells despite individual fine leaves. A temporary crown study was not integrated into this focused pass.
+4. Waterfall foam remains graphic; lake reflections borrow the painted sky rather than reflecting scene objects.
+5. Sky and land need more consistent edge treatment and finish across all five art directions. The painted sky remains an environment backdrop.
+6. High-resolution Overview and Lake costs remain above a 16.7 ms frame budget in this device sample. Passing rendering tests is not visual completion or a sustained performance guarantee.
 
 ### Verification
 
-The final material and sunlight combination passes all five styles in Overview, Castle and Lookout at 960×600, all four camera presets, and quarter-orbit captures. Starting and ending PNGs match exactly after an intermediate phase, with no page or WebGL errors. The final source also passes all five styles in Castle, Lake and Lookout at 1920×1200 with exact loop endpoints. Camera presets, keyboard and pointer panning, zoom, view-preserving style switching, reset, reduced motion and the 390-pixel phone layout pass without browser errors.
+- At scales 1 and 10, the baseline and candidate have byte-identical existing geometry attributes and indices, identical mesh placements and instanced transforms. The only new ground attribute is normalized habitat pigment. The actual landform, lake/river/fall connection, building support and small physical details are therefore retained.
+- The 960×600 comparison set passes all five styles, all four view presets and quarter-orbit views with no JavaScript or WebGL errors. Initial/end PNGs are exactly equal after an intermediate phase.
+- All five styles pass Castle, Lake and Lookout at native 1920×1200, again with exact loop endpoints. Native Fantasy/Cozy Lake and the phone layout were visually reviewed for retained fine detail and readable transitions.
+- Preset buttons, Shift-arrow and Shift-drag panning, zoom, view-preserving style switching, reset, reduced motion and a 390-pixel Retina phone layout pass.
+- Seven gallery previews were regenerated from the reviewed Three.js source: five 960×600 overviews, one 960×600 Lookout and one native 1920×1200 Castle. These are direct renderer exports; no new external or AI-generated image assets were introduced. The separate illustrated profile GIF is unchanged.
 
-Native-resolution visual review of the highest-risk Ink, Cozy and Fantasy views found no new clipping, broken water coverage or lost masonry/plant detail that blocks this lighting revision. The remaining minor Ink ground-shadow artifact is recorded above.
+### Hardware Chrome sample
 
-### Startup preparation evidence
+One Chrome session on Apple M2 Pro, with three warmup and twelve moving frames per view. Both warmup and measured frames use the same synchronized one-pixel readback. This short sequential comparison does not isolate GPU time or establish a performance improvement. Draw counts and triangle counts match the baseline in every sampled view. Baseline startup was 4.477/4.020 seconds at normal/Retina resolution; the candidate was 4.158/4.182 seconds.
 
-An isolated frozen-baseline experiment compared the existing scene with the color-material warmup alone. Eleven image pairs were byte-identical. Four program additions observed across sixty first-orbit samples were absent in the candidate; the same initial geometry count was retained. Its timing comparison overlapped another browser run, so it supports program and image evidence, not a startup speedup claim.
+| View | Baseline 960×600 median | Candidate 960×600 median / maximum | Baseline 1920×1200 median | Candidate 1920×1200 median / maximum |
+| --- | ---: | ---: | ---: | ---: |
+| Overview | 14.6 ms | 14.2 / 16.5 ms | 18.9 ms | 20.7 / 22.9 ms |
+| Castle | 12.5 ms | 11.6 / 13.3 ms | 14.9 ms | 15.3 / 17.6 ms |
+| Lake | 17.6 ms | 18.0 / 21.3 ms | 24.8 ms | 25.7 / 28.2 ms |
+| Lookout | 9.8 ms | 10.5 / 12.9 ms | 13.8 ms | 13.0 / 15.1 ms |
 
-A denser 720-frame trace of the combined light-and-material source identified one additional instanced, double-sided depth program at phase `0.5875`, used by the lookout's coarse leaf batch. A public `MeshDepthMaterial` proxy now prepares the exact program before display. Its synchronous compile setup temporarily omits fog, matching the depth pass, and restores fog before awaiting shader completion. The render target is restored before rendering. The proxy geometry is disposed after compilation, while its material keeps the program cached.
-
-With this correction, no new programs appear across all 720 first-orbit samples. Twelve saved-baseline/candidate image pairs are byte-identical, including initial view, loop end, and all five Overview/Lookout combinations. The registered geometry count and initial drawn triangle count are unchanged. No browser or WebGL errors were observed. This establishes the sampled shader-preparation behavior; it does not prove every possible zoom or camera path is free of compilation, nor establish a startup-time improvement.
-
-Style selection remains available while loading. A readiness guard defers drawing until preparation completes, and fog is never absent between event-loop tasks. A targeted browser check held each compile promise and clicked the visible style buttons: the former code rendered prematurely during the first wait and threw during the second. The correction preserves both selections, retains the color target during preparation, and displays the final selected style without errors.
-
-### Final source timing sample
-
-One hardware Chrome session on Apple M2 Pro with other test browsers closed; three warmup and twelve moving frames per view. Warmup and measured frames both finish with the same synchronized one-pixel readback. Startup measured 4.125 seconds at normal resolution and 4.018 seconds on the later Retina load.
-
-| View | 960×600 median / maximum | 1920×1200 median / maximum |
-| --- | ---: | ---: |
-| Overview | 14.7 / 18.3 ms | 19.9 / 28.5 ms |
-| Castle | 10.7 / 13.0 ms | 15.2 / 17.5 ms |
-| Lake | 17.2 / 18.3 ms | 26.0 / 28.3 ms |
-| Lookout | 10.2 / 12.6 ms | 12.8 / 14.9 ms |
-
-These short device-specific samples are not isolated GPU timestamps or a sustained frame-rate guarantee. The higher-resolution Overview and Lake samples still exceed a 16.7 ms frame budget. This pass makes no controlled performance-improvement claim.
+The current source and canonical deployments must be checked at their exact revision before reporting delivery.
