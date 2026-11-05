@@ -7,12 +7,56 @@ import RetroStyles from "../themes/RetroStyles.astro";
 import PaperStyles from "../themes/PaperStyles.astro";
 import { ClientRouter } from "astro:transitions";
 import { Font } from "astro:assets";
-const { title } = Astro.props;
+import portrait from "../assets/leon-kwan.jpg";
+import { resume as profile } from "../content/resume";
+const {
+  title,
+  resume = false,
+  description = "A collection of product ideas, useful tools, and creative experiments in nine visual styles.",
+} = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const siteUrl = Astro.site ?? new URL("https://leonkwan.com");
+const canonical = new URL(Astro.url.pathname, siteUrl);
+const homeUrl = new URL(`${base}/`, siteUrl).href;
+const pageTitle = resume ? title : `${title} | Leon Kwan`;
+const imageUrl = resume ? new URL(portrait.src, siteUrl).href : undefined;
+const structuredData = resume
+  ? {
+      "@context": "https://schema.org",
+      "@type": "ProfilePage",
+      url: canonical.href,
+      name: pageTitle,
+      description,
+      mainEntity: {
+        "@type": "Person",
+        "@id": `${homeUrl}#person`,
+        name: profile.name,
+        url: homeUrl,
+        image: imageUrl,
+        jobTitle: "CTO",
+        worksFor: {
+          "@type": "Organization",
+          name: "Khorium",
+          url: "https://www.khorium.ai/",
+        },
+        alumniOf: {
+          "@type": "CollegeOrUniversity",
+          name: profile.education.school,
+        },
+        sameAs: profile.links.map(({ href }) => href),
+        knowsAbout: profile.variants.find(({ id }) => id === "all")?.skills,
+      },
+    }
+  : undefined;
 ---
 
 <!doctype html>
-<html lang="en" data-mode="light" data-style="glass">
+<html
+  lang="en"
+  data-mode="light"
+  data-style={resume ? "resume" : "glass"}
+  data-experience={resume ? "resume" : "playground"}
+>
   <head>
     <meta charset="utf-8" />
     <ClientRouter />
@@ -28,12 +72,17 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
           /* Fall back to light mode. */
         }
         const choices = styleIds.filter((id) => id !== previousStyle);
-        const selected = choices[Math.floor(Math.random() * choices.length)];
+        const requested = new URLSearchParams(location.search).get("theme");
+        const selected = styleIds.includes(requested)
+          ? requested
+          : choices[Math.floor(Math.random() * choices.length)];
         const root = document.documentElement;
         root.dataset.mode = mode === "dark" ? "dark" : "light";
-        root.dataset.style = selected;
+        root.dataset.style =
+          root.dataset.experience === "resume" ? "resume" : selected;
         try {
-          localStorage.setItem("portfolio-style", selected);
+          if (root.dataset.experience !== "resume")
+            localStorage.setItem("portfolio-style", selected);
         } catch {
           /* The current visit still works without storage. */
         }
@@ -56,11 +105,38 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
     <RetroStyles />
     <Font cssVariable="--font-press-start" />
     <NesStyles />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
     <meta
-      name="description"
-      content="A small collection of product ideas, useful tools, and creative experiments. Explore different visual interpretations of the same portfolio."
+      name="robots"
+      content={resume ? "index, follow" : "noindex, follow"}
     />
+    <link rel="canonical" href={canonical.href} />
+    <meta property="og:type" content={resume ? "profile" : "website"} />
+    <meta property="og:site_name" content="Leon Kwan" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    {imageUrl && (
+      <>
+        <meta property="og:image" content={imageUrl} />
+        <meta property="og:image:width" content={String(portrait.width)} />
+        <meta property="og:image:height" content={String(portrait.height)} />
+        <meta property="og:image:alt" content="Leon Kwan outdoors by a lake" />
+        <meta name="twitter:image" content={imageUrl} />
+        <meta name="twitter:image:alt" content="Leon Kwan outdoors by a lake" />
+      </>
+    )}
+    {structuredData && (
+      <script
+        type="application/ld+json"
+        set:html={JSON.stringify(structuredData).replace(/</g, "\\u003c")}
+      />
+    )}
     <link rel="icon" href={`${base}/favicon.svg`} />
     <link rel="sitemap" href={`${base}/sitemap-index.xml`} />
     <link
@@ -69,7 +145,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
       title="Leon’s workshop — projects"
       href={`${base}/rss.xml`}
     />
-    <title>{title} | Leon's workshop</title>
+    <title>{pageTitle}</title>
   </head>
   <body>
     <GlassFilters />

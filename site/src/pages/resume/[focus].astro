@@ -1,0 +1,14 @@
+---
+import Resume from "../../experience/Resume.astro";
+import { resumeVariants } from "../../content/resume";
+export function getStaticPaths() {
+  return resumeVariants
+    .filter(({ id }) => id !== "default")
+    .map(({ id }) => ({
+      params: { focus: id },
+    }));
+}
+const { focus } = Astro.params;
+---
+
+<Resume focus={focus} />

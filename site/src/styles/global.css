@@ -1041,3 +1041,74 @@ footer span:first-child {
   background: var(--ui-action);
   color: var(--ui-on-action);
 }
+
+/* Shared appearance menu. */
+.site-settings {
+  position: relative;
+  margin-left: auto;
+  z-index: 30;
+  font: 14px/1.5 var(--font-manrope, sans-serif);
+}
+.site-settings > summary {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  list-style: none;
+  color: var(--ui-content-muted);
+}
+.site-settings > summary::-webkit-details-marker {
+  display: none;
+}
+.site-settings > summary:hover,
+.site-settings[open] > summary {
+  border-color: var(--ui-line);
+  color: var(--ui-content);
+}
+.site-settings .settings-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(240px, calc(100vw - 40px));
+  padding: 12px;
+  border: 1px solid var(--ui-line);
+  border-radius: 10px;
+  background: var(--ui-surface-solid);
+  color: var(--ui-content);
+  box-shadow: 0 12px 36px #00000014;
+}
+.site-settings .settings-panel > p {
+  margin: 0 8px 8px;
+  font-size: 12px;
+  color: var(--ui-content-muted);
+}
+.site-settings .settings-panel a,
+.site-settings .settings-panel button {
+  display: block;
+  width: 100%;
+  padding: 7px 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+}
+.site-settings .settings-panel :is(a, button):hover,
+.site-settings .settings-panel [aria-pressed="true"],
+.site-settings .settings-panel [aria-current="page"] {
+  background: var(--ui-surface-hover);
+}
+.site-settings .settings-themes {
+  margin: 8px 0;
+  padding: 8px 0;
+  border-block: 1px solid var(--ui-line);
+}
+.site-settings .mode-switch {
+  justify-content: center;
+  padding: 6px 0;
+}

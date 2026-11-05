@@ -1,7 +1,37 @@
-# Portfolio theme playground
+# Résumé and portfolio theme playground
 
-Two routes (`/` and `/projects/`) share content and a small browser controller. The theme
-selector changes the presentation without reloading the page.
+The root route (`/`) is a minimal professional résumé with a profile photo.
+`src/content/resume.json` holds the achievements from the supplied résumé and
+role tags; `src/content/resume.ts` selects the visible bullets. No email address
+or phone number is included. The source PDF stays outside the repository.
+
+The résumé focus links select Default, All bullets, Frontend, AI engineer,
+Platform, or Infrastructure. Role views have stable `/resume/{focus}/` URLs.
+All bullets contains all 22 experience and project achievements. The same
+selection drives each view and its downloadable one-page PDF.
+
+PDFs live in `public/resumes/` and work on static hosts. The generator uses
+ReportLab, single-column text, standard headings, and normal text links; it omits
+the website photo and checks page count, text extraction, selected bullet coverage,
+and absence of email/phone numbers. ATS parsing varies by employer; this is a
+simple text layout, not a guarantee of a particular screening result.
+
+After editing the JSON or PDF generator, regenerate the downloads:
+
+```sh
+python3 -m pip install -r scripts/requirements-resume.txt
+python3 scripts/generate-resume-pdfs.py
+```
+
+The Astro build checks the content, generator, and PDF hashes and fails if the
+exports are stale. Python is needed for regeneration, not normal site builds.
+Keep new variants registered in the JSON; routes and the focus selector are
+created from that registry. Never put private contact details in the JSON.
+
+`/random/` opens the existing theme playground with a random presentation.
+`/projects/` is its searchable demo project gallery. A compact gear menu in the
+top right contains themes, a link back to the résumé, and light/dark mode.
+Direct theme links use `/random/?theme=glass` (or any registered theme ID).
 
 - **Glass, Gothic, and Minimal:** first-class custom Tailwind styles.
 - **daisyUI:** actual daisyUI cards, buttons, badges, and input styling.
@@ -23,10 +53,10 @@ mise exec -- pnpm install
 mise exec -- pnpm dev --background
 ```
 
-Use the style buttons in the header to choose among all nine presentations.
+Use the appearance settings menu in the header to choose among all nine presentations.
 Each full page load starts with a randomly chosen style different
 from the previous saved style. Manual choices last for the current visit;
-navigation between Home and Projects keeps the current presentation. Gallery
+navigation between the playground Home and Projects keeps the current presentation. Gallery
 search, category, and selected project are owned by the shared controller and
 survive presentation changes. Search/filter state is in-memory, not saved on reload.
 
@@ -113,7 +143,7 @@ Change the Worker name there if needed before your first deployment.
 Set `SITE_URL` to your real public Cloudflare or custom-domain URL when building
 or deploying so `@astrojs/sitemap` can generate absolute URLs. For example,
 prefix the commands below with `SITE_URL=https://your-domain.com`.
-Production builds require a site URL for RSS generation.
+The default site URL is `https://leonkwan.com`; override it with `SITE_URL` for another production host.
 GitHub Pages supplies its URL automatically and sets `DEPLOY_TARGET=github-pages`
 to build without the Cloudflare adapter.
 
@@ -167,7 +197,7 @@ the corresponding gallery card. It includes descriptions and categories; no
 publication dates are invented for the sample projects. Every page includes an
 RSS discovery link. GitHub Pages base paths are included in feed URLs.
 
-Cloudflare builds require `SITE_URL=https://your-domain.com`. GitHub Pages
+Cloudflare builds should set `SITE_URL=https://your-domain.com` when using a domain other than the default. GitHub Pages
 supplies its configured URL through the workflow. Development uses the local URL.
 
 ## Typography
@@ -217,10 +247,24 @@ mirrors the root assets into its public directory during startup, preserving
 redirect remains available at `/island.html`. Edit the root asset originals,
 not the generated copies in `site/public/assets/`.
 
-The canonical website is https://notsaltylol.github.io/. The source stays here.
+SEO defaults to https://leonkwan.com/. Set `SITE_URL` to override the canonical origin for another host. The source stays here.
 The `notsaltylol/notsaltylol.github.io` repository contains only generated output
 and a Pages publishing workflow. Build this app with base `/` and site
 `https://notsaltylol.github.io`, then publish `dist/` to that repository's `public/`
 directory. Automatic publishing from this source repository is awaiting deploy-key
 approval. The existing project Pages workflow keeps the old
 https://notsaltylol.github.io/notsaltylol/ links working too.
+
+## Search and sharing
+
+The shared layout emits a canonical URL without query parameters, role-specific
+page titles and descriptions, Open Graph and Twitter metadata, and ProfilePage /
+Person JSON-LD from the public résumé data. The portrait is used for social
+previews; its web copy has EXIF metadata removed without changing image pixels.
+There are no email or phone fields in the page or structured profile data.
+
+The sitemap includes the résumé and role pages. `/random/` and `/projects/`
+contain demo content and have `noindex, follow` metadata; they are excluded from
+the sitemap. `/robots.txt` permits crawling and points at the sitemap index.
+Search indexing and domain/DNS setup still depend on deployment; these local
+changes do not publish the site or register it with Search Console.

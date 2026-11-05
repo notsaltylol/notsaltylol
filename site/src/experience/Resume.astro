@@ -1,0 +1,168 @@
+---
+import portrait from "../assets/leon-kwan.jpg";
+import SiteLayout from "../layouts/SiteLayout.astro";
+import Settings from "./Settings.astro";
+import { getResume, resumeVariants } from "../content/resume";
+import "../styles/resume.css";
+const { focus = "default" } = Astro.props as { focus?: string };
+const view = getResume(focus);
+const { variant } = view;
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const focusHref = (id: string) =>
+  id === "default" ? `${base}/` : `${base}/resume/${id}/`;
+---
+
+<SiteLayout
+  title={
+    focus === "default"
+      ? "Leon Kwan | Software Engineer & CTO at Khorium"
+      : `${variant.label} résumé | Leon Kwan`
+  }
+  resume
+  description={variant.summary}
+>
+  <div class="resume-page">
+    <a href="#resume" class="skip-link">
+      Skip to résumé
+    </a>
+    <header class="resume-toolbar">
+      <a href={focusHref("default")} aria-label="Leon Kwan home">
+        LK
+      </a>
+      <Settings />
+    </header>
+    <main id="resume" class="resume-document">
+      <header class="resume-intro">
+        <div>
+          <h1>{view.name}</h1>
+          <p class="resume-role">{variant.title}</p>
+          <p class="resume-summary">{variant.summary}</p>
+          <div class="resume-links" aria-label="Professional profiles">
+            {view.links.map(({ label, href }) => (
+              <a href={href}>{label}</a>
+            ))}
+          </div>
+        </div>
+        <div class="resume-portrait">
+          <img
+            src={portrait.src}
+            alt="Leon Kwan outdoors by a lake"
+            width={portrait.width}
+            height={portrait.height}
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+      </header>
+      <div class="resume-controls">
+        <nav class="resume-focus" aria-label="Résumé focus">
+          {resumeVariants.map(({ id, label }) => (
+            <a
+              href={focusHref(id)}
+              aria-current={id === focus ? "page" : undefined}
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+        <div class="resume-download-row">
+          <p class="resume-view-description">
+            {variant.description} <span>{view.bulletCount} bullets</span>
+          </p>
+          <a
+            class="resume-download"
+            href={`${base}/resumes/leon-kwan-${focus}.pdf`}
+            download={`Leon-Kwan-${variant.label.replaceAll(" ", "-")}-Resume.pdf`}
+            aria-label={`Download ${variant.label.toLowerCase()} résumé as a one-page PDF`}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              aria-hidden="true"
+            >
+              <path d="M12 3v12m-4-4 4 4 4-4M5 16v5h14v-5" />
+            </svg>
+            Download PDF
+          </a>
+        </div>
+      </div>
+      <section class="resume-section" aria-labelledby="experience-heading">
+        <h2 id="experience-heading">Experience</h2>
+        <div class="resume-entries">
+          {view.experience.map((job) => (
+            <article class="resume-entry">
+              <div class="resume-entry-heading">
+                <h3>{job.company}</h3>
+                <span class="resume-dates">
+                  {job.start} – {job.end}
+                </span>
+              </div>
+              <p class="resume-job-role">{job.role}</p>
+              <ul class="resume-bullets">
+                {job.bullets.map((bullet) => (
+                  <li data-bullet-id={bullet.id}>{bullet.text}</li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section class="resume-section" aria-labelledby="education-heading">
+        <h2 id="education-heading">Education</h2>
+        <div class="resume-entry">
+          <div class="resume-entry-heading">
+            <h3>{view.education.school}</h3>
+            <span class="resume-dates">{view.education.graduated}</span>
+          </div>
+          <p>
+            {view.education.degree} · GPA {view.education.gpa}
+          </p>
+        </div>
+      </section>
+      <section class="resume-section" aria-labelledby="skills-heading">
+        <h2 id="skills-heading">Skills</h2>
+        <ul class="resume-skills">
+          {variant.skills.map((skill) => (
+            <li>{skill}</li>
+          ))}
+        </ul>
+      </section>
+      <section class="resume-section" aria-labelledby="projects-heading">
+        <h2 id="projects-heading">Projects &amp; research</h2>
+        <div class="resume-entries">
+          {view.projects.map((project) => (
+            <article class="resume-entry">
+              <h3>
+                {project.href ? (
+                  <a href={project.href}>{project.name}</a>
+                ) : (
+                  project.name
+                )}
+              </h3>
+              <p class="resume-project-tools">{project.tools.join(", ")}</p>
+              {project.note && (
+                <p class="resume-project-note">{project.note}</p>
+              )}
+              <ul class="resume-bullets">
+                {project.bullets.map((bullet) => (
+                  <li data-bullet-id={bullet.id}>{bullet.text}</li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </section>
+      <footer class="resume-footer">
+        <span>{view.name}</span>
+        <a href="https://github.com/notsaltylol">GitHub</a>
+      </footer>
+    </main>
+  </div>
+</SiteLayout>
+<script>
+  import "./controller";
+</script>

@@ -1,0 +1,359 @@
+{
+  "name": "Leon Kwan",
+  "links": [
+    {
+      "label": "GitHub",
+      "text": "github.com/notsaltylol",
+      "href": "https://github.com/notsaltylol"
+    },
+    {
+      "label": "LinkedIn",
+      "text": "linkedin.com/in/kwanleon",
+      "href": "https://www.linkedin.com/in/kwanleon/"
+    }
+  ],
+  "variants": [
+    {
+      "id": "default",
+      "label": "Default",
+      "title": "Software engineer",
+      "summary": "I build full-stack products, AI-assisted workflows, and the infrastructure behind them. Currently CTO at Khorium; previously at Amazon.",
+      "description": "A selected overview of my work across products, AI, and cloud infrastructure.",
+      "skills": [
+        "Python",
+        "Java",
+        "TypeScript",
+        "JavaScript",
+        "Go",
+        "SQL",
+        "React",
+        "Next.js",
+        "Node.js",
+        "AWS",
+        "PostgreSQL",
+        "Git"
+      ]
+    },
+    {
+      "id": "all",
+      "label": "All bullets",
+      "title": "Software engineer",
+      "summary": "From full-stack products to distributed systems, AI workflows, and research. Currently CTO at Khorium; previously at Amazon.",
+      "description": "Every experience and project bullet from my r\u00e9sum\u00e9, in one place.",
+      "skills": [
+        "Python",
+        "Java",
+        "TypeScript",
+        "JavaScript",
+        "Go",
+        "C++",
+        "SQL",
+        "Bash",
+        "AWS Step Functions",
+        "ECS",
+        "Lambda",
+        "SQS",
+        "DynamoDB",
+        "CDK",
+        "PostgreSQL",
+        "React",
+        "Next.js",
+        "Node.js",
+        "Git"
+      ]
+    },
+    {
+      "id": "frontend",
+      "label": "Frontend",
+      "title": "Frontend engineering",
+      "summary": "I build full-stack web products with React, TypeScript, and Next.js, with experience in self-service analytics, user settings, and responsive interfaces.",
+      "description": "Web products, user-facing features, and interactive applications.",
+      "skills": [
+        "TypeScript",
+        "JavaScript",
+        "React",
+        "Next.js",
+        "Tailwind CSS",
+        "Node.js",
+        "Java",
+        "DynamoDB",
+        "Git"
+      ]
+    },
+    {
+      "id": "ai",
+      "label": "AI engineer",
+      "title": "AI engineering",
+      "summary": "I build LLM assistants and the services that run them, from natural-language app tools to reliable agent deployments and AI-assisted engineering workflows.",
+      "description": "LLM assistants, agent reliability, AI tooling, and machine learning projects.",
+      "skills": [
+        "Python",
+        "TypeScript",
+        "JavaScript",
+        "Go",
+        "C++",
+        "AWS ECS",
+        "CDK",
+        "Step Functions",
+        "SQS",
+        "React",
+        "Node.js",
+        "Git"
+      ]
+    },
+    {
+      "id": "platform",
+      "label": "Platform",
+      "title": "Platform engineering",
+      "summary": "I build platforms that connect product workflows, multi-tenant services, and reliable distributed execution. Currently leading the engineering team at Khorium.",
+      "description": "Shared services, multi-tenancy, developer tooling, and distributed systems.",
+      "skills": [
+        "Python",
+        "Java",
+        "TypeScript",
+        "Go",
+        "SQL",
+        "AWS Step Functions",
+        "ECS",
+        "SQS",
+        "DynamoDB",
+        "CDK",
+        "PostgreSQL",
+        "Node.js",
+        "Git"
+      ]
+    },
+    {
+      "id": "infrastructure",
+      "label": "Infrastructure",
+      "title": "Infrastructure engineering",
+      "summary": "I build cloud orchestration and fault-tolerant services, with experience scaling simulation pipelines, LLM agent deployments, and analytics backends on AWS.",
+      "description": "Cloud orchestration, fault tolerance, service availability, and scaling.",
+      "skills": [
+        "Python",
+        "Java",
+        "Go",
+        "SQL",
+        "Bash",
+        "AWS Step Functions",
+        "ECS",
+        "Lambda",
+        "SQS",
+        "DynamoDB",
+        "CDK",
+        "PostgreSQL",
+        "Git"
+      ]
+    }
+  ],
+  "experience": [
+    {
+      "id": "khorium",
+      "company": "Khorium",
+      "role": "CTO",
+      "start": "February 2026",
+      "end": "Present",
+      "bullets": [
+        {
+          "id": "k-jobs",
+          "text": "Scaled to thousands of concurrent simulation jobs with AWS Step Functions, SQS, and ECS Fargate orchestration.",
+          "focus": ["default", "platform", "infrastructure"]
+        },
+        {
+          "id": "k-workers",
+          "text": "Built fault-tolerant ECS workers with DLQ retries and process-isolated meshing so one crash can't stop the pipeline.",
+          "focus": ["platform", "infrastructure"]
+        },
+        {
+          "id": "k-lead",
+          "text": "Cut CAD-to-simulation setup from days to minutes, leading 5 engineers building the end-to-end platform.",
+          "focus": ["default", "frontend", "platform"]
+        },
+        {
+          "id": "k-ai",
+          "text": "Reduced manual workflow steps by 80% with an LLM assistant that drives app logic and UI tools from natural language.",
+          "focus": ["default", "frontend", "ai"]
+        },
+        {
+          "id": "k-tenancy",
+          "text": "Built multi-tenant org management with SSO, billing, and entitlements on Stytch B2B, Stripe, and PostgreSQL.",
+          "focus": ["default", "platform"]
+        },
+        {
+          "id": "k-tests",
+          "text": "Built end-to-end integration tests covering the CAD-to-simulation pipeline to catch regressions before release.",
+          "focus": ["platform", "infrastructure"]
+        }
+      ]
+    },
+    {
+      "id": "amazon",
+      "company": "Amazon",
+      "role": "Software Development Engineer 2",
+      "start": "September 2023",
+      "end": "February 2026",
+      "bullets": [
+        {
+          "id": "a-adoption",
+          "text": "Doubled code acceptance rate, leading org-wide adoption of AI coding tools like MCPs and Skills.",
+          "focus": ["default", "ai", "platform"]
+        },
+        {
+          "id": "a-agent",
+          "text": "Scaled LLM agent for internal HR BI tool to 99.9% availability and 100+ concurrent users via AWS ECS/CDK.",
+          "focus": ["default", "ai", "platform", "infrastructure"]
+        },
+        {
+          "id": "a-settings",
+          "text": "Delivered custom user settings feature for HR report tooling with React/TypeScript, achieving 70% adoption rate.",
+          "focus": ["default", "frontend"]
+        },
+        {
+          "id": "a-athena",
+          "text": "Scaled data analytics backend by 200% in Amazon Athena query concurrency to support 2x user growth.",
+          "focus": ["platform", "infrastructure"]
+        },
+        {
+          "id": "a-bi",
+          "text": "Developed full-stack self-service business intelligence tool using React, Java, DynamoDB, driving 100% increase in customers.",
+          "focus": ["default", "frontend", "platform"]
+        },
+        {
+          "id": "a-proxy",
+          "text": "Led complex data transformation efforts for Java proxy service, implementing caching to ensure low latency.",
+          "focus": ["platform", "infrastructure"]
+        },
+        {
+          "id": "a-mentor",
+          "text": "Mentored junior engineers on scalable service design and deployment strategies.",
+          "focus": ["infrastructure"]
+        }
+      ]
+    },
+    {
+      "id": "necx",
+      "company": "NEC X",
+      "role": "Full Stack Engineer",
+      "start": "February 2023",
+      "end": "August 2023",
+      "bullets": [
+        {
+          "id": "n-distributed",
+          "text": "Built reliable, distributed software from 0 to 1 for startups in NEC's venture studio portfolio.",
+          "focus": ["platform", "infrastructure"]
+        },
+        {
+          "id": "n-web",
+          "text": "Led full stack development, using React/TypeScript/Next.js/Tailwind CSS to create responsive, SEO optimized websites.",
+          "focus": ["default", "frontend", "ai"]
+        }
+      ]
+    },
+    {
+      "id": "aws",
+      "company": "Amazon Web Services",
+      "role": "Software Engineering Intern",
+      "start": "May 2022",
+      "end": "July 2022",
+      "bullets": [
+        {
+          "id": "aws-search",
+          "text": "Improved search experience for AWS CloudFormation Registry using OpenSearch and Lambda-driven backfill process.",
+          "focus": ["default", "platform", "infrastructure"]
+        }
+      ]
+    },
+    {
+      "id": "amex",
+      "company": "American Express",
+      "role": "Software Engineering Intern",
+      "start": "June 2021",
+      "end": "August 2021",
+      "bullets": [
+        {
+          "id": "amex-ai",
+          "text": "Built a modular pipeline for an incident enrichment AI, increasing application recovery capabilities in Golang.",
+          "focus": ["default", "ai", "infrastructure"]
+        }
+      ]
+    },
+    {
+      "id": "uf",
+      "company": "University of Florida",
+      "role": "Teaching and Research Assistant",
+      "start": "August 2021",
+      "end": "December 2022",
+      "bullets": [
+        {
+          "id": "uf-grader",
+          "text": "Developed an autograder for coding assignments from 300+ students, giving feedback on code quality, time complexity, etc.",
+          "focus": ["default", "frontend", "ai", "platform"]
+        }
+      ]
+    }
+  ],
+  "education": {
+    "school": "University of Florida",
+    "degree": "B.S. in Computer Science",
+    "graduated": "December 2022",
+    "gpa": "3.74"
+  },
+  "projects": [
+    {
+      "id": "sigcse",
+      "name": "2023 SIGCSE Paper Co-Author",
+      "tools": ["Python", "Clang"],
+      "note": "Logistics, Affordances, and Evaluation of Build Programming: A Code Reading Instructional Strategy",
+      "bullets": [
+        {
+          "id": "p-paper",
+          "text": "Analyzed code metrics for 250 code samples with Clang and Python.",
+          "focus": ["platform"]
+        }
+      ],
+      "href": "https://doi.org/10.1145/3545945.3569756"
+    },
+    {
+      "id": "ninhando",
+      "name": "Ninhando",
+      "tools": ["React", "TensorFlow.js"],
+      "note": "2022 Georgia Tech Hackathon - Best Retro Hack",
+      "bullets": [
+        {
+          "id": "p-ninhando",
+          "text": "Built a React app that plays an NES emulator with hand gestures via a TensorFlow.js vision model.",
+          "focus": ["default", "frontend", "ai"]
+        }
+      ],
+      "href": "https://devpost.com/software/ninhando"
+    },
+    {
+      "id": "canine",
+      "name": "Canine-GANs",
+      "tools": ["Python", "CUDA", "C++"],
+      "note": "",
+      "bullets": [
+        {
+          "id": "p-canine",
+          "text": "Built a performant data pipeline for a GAN to transform bone STLs to X-ray images for a biomechanics research lab.",
+          "focus": ["default", "ai", "infrastructure"]
+        }
+      ],
+      "href": null
+    },
+    {
+      "id": "sheltr",
+      "name": "Sheltr",
+      "tools": ["React.js", "Google Maps API"],
+      "note": "2021 UC Davis Hackathon - Overall Winner: Best Hack for Social Good",
+      "bullets": [
+        {
+          "id": "p-sheltr",
+          "text": "Built a React app mapping government housing data to simplify the housing search for lower-income families.",
+          "focus": ["frontend"]
+        }
+      ],
+      "href": "https://devpost.com/software/sheltr-2xjcvy"
+    }
+  ]
+}

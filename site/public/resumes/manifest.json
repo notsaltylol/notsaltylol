@@ -1,0 +1,54 @@
+{
+  "sourceSha256": "64918a0f6af86587591c10e41b1efb27b57c4edc0fc8a1d3c5e962c24191d136",
+  "generatorSha256": "b9af3ba81507ee5beb3b64a79b9d48d5028a79c2c2ebb33c049517363917bc8b",
+  "files": [
+    {
+      "focus": "default",
+      "filename": "leon-kwan-default.pdf",
+      "sha256": "ced9c2c4976c2f471c837bcbcd2ae50514da832d061873c060a5b0adac634a20",
+      "pages": 1,
+      "fontSize": 11,
+      "bulletCount": 14
+    },
+    {
+      "focus": "all",
+      "filename": "leon-kwan-all.pdf",
+      "sha256": "4430a59378be3c665e9aa4db5de040cba995223a0cb773f3976ecc61b6c88092",
+      "pages": 1,
+      "fontSize": 10,
+      "bulletCount": 22
+    },
+    {
+      "focus": "frontend",
+      "filename": "leon-kwan-frontend.pdf",
+      "sha256": "82a706416bda6883f1a5d02f5ee0ebff0de7547b3a72b1a7341970babd841521",
+      "pages": 1,
+      "fontSize": 11,
+      "bulletCount": 8
+    },
+    {
+      "focus": "ai",
+      "filename": "leon-kwan-ai.pdf",
+      "sha256": "af77a6ef9a82ecebb028c7869f42e235bc42f4fafa2c61664ffcf2e62b341b09",
+      "pages": 1,
+      "fontSize": 11,
+      "bulletCount": 8
+    },
+    {
+      "focus": "platform",
+      "filename": "leon-kwan-platform.pdf",
+      "sha256": "07dd29d8ed83f59813d043e2b2ba78ecc0d7c0123ca671327235701b0d66a770",
+      "pages": 1,
+      "fontSize": 11,
+      "bulletCount": 14
+    },
+    {
+      "focus": "infrastructure",
+      "filename": "leon-kwan-infrastructure.pdf",
+      "sha256": "27aba1194625792acee7cdc57ef9b22f9e297085575666aed9e92ad7a5a6afeb",
+      "pages": 1,
+      "fontSize": 11,
+      "bulletCount": 11
+    }
+  ]
+}

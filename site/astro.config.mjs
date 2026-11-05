@@ -2,12 +2,13 @@
 import { defineConfig, fontProviders } from "astro/config";
 import cloudflare from "@astrojs/cloudflare";
 import profileAssets from "./scripts/profile-assets.mjs";
+import resumePdfs from "./scripts/resume-pdfs.mjs";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
-  site: process.env.SITE_URL,
+  site: process.env.SITE_URL ?? "https://leonkwan.com",
   output: "static",
   adapter:
     process.env.DEPLOY_TARGET === "github-pages"
@@ -120,6 +121,13 @@ export default defineConfig({
       },
     },
   ],
-  integrations: [sitemap(), profileAssets()],
+  integrations: [
+    sitemap({
+      filter: (page) =>
+        !/\/(?:random|projects)\/?$/.test(new URL(page).pathname),
+    }),
+    profileAssets(),
+    resumePdfs(),
+  ],
   vite: { plugins: [tailwindcss()] },
 });

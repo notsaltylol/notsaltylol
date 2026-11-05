@@ -29,3 +29,7 @@ pnpm-debug.log*
 # Local browser verification
 .playwright-cli/
 output/playwright/
+
+# Local PDF verification and exported copies (site downloads are tracked)
+/tmp/pdfs/
+/output/pdf/

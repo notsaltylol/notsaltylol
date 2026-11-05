@@ -9,7 +9,7 @@ import Starwind from "../themes/Starwind.astro";
 import Paper from "../themes/Paper.astro";
 import Retro from "../themes/Retro.astro";
 import Nes from "../themes/Nes.astro";
-import ColorModeSwitch from "./ColorModeSwitch.astro";
+import Settings from "./Settings.astro";
 const { initialPage: page } = Astro.props as { initialPage: Page };
 const components = {
   glass: Tailwind,
@@ -24,7 +24,7 @@ const components = {
 };
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const href = (page: Page) =>
-  `${base}/${page === "projects" ? "projects/" : ""}`;
+  `${base}/${page === "projects" ? "projects/" : "random/"}`;
 ---
 
 {themes.map(({ id }) => {
@@ -56,16 +56,7 @@ const href = (page: Page) =>
             </a>
           ))}
         </nav>
-        <div class="theme-picker">
-          <div class="style-buttons" role="group" aria-label="Visual style">
-            {themes.map((theme) => (
-              <button data-style={theme.id} aria-pressed={id === theme.id}>
-                {theme.label}
-              </button>
-            ))}
-          </div>
-          <ColorModeSwitch theme={id} />
-        </div>
+        <Settings theme={id} />
       </header>
       <main id={`main-${id}`}>
         <Presentation page={page} theme={id} />

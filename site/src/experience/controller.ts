@@ -115,6 +115,9 @@ document.addEventListener("click", (event) => {
     document.documentElement.dataset.style = button.dataset.style;
     save("portfolio-style", button.dataset.style);
     syncControls();
+    const settings =
+      activePanel()?.querySelector<HTMLDetailsElement>(".site-settings");
+    if (settings) settings.open = true;
     activePanel()
       ?.querySelector<HTMLElement>(`[data-style="${button.dataset.style}"]`)
       ?.focus({ preventScroll: true });
@@ -163,10 +166,33 @@ document.addEventListener("starwind:checked-change", (event) => {
     setMode(event.detail.checked);
 });
 document.addEventListener("astro:before-swap", (event) => {
-  event.newDocument.documentElement.dataset.style =
-    document.documentElement.dataset.style;
+  const next = event.newDocument.documentElement;
+  if (next.dataset.experience === "resume") next.dataset.style = "resume";
+  else if (document.documentElement.dataset.experience === "playground")
+    next.dataset.style = document.documentElement.dataset.style;
   event.newDocument.documentElement.dataset.mode =
     document.documentElement.dataset.mode;
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    document
+      .querySelectorAll<HTMLDetailsElement>(".site-settings[open]")
+      .forEach((menu) => {
+        menu.open = false;
+        menu.querySelector("summary")?.focus();
+      });
+  }
+});
+document.addEventListener("click", (event) => {
+  if (!(event.target instanceof Node)) return;
+  if (event.target instanceof Element && event.target.closest(".site-settings"))
+    return;
+  const target = event.target;
+  document
+    .querySelectorAll<HTMLDetailsElement>(".site-settings[open]")
+    .forEach((menu) => {
+      if (!menu.contains(target)) menu.open = false;
+    });
 });
 function setup() {
   syncControls();
